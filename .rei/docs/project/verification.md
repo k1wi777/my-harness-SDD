@@ -1,6 +1,6 @@
 # Verification
 
-> **Documento del proyecto** — personaliza este archivo al adaptar el harness a tu repositorio.
+> **Documento del proyecto** — personaliza este archivo al adaptar REI Harness a tu repositorio.
 >
 > Este documento define cómo se verifica que un Work Item ha sido implementado correctamente.
 >
@@ -34,7 +34,7 @@ Cada checkpoint posee un identificador estable (`V1`, `V2`, ...). El Implementer
 | `V2` | `<comando 2>` | <qué valida> |
 | `V3` | `<comando 3>` | <qué valida> |
 
-> Estos mismos comandos deben estar cableados en `init.sh` (Sección 4, `run_check`) para que su resultado se refleje en el código de salida del script. Si añades o modificas un checkpoint aquí, actualiza también `init.sh`.
+> Estos mismos comandos deben estar cableados en `.rei/init.sh` (Sección 4, `run_check`) para que su resultado se refleje en el código de salida del script. Si añades o modificas un checkpoint aquí, actualiza también `.rei/init.sh`.
 
 ---
 
@@ -52,7 +52,7 @@ Como mínimo, por cada checkpoint ejecutado:
 La evidencia debe documentarse en:
 
 ```
-progress/<work-item>/impl.md
+.rei/progress/<work-item>/impl.md
 ```
 
 ---
@@ -61,7 +61,7 @@ progress/<work-item>/impl.md
 
 Un Work Item pasa a `blocked` cuando alguna verificación falla y no puede resolverse dentro del alcance de la sesión.
 
-El protocolo exacto para declarar un bloqueo (qué documentar, dónde, y cómo detenerse) está definido en el archivo de rol correspondiente (`agents/implementer.md`, `agents/reviewer.md`).
+El protocolo exacto para declarar un bloqueo (qué documentar, dónde, y cómo detenerse) está definido en el archivo de rol correspondiente (`.rei/agents/implementer.md`, `.rei/agents/reviewer.md`).
 
 Nunca continúes la implementación ni solicites revisión ignorando una verificación fallida.
 

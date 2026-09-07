@@ -2,9 +2,9 @@
 
 > Este documento define cómo se documenta el progreso del trabajo dentro del proyecto.
 >
-> La carpeta `progress/` constituye el registro vivo del estado de desarrollo y permite que cualquier agente o persona pueda comprender qué ocurrió durante una sesión, retomarla si fue interrumpida y consultar el historial del proyecto.
+> La carpeta `.rei/progress/` constituye el registro vivo del estado de desarrollo y permite que cualquier agente o persona pueda comprender qué ocurrió durante una sesión, retomarla si fue interrumpida y consultar el historial del proyecto.
 >
-> Ningún agente debe inventar nuevos formatos. Todos los archivos de `progress/` deben respetar las plantillas descritas en este documento.
+> Ningún agente debe inventar nuevos formatos. Todos los archivos de `.rei/progress/` deben respetar las plantillas descritas en este documento.
 >
 > **Este documento es la única fuente de verdad** para plantillas y estructura. Los agentes deben leerlo y aplicarlo directamente — nunca dupliques formatos en otros archivos.
 
@@ -13,7 +13,7 @@
 # Estructura
 
 ```text
-progress/
+.rei/progress/
 │
 ├── current.md              # Sesión activa (único Work Item en curso)
 ├── history.md              # Bitácora histórica (append-only)
@@ -24,9 +24,9 @@ progress/
     └── spec.md             # Bloqueo del Spec Author (solo si aplica)
 ```
 
-Los archivos de sesión (`current.md`, `history.md`) viven en la raíz de `progress/`.
+Los archivos de sesión (`current.md`, `history.md`) viven en la raíz de `.rei/progress/`.
 
-Cada Work Item tiene su propia carpeta `progress/<work-item>/`, análoga a `specs/<work-item>/`, donde se concentran todos los documentos generados durante su ciclo de vida.
+Cada Work Item tiene su propia carpeta `.rei/progress/<work-item>/`, análoga a `.rei/specs/<work-item>/`, donde se concentran todos los documentos generados durante su ciclo de vida.
 
 ---
 
@@ -34,7 +34,7 @@ Cada Work Item tiene su propia carpeta `progress/<work-item>/`, análoga a `spec
 
 Representa el estado **actual** de la sesión.
 
-> Esta plantilla también está embebida como heredoc en `init.sh` (Sección 2).
+> Esta plantilla también está embebida como heredoc en `.rei/init.sh` (Sección 2).
 > Si la modificas aquí, actualiza también el script para mantenerlas sincronizadas.
 
 El **Spec Author** lo inicializa al comenzar la planificación (`pending`) y lo deja en `ready` al terminar, esperando aprobación humana.
@@ -81,7 +81,7 @@ _—_
 
 Es la bitácora histórica del proyecto.
 
-> Esta plantilla también está embebida como heredoc en `init.sh` (Sección 2).
+> Esta plantilla también está embebida como heredoc en `.rei/init.sh` (Sección 2).
 > Si la modificas aquí, actualiza también el script para mantenerlas sincronizadas.
 
 Su contenido es **append-only**.
@@ -114,9 +114,9 @@ Cada entrada debe resumir:
 
 ---
 
-# progress/<work-item>/impl.md
+# .rei/progress/<work-item>/impl.md
 
-Documento generado por el **Implementer** en `progress/<work-item>/impl.md`.
+Documento generado por el **Implementer** en `.rei/progress/<work-item>/impl.md`.
 
 Describe el trabajo realizado durante la implementación.
 
@@ -132,9 +132,9 @@ Este archivo constituye la evidencia principal para la revisión.
 
 ---
 
-# progress/<work-item>/review.md
+# .rei/progress/<work-item>/review.md
 
-Documento generado por el **Reviewer** en `progress/<work-item>/review.md`.
+Documento generado por el **Reviewer** en `.rei/progress/<work-item>/review.md`.
 
 Resume el resultado de la revisión realizada sobre el Work Item.
 
@@ -147,7 +147,7 @@ Debe incluir como mínimo:
 
 ---
 
-# progress/<work-item>/spec.md
+# .rei/progress/<work-item>/spec.md
 
 Documento generado únicamente cuando el **Spec Author** no puede completar correctamente la planificación.
 
@@ -177,7 +177,7 @@ Si no existen bloqueos, este archivo no debe crearse.
 # Reglas
 
 - Mantén `current.md` actualizado durante todo el ciclo de vida del Work Item.
-- Crea `progress/<work-item>/` al iniciar el trabajo sobre un Work Item.
+- Crea `.rei/progress/<work-item>/` al iniciar el trabajo sobre un Work Item.
 - Nunca sobrescribas el historial.
 - No elimines documentación existente.
 - Utiliza siempre las plantillas definidas en este documento.

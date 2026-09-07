@@ -31,12 +31,12 @@ Tu único trabajo es **comprender la solicitud del usuario, seleccionar el workf
 Al recibir una nueva solicitud:
 
 1. Lee `AGENTS.md`.
-2. Ejecuta `bash init.sh`.
-3. Si `bash init.sh` falla, DETENTE e informa el problema.
-4. Lee `docs/harness/meta.md`.
-5. Lee `progress/current.md`.
+2. Ejecuta `bash .rei/init.sh`.
+3. Si `bash .rei/init.sh` falla, DETENTE e informa el problema.
+4. Lee `.rei/docs/harness/meta.md`.
+5. Lee `.rei/progress/current.md`.
 6. Antes de crear un nuevo Work Item o avanzar uno a `in_progress`,
-   verifica que ningún otro `specs/*/meta.json` tenga `status == in_progress`.
+   verifica que ningún otro `.rei/specs/*/meta.json` tenga `status == in_progress`.
    Si existe uno, infórmalo al usuario y no continúes hasta resolverlo.
 
 ---
@@ -45,8 +45,8 @@ Al recibir una nueva solicitud:
 
 1. Comprende completamente la solicitud del usuario.
 2. Si existe cualquier duda sobre el alcance, DETENTE y consulta al usuario.
-3. Determina el workflow correspondiente siguiendo `docs/harness/workflow.md`.
-4. Crea o actualiza `specs/<work-item>/meta.json` siguiendo `docs/harness/meta.md`.
+3. Determina el workflow correspondiente siguiendo `.rei/docs/harness/workflow.md`.
+4. Crea o actualiza `.rei/specs/<work-item>/meta.json` siguiendo `.rei/docs/harness/meta.md`.
 5. Redacta el contenido de `meta.json` representando el acuerdo alcanzado con el usuario, proporcionando el contexto suficiente para comprender el objetivo del trabajo sin convertir la descripción en una especificación.
 6. Define el `type` del trabajo (`feature` o `task`).
 7. Inicializa el trabajo con `status = pending`.
@@ -63,20 +63,20 @@ No delegues ningún trabajo hasta completar estos pasos.
 1. Lee el campo `type` de `meta.json`.
 2. Lanza **1 subagente `spec_author`**.
 3. Espera a que finalice.
-4. El `spec_author` creará `progress/<work-item>/`, inicializará `progress/current.md` en `pending`, generará la planificación y dejará ambos en `ready`.
+4. El `spec_author` creará `.rei/progress/<work-item>/`, inicializará `.rei/progress/current.md` en `pending`, generará la planificación y dejará ambos en `ready`.
 5. NO continúes automáticamente.
 6. Solicita la aprobación del usuario.
 
 Tu mensaje deberá ser similar a:
 
-> La planificación está lista en `specs/<work-item>/`.
+> La planificación está lista en `.rei/specs/<work-item>/`.
 > Revísala y responde **"aprobado"** para continuar o solicita los cambios necesarios.
 
 ---
 
 ## Caso B — `status == ready`
 
-Consulta `progress/current.md` para confirmar que la planificación finalizó y el Work Item espera aprobación.
+Consulta `.rei/progress/current.md` para confirmar que la planificación finalizó y el Work Item espera aprobación.
 
 Si el usuario **NO** ha aprobado la planificación:
 
@@ -93,8 +93,8 @@ Si el usuario solicita cambios:
 
 ## Caso C — `status == ready` y el usuario aprobó
 
-1. Actualiza `specs/<work-item>/meta.json` → `status = in_progress`.
-2. Lanza **1 subagente `implementer`** indicando como entrada `specs/<work-item>/`.
+1. Actualiza `.rei/specs/<work-item>/meta.json` → `status = in_progress`.
+2. Lanza **1 subagente `implementer`** indicando como entrada `.rei/specs/<work-item>/`.
 3. Espera a que finalice.
 
 ---
@@ -121,9 +121,9 @@ NO tomes esta decisión por tu cuenta.
 ---
 ## Caso F — `status == changes_requested`
 
-1. Lee `progress/<work-item>/review.md` para conocer los cambios solicitados.
-2. Actualiza `specs/<work-item>/meta.json` → `status = in_progress`.
-3. Lanza **1 subagente `implementer`**, indicando que debe corregir según `progress/<work-item>/review.md`.
+1. Lee `.rei/progress/<work-item>/review.md` para conocer los cambios solicitados.
+2. Actualiza `.rei/specs/<work-item>/meta.json` → `status = in_progress`.
+3. Lanza **1 subagente `implementer`**, indicando que debe corregir según `.rei/progress/<work-item>/review.md`.
 4. Espera a que finalice.
 
 ## Caso G — `status == done`
@@ -139,7 +139,7 @@ Informa al usuario que el trabajo ya ha sido completado.
 Al lanzar un subagente:
 
 * indica claramente el objetivo;
-* proporciona la ruta del trabajo dentro de `specs/`;
+* proporciona la ruta del trabajo dentro de `.rei/specs/`;
 * proporciona únicamente el contexto necesario para esa etapa.
 
 Cada subagente es responsable exclusivamente de su propia etapa.

@@ -2,10 +2,10 @@
 
 > `meta.json` describe un Work Item y permite a los agentes conocer su tipo, estado e información básica.
 
-Cada carpeta dentro de `specs/` debe contener un único archivo `meta.json`.
+Cada carpeta dentro de `.rei/specs/` debe contener un único archivo `meta.json`.
 
 ```text
-specs/
+.rei/specs/
 └── <work-item>/
     ├── meta.json
     └── ...
@@ -58,4 +58,3 @@ Valores válidos:
 
 Define la etapa actual del workflow.
 Los estados válidos y sus transiciones se definen en `workflow.md`.
-

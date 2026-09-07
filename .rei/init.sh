@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
 #
-# init.sh
+# .rei/init.sh
 #
-# Inicializa y verifica el Harness antes de comenzar una sesión.
+# Inicializa y verifica REI Harness antes de comenzar una sesión.
 #
 # Ejecución recomendada (no requiere permisos de ejecución):
-#   bash init.sh
+#   bash .rei/init.sh
 #
 # Alternativa, si el script tiene permiso de ejecución:
-#   chmod +x init.sh && ./init.sh
+#   chmod +x .rei/init.sh && ./.rei/init.sh
 #
-# Si algún elemento crítico del Harness falta, la sesión no debe comenzar.
+# Si algún elemento crítico de REI Harness falta, la sesión no debe comenzar.
 #
 
 set -u
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+cd "$PROJECT_ROOT" || exit 1
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -27,32 +31,31 @@ fail() { printf "${RED}[FAIL]${NC}  %s\n" "$1"; }
 EXIT_CODE=0
 
 echo "────────────────────────────────────────────"
-echo " Harness Initialization"
+echo " REI Harness Initialization"
 echo "────────────────────────────────────────────"
 echo
 
 ###########################################################
-# 1. Verificar archivos críticos del Harness
+# 1. Verificar archivos críticos de REI Harness
 ###########################################################
 
-echo "── 1. Verificando Harness ─────────────────"
+echo "── 1. Verificando REI Harness ─────────────"
 
 REQUIRED_FILES=(
     "AGENTS.md"
-    "README.md"
 
-    "docs/harness/workflow.md"
-    "docs/harness/specs.md"
-    "docs/harness/meta.md"
-    "docs/harness/progress.md"
-    "docs/project/architecture.md"
-    "docs/project/conventions.md"
-    "docs/project/verification.md"
+    ".rei/docs/harness/workflow.md"
+    ".rei/docs/harness/specs.md"
+    ".rei/docs/harness/meta.md"
+    ".rei/docs/harness/progress.md"
+    ".rei/docs/project/architecture.md"
+    ".rei/docs/project/conventions.md"
+    ".rei/docs/project/verification.md"
 
-    "agents/leader.md"
-    "agents/spec_author.md"
-    "agents/implementer.md"
-    "agents/reviewer.md"
+    ".rei/agents/leader.md"
+    ".rei/agents/spec_author.md"
+    ".rei/agents/implementer.md"
+    ".rei/agents/reviewer.md"
 )
 
 FAILED_CHECKS=()
@@ -70,20 +73,20 @@ done
 echo
 
 ###########################################################
-# 2. Inicializar estructura auxiliar
+# 2. Inicializar estructura auxiliar de REI Harness
 ###########################################################
 
 echo "── 2. Inicializando estructura ────────────"
 
-mkdir -p specs
-mkdir -p progress
+mkdir -p .rei/specs
+mkdir -p .rei/progress
 
-ok "specs/"
-ok "progress/"
+ok ".rei/specs/"
+ok ".rei/progress/"
 
-CURRENT_FILE="progress/current.md"
+CURRENT_FILE=".rei/progress/current.md"
 
-# Plantilla definida en docs/harness/progress.md — si la modificas ahí, actualiza también este heredoc.
+# Plantilla definida en .rei/docs/harness/progress.md — si la modificas ahí, actualiza también este heredoc.
 if [[ ! -f "$CURRENT_FILE" ]]; then
 cat > "$CURRENT_FILE" <<'EOF'
 # Sesión actual
@@ -112,14 +115,14 @@ _—_
 _—_
 EOF
 
-    ok "progress/current.md creado"
+    ok ".rei/progress/current.md creado"
 else
-    ok "progress/current.md"
+    ok ".rei/progress/current.md"
 fi
 
-HISTORY_FILE="progress/history.md"
+HISTORY_FILE=".rei/progress/history.md"
 
-# Plantilla definida en docs/harness/progress.md — si la modificas ahí, actualiza también este heredoc.
+# Plantilla definida en .rei/docs/harness/progress.md — si la modificas ahí, actualiza también este heredoc.
 if [[ ! -f "$HISTORY_FILE" ]]; then
 cat > "$HISTORY_FILE" <<'EOF'
 # Bitácora histórica (append-only)
@@ -131,30 +134,30 @@ cat > "$HISTORY_FILE" <<'EOF'
 ---
 EOF
 
-    ok "progress/history.md creado"
+    ok ".rei/progress/history.md creado"
 else
-    ok "progress/history.md"
+    ok ".rei/progress/history.md"
 fi
 
 echo
 
 ###########################################################
-# 3. Validar invariantes del Harness
+# 3. Validar invariantes de REI Harness
 ###########################################################
 
 echo "── 3. Validando invariantes ───────────────"
 
-# 3.1 — Sesión activa en progress/current.md
+# 3.1 — Sesión activa en .rei/progress/current.md
 #
-# progress/current.md es el único archivo que representa la sesión activa.
+# .rei/progress/current.md es el único archivo que representa la sesión activa.
 # Por diseño (AGENTS.md §9: "trabaja sobre un único Work Item por sesión"),
-# la regla de docs/harness/workflow.md ("solo un Work Item en in_progress") queda
+# la regla de .rei/docs/harness/workflow.md ("solo un Work Item en in_progress") queda
 # garantizada por esta misma estructura: basta con leer este único archivo,
-# no es necesario escanear specs/*/meta.json.
+# no es necesario escanear .rei/specs/*/meta.json.
 if grep -q "_ninguno_" "$CURRENT_FILE"; then
     ok "No existe ninguna sesión activa."
 else
-    warn "Existe una sesión registrada en progress/current.md."
+    warn "Existe una sesión registrada en .rei/progress/current.md."
     warn "Revisa si debe continuarse antes de iniciar un nuevo Work Item."
 fi
 
@@ -167,11 +170,11 @@ echo
 echo "── 4. Verificando proyecto ───────────────"
 
 echo "[INFO] Personaliza esta sección según tu proyecto."
-echo "[INFO] Los comandos deben coincidir con docs/project/verification.md."
+echo "[INFO] Los comandos deben coincidir con .rei/docs/project/verification.md."
 
 # Usa run_check para que cualquier fallo se propague correctamente a $EXIT_CODE.
-# El Reviewer exige que init.sh finalice sin errores antes de aprobar un Work Item,
-# así que un comando de verificación que falle DEBE marcar el harness como fallido.
+# El Reviewer exige que .rei/init.sh finalice sin errores antes de aprobar un Work Item,
+# así que un comando de verificación que falle DEBE marcar REI Harness como fallido.
 run_with_spinner() {
     local pid="$1"
     local message="$2"
@@ -233,9 +236,9 @@ echo
 echo "── 5. Resumen ─────────────────────────────"
 
 if [[ $EXIT_CODE -eq 0 ]]; then
-    ok "Harness listo para trabajar."
+    ok "REI Harness listo para trabajar."
 else
-    fail "El Harness contiene errores:"
+    fail "REI Harness contiene errores:"
     for issue in "${FAILED_CHECKS[@]}"; do
         fail "  - $issue"
     done

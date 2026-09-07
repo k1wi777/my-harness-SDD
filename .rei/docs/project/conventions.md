@@ -1,6 +1,6 @@
 # Convenciones
 
-> **Documento del proyecto** — personaliza este archivo al adaptar el harness a tu repositorio.
+> **Documento del proyecto** — personaliza este archivo al adaptar REI Harness a tu repositorio.
 >
 > Este documento define las convenciones de desarrollo del proyecto.
 > El Implementer debe seguirlas durante la implementación y el Reviewer las utilizará para validar la calidad del código.
