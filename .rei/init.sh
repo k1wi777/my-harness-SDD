@@ -79,10 +79,10 @@ echo
 echo "── 2. Inicializando estructura ────────────"
 
 mkdir -p .rei/specs
-mkdir -p .rei/progress
+mkdir -p .rei/progress/work-items
 
 ok ".rei/specs/"
-ok ".rei/progress/"
+ok ".rei/progress/work-items/"
 
 CURRENT_FILE=".rei/progress/current.md"
 

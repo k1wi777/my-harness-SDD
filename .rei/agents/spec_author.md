@@ -34,10 +34,10 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 1. Lee `.rei/docs/harness/specs.md`.
 2. Lee `.rei/docs/harness/progress.md`.
 3. Lee la documentación del proyecto necesaria para comprender el contexto del Work Item.
-4. Lee `.rei/specs/<work-item>/meta.json`.
+4. Lee `.rei/specs/<work-item-id>/meta.json`.
 5. Verifica que `status == pending`.
 6. Consulta `type`.
-7. Crea `.rei/progress/<work-item>/`.
+7. Crea `.rei/progress/work-items/<work-item-id>/`.
 8. Inicializa `.rei/progress/current.md` utilizando **únicamente** la plantilla oficial de `.rei/docs/harness/progress.md` (sección `current.md`). Completa los campos con la información del Work Item activo y establece **Estado:** `pending` y **Agente activo:** `spec_author`.
 
 ---
@@ -109,7 +109,7 @@ Si la información disponible no permite generar una planificación completa:
 
 1. Actualiza `.rei/progress/current.md`: **Estado** a `blocked` y registra el motivo en **Bitácora** y **Próximo paso**.
 2. Actualiza `status` a `blocked`.
-3. Documenta el motivo del bloqueo en `.rei/progress/<work-item>/spec.md`.
+3. Documenta el motivo del bloqueo en `.rei/progress/work-items/<work-item-id>/spec.md`.
 4. DETENTE.
 
 NO inventes información para completar la planificación.
@@ -121,13 +121,13 @@ NO inventes información para completar la planificación.
 Tu salida final es **una sola línea**:
 
 ```
-ready -> .rei/specs/<work-item>/
+ready -> .rei/specs/<work-item-id>/
 ```
 o
 
 ```
-blocked -> .rei/specs/<work-item>/
+blocked -> .rei/specs/<work-item-id>/
 ```
 
-Si te bloqueas, escribe la razón en `.rei/progress/<work-item>/spec.md`. Nunca
+Si te bloqueas, escribe la razón en `.rei/progress/work-items/<work-item-id>/spec.md`. Nunca
 devuelvas el contenido del spec en chat — vive en disco.

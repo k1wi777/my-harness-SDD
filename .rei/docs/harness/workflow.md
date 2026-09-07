@@ -93,7 +93,7 @@ El flujo es el mismo para Features y Tasks — únicamente cambia la planificaci
 
 pending → spec_author → ready → ⏸ aprobación humana → in_progress → implementer → review → reviewer → done
 
-Durante todo el flujo, `.rei/progress/current.md` refleja el estado vivo del Work Item: el **Spec Author** lo inicializa en `pending` y lo deja en `ready`; el **Implementer** lo actualiza en `in_progress` y `review`. Los reportes de cada agente se almacenan en `.rei/progress/<work-item>/`.
+Durante todo el flujo, `.rei/progress/current.md` refleja el estado vivo del Work Item: el **Spec Author** lo inicializa en `pending` y lo deja en `ready`; el **Implementer** lo actualiza en `in_progress` y `review`. Los reportes de cada agente se almacenan en `.rei/progress/work-items/<work-item-id>/`, usando el mismo `id` de `.rei/specs/<work-item-id>/`.
 
 **Ramificaciones:**
 

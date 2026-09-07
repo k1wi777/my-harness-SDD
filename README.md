@@ -116,8 +116,11 @@ La aprobación humana forma parte del workflow y nunca puede omitirse.
 │   ├── init.sh                   # Inicialización y verificación del entorno
 │   ├── agents/                   # Roles y protocolos de los agentes
 │   ├── docs/                     # Documentación de REI Harness y del proyecto
-│   ├── specs/                    # Work Items y planificaciones
+│   ├── specs/                    # Work Items y planificaciones por fecha
 │   └── progress/                 # Estado e historial del trabajo
+│       ├── current.md            # Estado de la sesión actual
+│       ├── history.md            # Resumen histórico
+│       └── work-items/           # Detalle por Work Item
 │
 ├── src/                          # Código fuente del proyecto
 ├── tests/                        # Pruebas del proyecto
@@ -176,7 +179,7 @@ contiene:
 
 - sesión actual (`current.md`)
 - historial (`history.md`)
-- carpeta por Work Item (`<work-item>/`) con reportes de implementación, revisión y bloqueos
+- carpeta por Work Item (`work-items/<work-item-id>/`) con reportes de implementación, revisión y bloqueos
 
 Esto permite:
 

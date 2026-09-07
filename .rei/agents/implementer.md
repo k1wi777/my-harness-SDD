@@ -19,7 +19,7 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 - El Work Item debe encontrarse en estado `in_progress`.
 - Si `status != in_progress`, DETENTE.
 - Debe existir `.rei/progress/current.md` con el Work Item activo y un estado coherente (`ready` o `in_progress` si la sesión fue interrumpida).
-- Debe existir `.rei/progress/<work-item>/`.
+- Debe existir `.rei/progress/work-items/<work-item-id>/`.
 - Si `type == feature`, deben existir:
   - `requirements.md`
   - `design.md`
@@ -35,7 +35,7 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 2. Lee `.rei/docs/project/architecture.md`.
 3. Lee `.rei/docs/project/conventions.md`.
 4. Lee `.rei/docs/project/verification.md`.
-5. Lee `.rei/specs/<work-item>/meta.json`.
+5. Lee `.rei/specs/<work-item-id>/meta.json`.
 6. Lee `.rei/progress/current.md`.
 7. Consulta el campo `type`.
 8. Actualiza `.rei/progress/current.md`: **Estado** a `in_progress`, **Agente activo** a `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la implementación.
@@ -53,7 +53,7 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 4. Al finalizar:
    - ejecuta `bash .rei/init.sh`;
    - verifica que todos los requisitos fueron implementados;
-   - documenta el trabajo en `.rei/progress/<work-item>/impl.md`;
+   - documenta el trabajo en `.rei/progress/work-items/<work-item-id>/impl.md`;
    - deja `.rei/progress/current.md` completamente actualizado.
 5. Actualiza `.rei/progress/current.md`: **Estado** a `review` y **Próximo paso** a esperar revisión.
 6. Cambia `status` a `review`.
@@ -71,7 +71,7 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
    - verifica que el cambio funciona antes de continuar con el siguiente.
 4. Al finalizar:
    - ejecuta `bash .rei/init.sh`;
-   - documenta el trabajo en `.rei/progress/<work-item>/impl.md`;
+   - documenta el trabajo en `.rei/progress/work-items/<work-item-id>/impl.md`;
    - deja `.rei/progress/current.md` completamente actualizado.
 5. Actualiza `.rei/progress/current.md`: **Estado** a `review` y **Próximo paso** a esperar revisión.
 6. Cambia `status` a `review`.
@@ -83,7 +83,7 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 
 El Work Item fue bloqueado durante la implementación.
 
-1. Documenta el bloqueo en `.rei/progress/<work-item>/impl.md`.
+1. Documenta el bloqueo en `.rei/progress/work-items/<work-item-id>/impl.md`.
 2. Actualiza `.rei/progress/current.md`.
 3. DETENTE.
 
@@ -99,7 +99,7 @@ El Work Item fue bloqueado durante la implementación.
 - SIEMPRE implementa siguiendo las convenciones definidas en `.rei/docs/project/conventions.md`.
 - SIEMPRE marca cada tarea en `tasks.md` (o paso en `plan.md`) **inmediatamente** al completarla.
 - SIEMPRE mantén actualizado `.rei/progress/current.md`.
-- SIEMPRE documenta la implementación en `.rei/progress/<work-item>/impl.md`.
+- SIEMPRE documenta la implementación en `.rei/progress/work-items/<work-item-id>/impl.md`.
 - SIEMPRE verifica tu trabajo antes de solicitar revisión.
 
 ---
@@ -109,13 +109,13 @@ El Work Item fue bloqueado durante la implementación.
 Tu respuesta final será únicamente:
 
 ```text
-review -> .rei/progress/<work-item>/impl.md
+review -> .rei/progress/work-items/<work-item-id>/impl.md
 ```
 
 o
 
 ```text
-blocked -> .rei/progress/<work-item>/impl.md
+blocked -> .rei/progress/work-items/<work-item-id>/impl.md
 ```
 
 Nunca devuelvas el código implementado en el chat.

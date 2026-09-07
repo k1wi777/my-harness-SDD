@@ -52,7 +52,7 @@ Como mínimo, por cada checkpoint ejecutado:
 La evidencia debe documentarse en:
 
 ```
-.rei/progress/<work-item>/impl.md
+.rei/progress/work-items/<work-item-id>/impl.md
 ```
 
 ---

@@ -8,5 +8,5 @@ No requieren personalización al adaptar REI Harness a un proyecto concreto. Mod
 |---------|-----------|
 | `workflow.md` | Flujo de Work Items, estados y transiciones. |
 | `specs.md` | Spec Driven Development y formatos de planificación. |
-| `progress.md` | Sistema de progreso y plantillas de `.rei/progress/`. |
+| `progress.md` | Sistema de progreso y plantillas de `.rei/progress/` y `.rei/progress/work-items/`. |
 | `meta.md` | Estructura y significado de `meta.json`. |

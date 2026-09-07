@@ -18,11 +18,11 @@ El tipo de planificación depende del tipo de Work Item.
 
 # Estructura
 
-Cada Work Item dispone de una carpeta propia dentro de `.rei/specs/`.
+Cada Work Item dispone de una carpeta propia dentro de `.rei/specs/`. El nombre de la carpeta es su `id` inmutable.
 
 ```
 .rei/specs/
-└── <work-item>/
+└── <work-item-id>/
     ├── meta.json
     ├── requirements.md   (solo Features)
     ├── design.md         (solo Features)

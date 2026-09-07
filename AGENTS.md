@@ -89,7 +89,8 @@ No continúes hasta completar estos pasos.
 | `src/` | Código fuente del proyecto. |
 | `tests/` | Suite de pruebas. |
 | `.rei/specs/` | Work Items y planificación del REI Harness. |
-| `.rei/progress/` | Estado actual e historial del trabajo. |
+| `.rei/progress/` | Estado actual (`current.md`), historial general (`history.md`) y detalle de Work Items. |
+| `.rei/progress/work-items/` | Registros detallados de cada Work Item, organizados cronológicamente. |
 | `.rei/docs/harness/` | Documentación del arnés (workflow, specs, progreso). |
 | `.rei/docs/project/` | Documentación específica del proyecto. |
 | `.rei/agents/` | Roles y comportamiento de los subagentes. |
@@ -156,7 +157,7 @@ Describe las reglas de **este repositorio**. Debe personalizarse al implementar 
 
 | Si necesitas... | Consulta... |
 |-----------------|-------------|
-| Un Work Item concreto | `.rei/specs/<work-item>/` |
+| Un Work Item concreto | `.rei/specs/<work-item-id>/` |
 | El comportamiento de un agente | `.rei/agents/<role>.md` |
 No cargues documentación que no aporte contexto a la tarea actual.
 
@@ -169,7 +170,7 @@ Prioriza siempre la carga de información en el siguiente orden:
 1. `AGENTS.md`
 2. `.rei/agents/<role>.md`
 3. `docs/...`
-4. `.rei/specs/<work-item>/`
+4. `.rei/specs/<work-item-id>/`
 
 Carga únicamente el contexto necesario para completar la tarea actual.
 
@@ -185,4 +186,4 @@ Estas reglas aplican a cualquier agente del repositorio.
 - Consulta la documentación antes de asumir comportamientos no especificados.
 - Si encuentras documentación contradictoria, DETENTE y repórtala.
 - En caso de conflicto entre documentos, prevalece el orden inverso de la Sección 8:
-  `.rei/specs/<work-item>/` > `.rei/docs/...` > `.rei/agents/<role>.md` > `AGENTS.md`.
+  `.rei/specs/<work-item-id>/` > `.rei/docs/...` > `.rei/agents/<role>.md` > `AGENTS.md`.

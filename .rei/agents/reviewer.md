@@ -16,7 +16,7 @@ NUNCA implementes código.
 
 # Precondiciones
 
-- El Work Item debe encontrarse en estado `review` en `.rei/specs/<work-item>/meta.json`.
+- El Work Item debe encontrarse en estado `review` en `.rei/specs/<work-item-id>/meta.json`.
 - Si `status != review`, DETENTE.
 
 ---
@@ -27,7 +27,7 @@ NUNCA implementes código.
 2. Lee `.rei/docs/project/architecture.md`.
 3. Lee `.rei/docs/project/conventions.md`.
 4. Lee `.rei/docs/project/verification.md`.
-5. Lee `.rei/specs/<work-item>/meta.json`.
+5. Lee `.rei/specs/<work-item-id>/meta.json`.
 6. Consulta `type`.
 
 ---
@@ -38,7 +38,7 @@ NUNCA implementes código.
    - `requirements.md`
    - `design.md`
    - `tasks.md`
-   - `.rei/progress/<work-item>/impl.md`
+   - `.rei/progress/work-items/<work-item-id>/impl.md`
 
 2. Comprueba que:
    - todos los requisitos fueron implementados;
@@ -48,7 +48,7 @@ NUNCA implementes código.
    - cada checkpoint (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
    - `bash .rei/init.sh` finaliza correctamente.
 
-3. Escribe el resultado en `.rei/progress/<work-item>/review.md`.
+3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 4. Si todo es correcto:
    - añade el resumen de `.rei/progress/current.md` al final de `.rei/progress/history.md`;
@@ -67,7 +67,7 @@ NUNCA implementes código.
 
 1. Lee:
    - `plan.md`
-   - `.rei/progress/<work-item>/impl.md`
+   - `.rei/progress/work-items/<work-item-id>/impl.md`
 
 2. Comprueba que:
    - el objetivo fue cumplido;
@@ -77,7 +77,7 @@ NUNCA implementes código.
    - cada checkpoint (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
    - `bash .rei/init.sh` finaliza correctamente.
 
-3. Escribe el resultado en `.rei/progress/<work-item>/review.md`.
+3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 4. Si todo es correcto:
    - cambia `status` a `done`;
@@ -95,7 +95,7 @@ NUNCA implementes código.
 Si durante la revisión no es posible determinar si el Work Item cumple la planificación:
 
 1. Cambia `status` a `blocked`.
-2. Documenta el motivo en `.rei/progress/<work-item>/review.md`.
+2. Documenta el motivo en `.rei/progress/work-items/<work-item-id>/review.md`.
 3. DETENTE.
 
 ---
@@ -108,7 +108,7 @@ Si durante la revisión no es posible determinar si el Work Item cumple la plani
 - NUNCA apruebes si `bash .rei/init.sh` falla.
 - NUNCA apruebes si existe una desviación respecto a la planificación.
 - SIEMPRE justifica cada rechazo de forma concreta.
-- SIEMPRE documenta el resultado en `.rei/progress/<work-item>/review.md`.
+- SIEMPRE documenta el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 - NUNCA dupliques plantillas — utiliza únicamente las definidas en `.rei/docs/harness/progress.md`.
 
 ---
@@ -118,19 +118,19 @@ Si durante la revisión no es posible determinar si el Work Item cumple la plani
 Tu respuesta final será únicamente:
 
 ```text
-done -> .rei/progress/<work-item>/review.md
+done -> .rei/progress/work-items/<work-item-id>/review.md
 ```
 
 o
 
 ```text
-changes_requested -> .rei/progress/<work-item>/review.md
+changes_requested -> .rei/progress/work-items/<work-item-id>/review.md
 ```
 
 o
 
 ```text
-blocked -> .rei/progress/<work-item>/review.md
+blocked -> .rei/progress/work-items/<work-item-id>/review.md
 ```
 
 Nunca devuelvas el contenido de la revisión en el chat.

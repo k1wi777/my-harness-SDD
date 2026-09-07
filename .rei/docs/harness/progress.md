@@ -18,15 +18,16 @@
 ├── current.md              # Sesión activa (único Work Item en curso)
 ├── history.md              # Bitácora histórica (append-only)
 │
-└── <work-item>/            # Documentos generados por los agentes
-    ├── impl.md             # Reporte del Implementer
-    ├── review.md           # Reporte del Reviewer
-    └── spec.md             # Bloqueo del Spec Author (solo si aplica)
+└── work-items/             # Detalle de cada Work Item
+    └── <work-item-id>/     # Usa el mismo id que .rei/specs/<work-item-id>/
+        ├── impl.md         # Reporte del Implementer
+        ├── review.md       # Reporte del Reviewer
+        └── spec.md         # Bloqueo del Spec Author (solo si aplica)
 ```
 
 Los archivos de sesión (`current.md`, `history.md`) viven en la raíz de `.rei/progress/`.
 
-Cada Work Item tiene su propia carpeta `.rei/progress/<work-item>/`, análoga a `.rei/specs/<work-item>/`, donde se concentran todos los documentos generados durante su ciclo de vida.
+Cada Work Item tiene su propia carpeta `.rei/progress/work-items/<work-item-id>/`, análoga a `.rei/specs/<work-item-id>/`, donde se concentran todos los documentos generados durante su ciclo de vida.
 
 ---
 
@@ -114,9 +115,9 @@ Cada entrada debe resumir:
 
 ---
 
-# .rei/progress/<work-item>/impl.md
+# .rei/progress/work-items/<work-item-id>/impl.md
 
-Documento generado por el **Implementer** en `.rei/progress/<work-item>/impl.md`.
+Documento generado por el **Implementer** en `.rei/progress/work-items/<work-item-id>/impl.md`.
 
 Describe el trabajo realizado durante la implementación.
 
@@ -132,9 +133,9 @@ Este archivo constituye la evidencia principal para la revisión.
 
 ---
 
-# .rei/progress/<work-item>/review.md
+# .rei/progress/work-items/<work-item-id>/review.md
 
-Documento generado por el **Reviewer** en `.rei/progress/<work-item>/review.md`.
+Documento generado por el **Reviewer** en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 Resume el resultado de la revisión realizada sobre el Work Item.
 
@@ -147,7 +148,7 @@ Debe incluir como mínimo:
 
 ---
 
-# .rei/progress/<work-item>/spec.md
+# .rei/progress/work-items/<work-item-id>/spec.md
 
 Documento generado únicamente cuando el **Spec Author** no puede completar correctamente la planificación.
 
@@ -168,16 +169,16 @@ Si no existen bloqueos, este archivo no debe crearse.
 | `current.md` (inicialización: `pending` → `ready`) | Spec Author |
 | `current.md` (implementación: `in_progress` → `review`) | Implementer |
 | `history.md` | Reviewer |
-| `<work-item>/impl.md` | Implementer |
-| `<work-item>/review.md` | Reviewer |
-| `<work-item>/spec.md` | Spec Author |
+| `work-items/<work-item-id>/impl.md` | Implementer |
+| `work-items/<work-item-id>/review.md` | Reviewer |
+| `work-items/<work-item-id>/spec.md` | Spec Author |
 
 ---
 
 # Reglas
 
 - Mantén `current.md` actualizado durante todo el ciclo de vida del Work Item.
-- Crea `.rei/progress/<work-item>/` al iniciar el trabajo sobre un Work Item.
+- Crea `.rei/progress/work-items/<work-item-id>/` al iniciar el trabajo sobre un Work Item.
 - Nunca sobrescribas el historial.
 - No elimines documentación existente.
 - Utiliza siempre las plantillas definidas en este documento.

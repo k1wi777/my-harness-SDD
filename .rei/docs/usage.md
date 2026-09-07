@@ -26,7 +26,7 @@ Ninguna de las dos es un trámite. Son los dos puntos donde el proceso se detien
    ```bash
    bash .rei/init.sh
    ```
-4. El script verificará que REI Harness esté completo y preparará las carpetas `.rei/specs/` y `.rei/progress/` si no existen todavía.
+4. El script verificará que REI Harness esté completo y preparará las carpetas `.rei/specs/` y `.rei/progress/work-items/` si no existen todavía.
 
 Si `.rei/init.sh` reporta `[FAIL]`, falta algún archivo de REI Harness — revisa el listado que imprime antes de continuar. No inicies trabajo hasta que el resumen final diga "REI Harness listo para trabajar".
 
@@ -77,7 +77,7 @@ Si tu solicitud tiene cualquier ambigüedad de alcance, el Leader **debe** deten
 
 Esta negociación es tu responsabilidad, no un paso automático. El `meta.json` que el Leader crea al final **representa el acuerdo alcanzado contigo** — es tu criterio quedando registrado, no una decisión que el agente tomó solo. Vale la pena tomarte este paso en serio: cuanto más claro quede el acuerdo aquí, menos ambigüedad tendrá que resolver el Spec Author después.
 
-Solo una vez que existe ese acuerdo explícito, el Leader crea el Work Item (`.rei/specs/<work-item>/meta.json`) con estado `pending` y decide si corresponde a una Feature o una Task (ver `.rei/docs/harness/workflow.md`).
+Solo una vez que existe ese acuerdo explícito, el Leader crea el Work Item (`.rei/specs/<work-item-id>/meta.json`) con estado `pending`, genera su `id` con fecha y hora de creación y decide si corresponde a una Feature o una Task (ver `.rei/docs/harness/workflow.md`).
 
 ---
 
@@ -91,7 +91,7 @@ pending → spec_author → ready → ⏸ tu aprobación → in_progress → rev
 
 En la práctica, esto es lo que vas a ver:
 
-1. **Planificación.** El Leader delega en el Spec Author, que redacta la planificación (`requirements.md` + `design.md` + `tasks.md` para una Feature, o `plan.md` para una Task) dentro de `.rei/specs/<work-item>/`.
+1. **Planificación.** El Leader delega en el Spec Author, que redacta la planificación (`requirements.md` + `design.md` + `tasks.md` para una Feature, o `plan.md` para una Task) dentro de `.rei/specs/<work-item-id>/`.
 2. **Tu aprobación.** El Leader se detiene y te pide revisar la planificación. Esto **nunca se salta** — es el punto donde tienes control total antes de que se escriba una sola línea de código.
 3. **Implementación.** Solo después de tu aprobación explícita, el Implementer ejecuta la planificación tal como fue aprobada.
 4. **Revisión.** El Reviewer valida el trabajo contra la planificación y los checkpoints de `.rei/docs/project/verification.md`.
@@ -114,7 +114,7 @@ Lo mismo aplica después de la revisión: si el Reviewer rechaza el trabajo (`ch
 
 # 5. Continuar una sesión interrumpida
 
-Si cierras la conversación con un Work Item a medias, no se pierde nada — vive en `.rei/specs/` y `.rei/progress/`, no en el historial del chat.
+Si cierras la conversación con un Work Item a medias, no se pierde nada — vive en `.rei/specs/<work-item-id>/` y `.rei/progress/work-items/<work-item-id>/`, no en el historial del chat.
 
 La próxima vez que ejecutes `bash .rei/init.sh` y hables con el agente, el Leader leerá `.rei/progress/current.md` y `.rei/specs/*/meta.json`, y te preguntará si quieres continuar, reiniciar o cancelar ese Work Item. Tú decides; el Leader nunca lo asume por su cuenta.
 
