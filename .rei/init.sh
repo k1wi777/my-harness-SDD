@@ -28,8 +28,81 @@ ok()   { printf "${GREEN}[OK]${NC}    %s\n" "$1"; }
 warn() { printf "${YELLOW}[WARN]${NC}  %s\n" "$1"; }
 fail() { printf "${RED}[FAIL]${NC}  %s\n" "$1"; }
 
+center_line() {
+    local line="$1"
+    local terminal_width="$2"
+    local color="${3:-}"
+    local reset="${4:-}"
+    local line_width=${#line}
+    local padding=$(( (terminal_width - line_width) / 2 ))
+
+    (( padding < 0 )) && padding=0
+    printf '%*s%s%s%s\n' "$padding" '' "$color" "$line" "$reset"
+}
+
+print_banner() {
+    local terminal_width=80
+    local detected_width=''
+
+    if command -v tput >/dev/null 2>&1; then
+        detected_width="$(tput cols 2>/dev/null || true)"
+    fi
+
+    if [[ "$detected_width" =~ ^[0-9]+$ ]] && (( detected_width > 0 )); then
+        terminal_width="$detected_width"
+    fi
+
+    local banner_white=''
+    local banner_reset=''
+    if [[ -t 1 ]]; then
+        banner_white=$'\033[97m'
+        banner_reset=$'\033[0m'
+    fi
+
+    printf '\n'
+
+    if (( terminal_width < 28 )); then
+        center_line 'REI HARNESS' "$terminal_width" "$banner_white" "$banner_reset"
+        printf '\n'
+        return
+    fi
+
+    local art_line
+    local rei_art=(
+        '██████╗ ███████╗██╗'
+        '██╔══██╗██╔════╝██║'
+        '██████╔╝█████╗  ██║'
+        '██╔══██╗██╔══╝  ██║'
+        '██║  ██║███████╗██║'
+        '╚═╝  ╚═╝╚══════╝╚═╝'
+    )
+
+    for art_line in "${rei_art[@]}"; do
+        center_line "$art_line" "$terminal_width" "$banner_white" "$banner_reset"
+    done
+
+    printf '\n'
+    center_line 'H A R N E S S' "$terminal_width" "$banner_white" "$banner_reset"
+    printf '\n'
+
+    local box_text='SDD and Multi-agent Orchestration'
+    if (( terminal_width < ${#box_text} + 4 )); then
+        box_text='REI Harness'
+    fi
+
+    local dashes
+    printf -v dashes '%*s' "$(( ${#box_text} + 2 ))" ''
+    dashes=${dashes// /-}
+
+    center_line "+${dashes}+" "$terminal_width" "$banner_white" "$banner_reset"
+    center_line "| ${box_text} |" "$terminal_width" "$banner_white" "$banner_reset"
+    center_line "+${dashes}+" "$terminal_width" "$banner_white" "$banner_reset"
+    printf '\n'
+}
+
 EXIT_CODE=0
 
+print_banner
 echo "────────────────────────────────────────────"
 echo " REI Harness Initialization"
 echo "────────────────────────────────────────────"
