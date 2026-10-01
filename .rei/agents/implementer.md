@@ -33,11 +33,14 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 
 1. Lee `.rei/docs/project/architecture.md`.
 2. Lee `.rei/docs/project/conventions.md`.
-3. Lee `.rei/docs/project/verification.md`.
-4. Lee `.rei/specs/<work-item-id>/meta.json`.
-5. Lee `.rei/progress/current.md`.
-6. Consulta el campo `type`.
-7. Actualiza `.rei/progress/current.md`: **Estado** a `in_progress`, **Agente activo** a `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la implementación.
+3. Lee `.rei/specs/<work-item-id>/meta.json`.
+4. Lee `.rei/progress/current.md`.
+5. Consulta el campo `type`.
+6. Actualiza `.rei/progress/current.md`: **Estado** a `in_progress`, **Agente activo** a `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la implementación.
+
+> NO leas `verification.md` por defecto: los checkpoints rápidos se ejecutan con
+> `bash .rei/init.sh`, y `design.md`/`tasks.md` referencian sus IDs. Consúltalo
+> solo si necesitas el mapeo de checkpoints o la evidencia esperada.
 
 ---
 
@@ -48,7 +51,7 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 3. Después de completar **cada** tarea, **inmediatamente**:
    - márcala como completada (`[x]`) en `tasks.md`;
    - actualiza `.rei/progress/current.md`;
-   - verifica que el cambio funciona antes de continuar con la siguiente.
+   - verifica que el cambio funciona antes de continuar (por ejemplo con `bash .rei/init.sh`, o solo los tests del módulo afectado si el proyecto lo permite).
 4. Al finalizar:
    - ejecuta `bash .rei/init.sh`;
    - verifica que todos los requisitos fueron implementados;
@@ -67,7 +70,7 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 3. Después de completar **cada** paso del plan, **inmediatamente**:
    - márcalo como completado en `plan.md`;
    - actualiza `.rei/progress/current.md`;
-   - verifica que el cambio funciona antes de continuar con el siguiente.
+   - verifica que el cambio funciona antes de continuar (por ejemplo con `bash .rei/init.sh`, o solo los tests del módulo afectado si el proyecto lo permite).
 4. Al finalizar:
    - ejecuta `bash .rei/init.sh`;
    - documenta el trabajo en `.rei/progress/work-items/<work-item-id>/impl.md`;
@@ -101,6 +104,7 @@ Si durante la implementación el trabajo no puede continuar:
 - SIEMPRE mantén actualizado `.rei/progress/current.md`.
 - SIEMPRE documenta la implementación en `.rei/progress/work-items/<work-item-id>/impl.md`.
 - SIEMPRE verifica tu trabajo antes de solicitar revisión.
+- No releas un archivo que ya esté en tu contexto; usa `Grep` para localizar un dato concreto en lugar de releer el archivo completo.
 
 ---
 

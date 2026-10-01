@@ -23,11 +23,12 @@ NUNCA implementes código.
 
 # Protocolo
 
-1. Lee `.rei/docs/project/architecture.md`.
-2. Lee `.rei/docs/project/conventions.md`.
-3. Lee `.rei/docs/project/verification.md`.
-4. Lee `.rei/specs/<work-item-id>/meta.json`.
-5. Consulta `type`.
+1. Lee `.rei/docs/project/verification.md`.
+2. Lee `.rei/specs/<work-item-id>/meta.json`.
+3. Consulta `type`.
+
+> NO leas `architecture.md` ni `conventions.md` por defecto. Consúltalos solo
+> si esta revisión concreta lo requiere.
 
 ---
 
@@ -42,9 +43,10 @@ NUNCA implementes código.
 2. Comprueba que:
    - todos los requisitos fueron implementados;
    - todas las tareas están completadas;
-   - la implementación respeta la arquitectura;
-   - la implementación respeta las convenciones;
-   - cada checkpoint (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
+   - la implementación respeta la arquitectura (lee `architecture.md` solo si esta revisión lo requiere);
+   - la implementación respeta las convenciones (lee `conventions.md` solo si esta revisión lo requiere);
+   - cada checkpoint rápido (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
+   - los checkpoints lentos tienen evidencia válida (CI o ejecución manual);
    - `bash .rei/init.sh` finaliza correctamente.
 
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
@@ -71,9 +73,10 @@ NUNCA implementes código.
 2. Comprueba que:
    - el objetivo fue cumplido;
    - las restricciones fueron respetadas;
-   - la implementación respeta la arquitectura;
-   - la implementación respeta las convenciones;
-   - cada checkpoint (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
+   - la implementación respeta la arquitectura (lee `architecture.md` solo si esta revisión lo requiere);
+   - la implementación respeta las convenciones (lee `conventions.md` solo si esta revisión lo requiere);
+   - cada checkpoint rápido (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
+   - los checkpoints lentos tienen evidencia válida (CI o ejecución manual);
    - `bash .rei/init.sh` finaliza correctamente.
 
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
@@ -112,6 +115,7 @@ Si durante la revisión no es posible determinar si el Work Item cumple la plani
 - SIEMPRE documenta el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 - SIEMPRE cierra la sesión con `bash .rei/scripts/archive-session.sh` al aprobar (feature o task).
 - NUNCA escribas plantillas a mano: usa los scripts de `.rei/scripts/`.
+- No releas un archivo que ya esté en tu contexto; usa `Grep` para localizar un dato concreto en lugar de releer el archivo completo.
 
 ---
 

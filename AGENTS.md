@@ -149,11 +149,11 @@ Define cómo funciona el arnés. No requiere personalización por proyecto.
 
 Describe las reglas de **este repositorio**. Debe personalizarse al implementar REI Harness.
 
-| Si necesitas... | Consulta... |
-|-----------------|-------------|
-| Arquitectura | `.rei/docs/project/architecture.md` |
-| Convenciones | `.rei/docs/project/conventions.md` |
-| Verificación | `.rei/docs/project/verification.md` |
+| Si necesitas... | Consulta... | Quién lo lee por defecto |
+|-----------------|-------------|--------------------------|
+| Arquitectura | `.rei/docs/project/architecture.md` | Implementer, Spec Author (diseño) |
+| Convenciones | `.rei/docs/project/conventions.md` | Implementer |
+| Verificación | `.rei/docs/project/verification.md` | Reviewer |
 
 ## Work Items
 
@@ -187,5 +187,7 @@ Estas reglas aplican a cualquier agente del repositorio.
 - No omitas etapas del workflow.
 - Consulta la documentación antes de asumir comportamientos no especificados.
 - Si encuentras documentación contradictoria, DETENTE y repórtala.
+- Para conocer el estado de la sesión o de los Work Items, ejecuta los scripts de `.rei/scripts/`; no escanees `meta.json` manualmente.
+- No releas un archivo que ya esté en tu contexto; para localizar un dato concreto usa búsquedas en lugar de releer el archivo completo.
 - En caso de conflicto entre documentos, prevalece el orden inverso de la Sección 8:
   `.rei/specs/<work-item-id>/` > `.rei/docs/...` > `.rei/agents/<role>.md` > `AGENTS.md`.

@@ -26,6 +26,7 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 - SIEMPRE inicia la sesión con `bash .rei/scripts/start-session.sh <work-item-id> <type>`.
 - SIEMPRE deja `.rei/progress/current.md` en `ready` al finalizar correctamente.
 - NUNCA escribas plantillas a mano: usa los scripts de `.rei/scripts/`.
+- No releas un archivo que ya esté en tu contexto; usa `Grep` para localizar un dato concreto en lugar de releer el archivo completo.
 
 ---
 
@@ -37,8 +38,11 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 4. Consulta `type`.
 5. Inicia la sesión:
    `bash .rei/scripts/start-session.sh <work-item-id> <type>`
-6. Lee únicamente la documentación del proyecto que necesites para comprender
-   el contexto del Work Item (`.rei/docs/project/`).
+6. Consulta el índice de la documentación del proyecto
+   (`.rei/docs/project/README.md`) y lee solo lo que el Work Item requiera:
+   - `architecture.md` si necesitas tomar decisiones de diseño (`design.md`);
+   - `conventions.md` o `verification.md` solo si el Work Item lo justifica.
+   No leas la documentación del proyecto "por defecto".
 
 ---
 

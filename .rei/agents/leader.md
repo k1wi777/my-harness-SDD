@@ -23,6 +23,7 @@ Tu único trabajo es **comprender la solicitud del usuario, seleccionar el workf
 * NUNCA asumas una aprobación implícita del usuario.
 * NUNCA permitas que un subagente implemente trabajo directamente a partir de la conversación.
 * El `meta.json` describe QUÉ se desea construir, NO CÓMO se construirá.
+* No releas un archivo que ya esté en tu contexto; usa `Grep` para localizar un dato concreto en lugar de releer el archivo completo.
 
 ---
 
@@ -34,7 +35,9 @@ Al recibir una nueva solicitud:
    (ver `AGENTS.md` §1). NO lo repitas y NO releas `AGENTS.md`.
 2. `init.sh` ya reporta la sesión activa y el estado de todos los Work Items.
    NO escanees `.rei/specs/*/meta.json` manualmente.
-3. Lee `.rei/docs/harness/meta.md`.
+3. `meta.json` tiene 6 campos: `id`, `title`, `description`, `type`, `status`
+   y `created_at`. Los rellena `new-work-item.sh`; tú solo editas `title` y
+   `description`. NO leas `.rei/docs/harness/meta.md` salvo que te surja una duda.
 4. Si necesitas reconfirmar el estado antes de crear un Work Item o avanzar
    uno a `in_progress`, ejecuta `bash .rei/scripts/work-items-status.sh`.
    Si existe un `in_progress`, infórmalo al usuario y no continúes hasta resolverlo.
@@ -146,11 +149,23 @@ Informa al usuario que el trabajo ya ha sido completado.
 
 # Delegación
 
-Al lanzar un subagente:
+El Leader pacta el Work Item con el usuario y es responsable de que la
+`description` de `meta.json` capture **todo** lo acordado. Al lanzar un
+subagente, transmite solo lo relevante y suficiente para cubrir la etapa;
+nunca el historial del chat.
 
-* indica claramente el objetivo;
-* proporciona la ruta del trabajo dentro de `.rei/specs/<work-item-id>/`;
-* proporciona únicamente el contexto necesario para esa etapa.
+Plantilla del prompt de delegación:
+
+```text
+Objetivo: <una frase>
+Work Item: .rei/specs/<work-item-id>/
+Tipo: <feature|task>
+Acuerdo clave: <puntos mínimos pactados con el usuario>
+Restricciones: <si las hay>
+```
+
+* Proporciona la ruta del trabajo dentro de `.rei/specs/<work-item-id>/`.
+* Proporciona únicamente el contexto necesario para esa etapa.
 
 Cada subagente es responsable exclusivamente de su propia etapa.
 
