@@ -7,6 +7,9 @@
 # Ejecución recomendada (no requiere permisos de ejecución):
 #   bash .rei/init.sh
 #
+# Salida reducida (para agentes, sin banner ni listado de archivos):
+#   bash .rei/init.sh --quiet
+#
 # Alternativa, si el script tiene permiso de ejecución:
 #   chmod +x .rei/init.sh && ./.rei/init.sh
 #
@@ -14,6 +17,13 @@
 #
 
 set -u
+
+QUIET=0
+for arg in "$@"; do
+    case "$arg" in
+        --quiet|-q) QUIET=1 ;;
+    esac
+done
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
@@ -24,9 +34,15 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-ok()   { printf "${GREEN}[OK]${NC}    %s\n" "$1"; }
-warn() { printf "${YELLOW}[WARN]${NC}  %s\n" "$1"; }
-fail() { printf "${RED}[FAIL]${NC}  %s\n" "$1"; }
+if (( QUIET )); then
+    ok()   { :; }
+    warn() { printf "${YELLOW}[WARN]${NC}  %s\n" "$1"; }
+    fail() { printf "${RED}[FAIL]${NC}  %s\n" "$1"; }
+else
+    ok()   { printf "${GREEN}[OK]${NC}    %s\n" "$1"; }
+    warn() { printf "${YELLOW}[WARN]${NC}  %s\n" "$1"; }
+    fail() { printf "${RED}[FAIL]${NC}  %s\n" "$1"; }
+fi
 
 center_line() {
     local line="$1"
@@ -102,17 +118,19 @@ print_banner() {
 
 EXIT_CODE=0
 
-print_banner
-echo "────────────────────────────────────────────"
-echo " REI Harness Initialization"
-echo "────────────────────────────────────────────"
-echo
+if (( ! QUIET )); then
+    print_banner
+    echo "────────────────────────────────────────────"
+    echo " REI Harness Initialization"
+    echo "────────────────────────────────────────────"
+    echo
+fi
 
 ###########################################################
 # 1. Verificar archivos críticos de REI Harness
 ###########################################################
 
-echo "── 1. Verificando REI Harness ─────────────"
+(( ! QUIET )) && echo "── 1. Verificando REI Harness ─────────────"
 
 REQUIRED_FILES=(
     "AGENTS.md"
@@ -161,7 +179,7 @@ echo
 # 2. Inicializar estructura auxiliar de REI Harness
 ###########################################################
 
-echo "── 2. Inicializando estructura ────────────"
+(( ! QUIET )) && echo "── 2. Inicializando estructura ────────────"
 
 mkdir -p .rei/specs
 mkdir -p .rei/progress/work-items
@@ -191,40 +209,13 @@ fi
 echo
 
 ###########################################################
-# 3. Validar invariantes de REI Harness
+# 3. Verificación del proyecto
 ###########################################################
 
-echo "── 3. Validando invariantes ───────────────"
+(( ! QUIET )) && echo "── 3. Verificando proyecto ───────────────"
 
-# El estado se resuelve con código, nunca leyendo archivos desde la IA.
-# Ver .rei/scripts/session-status.sh y .rei/scripts/work-items-status.sh
-
-session_report="$(bash .rei/scripts/session-status.sh)"
-session_rc=$?
-if (( session_rc == 0 )); then
-    ok "$session_report"
-else
-    warn "$session_report"
-    warn "Revisa si debe continuarse antes de iniciar un nuevo Work Item."
-fi
-
-work_items_report="$(bash .rei/scripts/work-items-status.sh)"
-work_items_rc=$?
-echo "$work_items_report"
-if (( work_items_rc != 0 )); then
-    warn "Resuelve el Work Item activo antes de iniciar uno nuevo."
-fi
-
-echo
-
-###########################################################
-# 4. Verificación del proyecto
-###########################################################
-
-echo "── 4. Verificando proyecto ───────────────"
-
-echo "[INFO] Personaliza esta sección según tu proyecto."
-echo "[INFO] Los comandos deben coincidir con .rei/docs/project/verification.md."
+(( ! QUIET )) && echo "[INFO] Personaliza esta sección según tu proyecto."
+(( ! QUIET )) && echo "[INFO] Los comandos deben coincidir con .rei/docs/project/verification.md."
 
 # Usa run_check para que cualquier fallo se propague correctamente a $EXIT_CODE.
 # El Reviewer exige que .rei/init.sh finalice sin errores antes de aprobar un Work Item,
@@ -293,10 +284,10 @@ run_check() {
 echo
 
 ###########################################################
-# 5. Resumen
+# 4. Resumen
 ###########################################################
 
-echo "── 5. Resumen ─────────────────────────────"
+(( ! QUIET )) && echo "── 4. Resumen ─────────────────────────────"
 
 if [[ $EXIT_CODE -eq 0 ]]; then
     ok "REI Harness listo para trabajar."
