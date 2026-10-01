@@ -38,10 +38,10 @@ Representa el estado **actual** de la sesión.
 > La plantilla canónica vive en `.rei/templates/current.md` (fuente única de verdad).
 > No la copies a mano: usa los scripts de `.rei/scripts/`.
 
-> Este archivo es un **registro vivo de la sesión**, no la fuente de verdad del
-> estado. El estado oficial de un Work Item vive en
-> `.rei/specs/<work-item-id>/meta.json`; el campo `Estado` de `current.md` es
-> solo informativo.
+> Este archivo es el **contexto vivo de la sesión activa**: sirve para retomar un
+> Work Item exactamente donde quedó si la sesión se interrumpe. El registro
+> duradero y el diagnóstico global del conjunto de Work Items viven en
+> `.rei/specs/<work-item-id>/meta.json` (consulta `work-items-status.sh`).
 
 El **Spec Author** lo inicializa ejecutando
 `bash .rei/scripts/start-session.sh <work-item-id> <type>` al comenzar la
