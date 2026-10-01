@@ -271,11 +271,20 @@ run_check() {
 }
 
 #
+# Regla: aquí solo van verificaciones rápidas y de bajo costo (linter,
+# type-check, tests rápidos). Los checks lentos (build completo, e2e,
+# integración) pertenecen a CI o a una ejecución manual, NO a este script,
+# porque init.sh se ejecuta de forma constante (arranque, implementación, revisión).
+#
+# Recomendación de personalización: si tu proyecto lo permite, prefiere
+# verificar solo el módulo o los módulos afectados por el Work Item en lugar
+# de la suite completa. REI Harness no impone cómo invocarlos porque es
+# agnóstico al lenguaje y al framework de test.
+#
 # Ejemplos (descomenta y adapta a tu stack):
 #
 # run_check "Lint"  npm run lint
 # run_check "Tests" npm test
-# run_check "Build" npm run build
 #
 # run_check "Tests" pytest
 #
