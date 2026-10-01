@@ -4,9 +4,9 @@
 >
 > La carpeta `.rei/progress/` constituye el registro vivo del estado de desarrollo y permite que cualquier agente o persona pueda comprender qué ocurrió durante una sesión, retomarla si fue interrumpida y consultar el historial del proyecto.
 >
-> Ningún agente debe inventar nuevos formatos. Todos los archivos de `.rei/progress/` deben respetar las plantillas descritas en este documento.
+> Ningún agente debe inventar nuevos formatos. Todos los archivos de `.rei/progress/` deben respetar las plantillas canónicas de `.rei/templates/`.
 >
-> **Este documento es la única fuente de verdad** para plantillas y estructura. Los agentes deben leerlo y aplicarlo directamente — nunca dupliques formatos en otros archivos.
+> Las plantillas se generan y restablecen con los scripts de `.rei/scripts/` — **nunca las escribas a mano**.
 
 ---
 
@@ -35,10 +35,12 @@ Cada Work Item tiene su propia carpeta `.rei/progress/work-items/<work-item-id>/
 
 Representa el estado **actual** de la sesión.
 
-> Esta plantilla también está embebida como heredoc en `.rei/init.sh` (Sección 2).
-> Si la modificas aquí, actualiza también el script para mantenerlas sincronizadas.
+> La plantilla canónica vive en `.rei/templates/current.md` (fuente única de verdad).
+> No la copies a mano: usa los scripts de `.rei/scripts/`.
 
-El **Spec Author** lo inicializa al comenzar la planificación (`pending`) y lo deja en `ready` al terminar, esperando aprobación humana.
+El **Spec Author** lo inicializa ejecutando
+`bash .rei/scripts/start-session.sh <work-item-id> <type>` al comenzar la
+planificación (`pending`) y lo deja en `ready` al terminar, esperando aprobación humana.
 
 El **Implementer** lo actualiza al iniciar la implementación (`in_progress`) y lo mantiene durante toda la ejecución hasta pasar a `review`.
 
@@ -48,33 +50,7 @@ No debe rellenarse únicamente al finalizar el trabajo.
 
 Su propósito es permitir que una sesión pueda retomarse en cualquier momento, incluso durante la planificación o la espera de aprobación.
 
-Debe utilizar siempre la siguiente plantilla:
-
-```md
-# Sesión actual
-
-> Estado vivo de la sesión.
-> Se actualiza durante toda la ejecución.
-> Al finalizar el Work Item su resumen se mueve a `history.md` y este archivo vuelve a su estado inicial.
-
-- **Work Item:** _ninguno_
-- **Tipo:** _—_
-- **Estado:** _—_
-- **Inicio:** _—_
-- **Agente activo:** _—_
-
-## Plan
-
-_—_
-
-## Bitácora
-
-_—_
-
-## Próximo paso
-
-_—_
-```
+Al cerrar el Work Item, `bash .rei/scripts/archive-session.sh` mueve su resumen a `history.md` y restablece este archivo a su estado inicial.
 
 ---
 
@@ -82,26 +58,14 @@ _—_
 
 Es la bitácora histórica del proyecto.
 
-> Esta plantilla también está embebida como heredoc en `.rei/init.sh` (Sección 2).
-> Si la modificas aquí, actualiza también el script para mantenerlas sincronizadas.
+> La plantilla canónica vive en `.rei/templates/history.md` (fuente única de verdad).
+> No la copies a mano: `bash .rei/scripts/archive-session.sh` la usa.
 
 Su contenido es **append-only**.
 
 Nunca deben modificarse entradas anteriores.
 
-Al finalizar correctamente un Work Item, el resumen de `current.md` debe añadirse al final de este archivo.
-
-La plantilla base es:
-
-```md
-# Bitácora histórica (append-only)
-
-> Registro histórico de todas las sesiones completadas.
-> Nunca modifiques entradas anteriores.
-> Siempre añade nuevas entradas al final.
-
----
-```
+Al finalizar correctamente un Work Item, `bash .rei/scripts/archive-session.sh` añade el resumen de `current.md` al final de este archivo.
 
 Cada entrada debe resumir:
 
@@ -164,14 +128,14 @@ Si no existen bloqueos, este archivo no debe crearse.
 
 # Responsabilidades
 
-| Archivo | Responsable |
-|----------|-------------|
-| `current.md` (inicialización: `pending` → `ready`) | Spec Author |
-| `current.md` (implementación: `in_progress` → `review`) | Implementer |
-| `history.md` | Reviewer |
-| `work-items/<work-item-id>/impl.md` | Implementer |
-| `work-items/<work-item-id>/review.md` | Reviewer |
-| `work-items/<work-item-id>/spec.md` | Spec Author |
+| Archivo | Responsable | Cómo |
+|----------|-------------|------|
+| `current.md` (inicio: `pending`) | Spec Author | `bash .rei/scripts/start-session.sh <id> <type>` |
+| `current.md` (implementación: `in_progress` → `review`) | Implementer | edición directa |
+| `history.md` + reset de `current.md` | Reviewer | `bash .rei/scripts/archive-session.sh` |
+| `work-items/<work-item-id>/impl.md` | Implementer | edición directa |
+| `work-items/<work-item-id>/review.md` | Reviewer | edición directa |
+| `work-items/<work-item-id>/spec.md` | Spec Author | edición directa (solo en bloqueo) |
 
 ---
 
@@ -181,5 +145,5 @@ Si no existen bloqueos, este archivo no debe crearse.
 - Crea `.rei/progress/work-items/<work-item-id>/` al iniciar el trabajo sobre un Work Item.
 - Nunca sobrescribas el historial.
 - No elimines documentación existente.
-- Utiliza siempre las plantillas definidas en este documento.
+- Utiliza siempre las plantillas canónicas de `.rei/templates/` (vía `.rei/scripts/`).
 - Todo Work Item debe dejar evidencia suficiente para poder comprender qué ocurrió sin depender del historial del chat.

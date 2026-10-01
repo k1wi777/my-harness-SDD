@@ -115,6 +115,8 @@ La aprobación humana forma parte del workflow y nunca puede omitirse.
 ├── .rei/                         # REI Harness
 │   ├── init.sh                   # Inicialización y verificación del entorno
 │   ├── agents/                   # Roles y protocolos de los agentes
+│   ├── scripts/                  # Automatización de estado y plantillas
+│   ├── templates/                # Plantillas canónicas (fuente única de verdad)
 │   ├── docs/                     # Documentación de REI Harness y del proyecto
 │   ├── specs/                    # Work Items y planificaciones por fecha
 │   └── progress/                 # Estado e historial del trabajo

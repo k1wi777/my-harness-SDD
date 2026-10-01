@@ -116,7 +116,7 @@ Lo mismo aplica después de la revisión: si el Reviewer rechaza el trabajo (`ch
 
 Si cierras la conversación con un Work Item a medias, no se pierde nada — vive en `.rei/specs/<work-item-id>/` y `.rei/progress/work-items/<work-item-id>/`, no en el historial del chat.
 
-La próxima vez que ejecutes `bash .rei/init.sh` y hables con el agente, el Leader leerá `.rei/progress/current.md` y `.rei/specs/*/meta.json`, y te preguntará si quieres continuar, reiniciar o cancelar ese Work Item. Tú decides; el Leader nunca lo asume por su cuenta.
+La próxima vez que ejecutes `bash .rei/init.sh` y hables con el agente, el Leader leerá el estado de la sesión y de los Work Items mediante los scripts de `.rei/scripts/`, y te preguntará si quieres continuar, reiniciar o cancelar ese Work Item. Tú decides; el Leader nunca lo asume por su cuenta.
 
 ---
 

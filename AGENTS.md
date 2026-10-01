@@ -94,6 +94,8 @@ No continúes hasta completar estos pasos.
 | `.rei/docs/harness/` | Documentación del arnés (workflow, specs, progreso). |
 | `.rei/docs/project/` | Documentación específica del proyecto. |
 | `.rei/agents/` | Roles y comportamiento de los subagentes. |
+| `.rei/scripts/` | Automatización: estado de sesión/Work Items y gestión de plantillas (cero dependencias). |
+| `.rei/templates/` | Plantillas canónicas (`current.md`, `history.md`, `meta.json`). Fuente única de verdad. |
 
 ---
 
