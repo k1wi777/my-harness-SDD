@@ -2,7 +2,7 @@
 
 name: leader
 description: Orquestador principal. Recibe la solicitud del usuario, selecciona el workflow adecuado y coordina a los subagentes. NUNCA implementa directamente.
-tools: Read, Glob, Grep, Bash, Agent
+tools: Read, Glob, Grep, Bash, Write, Edit, Agent
 ------------------------------------
 
 # Leader
@@ -30,14 +30,14 @@ Tu único trabajo es **comprender la solicitud del usuario, seleccionar el workf
 
 Al recibir una nueva solicitud:
 
-1. Lee `AGENTS.md`.
-2. Ejecuta `bash .rei/init.sh`.
-3. Si `bash .rei/init.sh` falla, DETENTE e informa el problema.
-4. Lee `.rei/docs/harness/meta.md`.
-5. Lee `.rei/progress/current.md`.
-6. Antes de crear un nuevo Work Item o avanzar uno a `in_progress`,
-   verifica que ningún otro `.rei/specs/*/meta.json` tenga `status == in_progress`.
-   Si existe uno, infórmalo al usuario y no continúes hasta resolverlo.
+1. Asume que `bash .rei/init.sh` ya se ejecutó al iniciar la sesión
+   (ver `AGENTS.md` §1). NO lo repitas y NO releas `AGENTS.md`.
+2. `init.sh` ya reporta la sesión activa y el estado de todos los Work Items.
+   NO escanees `.rei/specs/*/meta.json` manualmente.
+3. Lee `.rei/docs/harness/meta.md`.
+4. Si necesitas reconfirmar el estado antes de crear un Work Item o avanzar
+   uno a `in_progress`, ejecuta `bash .rei/scripts/work-items-status.sh`.
+   Si existe un `in_progress`, infórmalo al usuario y no continúes hasta resolverlo.
 
 ---
 
@@ -45,13 +45,19 @@ Al recibir una nueva solicitud:
 
 1. Comprende completamente la solicitud del usuario.
 2. Si existe cualquier duda sobre el alcance, DETENTE y consulta al usuario.
-3. Determina el workflow correspondiente siguiendo `.rei/docs/harness/workflow.md`.
-4. Genera el `id` inmutable del Work Item con el formato `YYYY-MM-DD_HH-mm__slug-en-kebab-case`, usando la fecha y hora de creación. Si ya existe el mismo identificador, añade un sufijo numérico al slug (`-2`, `-3`, ...).
-5. Crea o actualiza `.rei/specs/<work-item-id>/meta.json` siguiendo `.rei/docs/harness/meta.md` y registra el mismo `id` y `created_at`.
-6. Redacta el contenido de `meta.json` representando el acuerdo alcanzado con el usuario, proporcionando el contexto suficiente para comprender el objetivo del trabajo sin convertir la descripción en una especificación.
-7. Define el `type` del trabajo (`feature` o `task`).
-8. Inicializa el trabajo con `status = pending`.
-9. Consulta `meta.json` y continúa el workflow correspondiente.
+3. Determina el tipo (`feature` o `task`) siguiendo `.rei/docs/harness/workflow.md`.
+4. Genera el `id` inmutable con el formato `YYYY-MM-DD_HH-mm__slug-en-kebab-case`,
+   usando la fecha y hora de creación. Si ya existe el mismo identificador,
+   añade un sufijo numérico al slug (`-2`, `-3`, ...).
+5. Crea el Work Item ejecutando:
+   `bash .rei/scripts/new-work-item.sh <work-item-id> <type> [title]`
+   El script crea `.rei/specs/<id>/`, `.rei/progress/work-items/<id>/` y
+   `meta.json` con `status = pending`.
+6. Completa `title` y `description` en `.rei/specs/<id>/meta.json` con `Edit`,
+   representando el acuerdo alcanzado con el usuario. La `description` debe dar
+   contexto suficiente para comprender el objetivo sin convertirse en una
+   especificación.
+7. Continúa el workflow correspondiente.
 
 No delegues ningún trabajo hasta completar estos pasos.
 
@@ -64,7 +70,9 @@ No delegues ningún trabajo hasta completar estos pasos.
 1. Lee el campo `type` de `meta.json`.
 2. Lanza **1 subagente `spec_author`**.
 3. Espera a que finalice.
-4. El `spec_author` creará `.rei/progress/work-items/<work-item-id>/`, inicializará `.rei/progress/current.md` en `pending`, generará la planificación y dejará ambos en `ready`.
+4. El `spec_author` iniciará la sesión
+   (`bash .rei/scripts/start-session.sh`), generará la planificación y dejará
+   `current.md` y `meta.json` en `ready`.
 5. NO continúes automáticamente.
 6. Solicita la aprobación del usuario.
 
@@ -77,7 +85,8 @@ Tu mensaje deberá ser similar a:
 
 ## Caso B — `status == ready`
 
-Consulta `.rei/progress/current.md` para confirmar que la planificación finalizó y el Work Item espera aprobación.
+`init.sh` ya reporta el estado de la sesión. Si necesitas reconfirmarlo,
+ejecuta `bash .rei/scripts/session-status.sh`.
 
 Si el usuario **NO** ha aprobado la planificación:
 

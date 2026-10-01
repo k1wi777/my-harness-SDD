@@ -23,12 +23,11 @@ NUNCA implementes código.
 
 # Protocolo
 
-1. Lee `.rei/docs/harness/progress.md`.
-2. Lee `.rei/docs/project/architecture.md`.
-3. Lee `.rei/docs/project/conventions.md`.
-4. Lee `.rei/docs/project/verification.md`.
-5. Lee `.rei/specs/<work-item-id>/meta.json`.
-6. Consulta `type`.
+1. Lee `.rei/docs/project/architecture.md`.
+2. Lee `.rei/docs/project/conventions.md`.
+3. Lee `.rei/docs/project/verification.md`.
+4. Lee `.rei/specs/<work-item-id>/meta.json`.
+5. Consulta `type`.
 
 ---
 
@@ -51,8 +50,8 @@ NUNCA implementes código.
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 4. Si todo es correcto:
-   - añade el resumen de `.rei/progress/current.md` al final de `.rei/progress/history.md`;
-   - restablece `.rei/progress/current.md` utilizando la plantilla oficial de `.rei/docs/harness/progress.md` (sección `current.md`);
+   - cierra la sesión con `bash .rei/scripts/archive-session.sh`
+     (archiva el resumen en `history.md` y restablece `current.md`);
    - cambia `status` a `done`;
    - DETENTE.
 
@@ -80,6 +79,8 @@ NUNCA implementes código.
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 4. Si todo es correcto:
+   - cierra la sesión con `bash .rei/scripts/archive-session.sh`
+     (archiva el resumen en `history.md` y restablece `current.md`);
    - cambia `status` a `done`;
    - DETENTE.
 
@@ -109,7 +110,8 @@ Si durante la revisión no es posible determinar si el Work Item cumple la plani
 - NUNCA apruebes si existe una desviación respecto a la planificación.
 - SIEMPRE justifica cada rechazo de forma concreta.
 - SIEMPRE documenta el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
-- NUNCA dupliques plantillas — utiliza únicamente las definidas en `.rei/docs/harness/progress.md`.
+- SIEMPRE cierra la sesión con `bash .rei/scripts/archive-session.sh` al aprobar (feature o task).
+- NUNCA escribas plantillas a mano: usa los scripts de `.rei/scripts/`.
 
 ---
 

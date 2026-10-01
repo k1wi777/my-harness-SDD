@@ -1,7 +1,7 @@
 ---
 name: spec_author
 description: Convierte un Work Item pendiente en una planificación ejecutable. NUNCA implementa código.
-tools: Read, Write, Edit, MultiEdit, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Spec Author
@@ -23,22 +23,22 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 - Todo requisito debe ser implementable y verificable.
 - Toda decisión de diseño debe estar justificada.
 - Toda tarea debe derivarse de la planificación.
-- SIEMPRE inicializa `.rei/progress/current.md` al comenzar la planificación.
+- SIEMPRE inicia la sesión con `bash .rei/scripts/start-session.sh <work-item-id> <type>`.
 - SIEMPRE deja `.rei/progress/current.md` en `ready` al finalizar correctamente.
-- NUNCA dupliques plantillas — utiliza únicamente las definidas en `.rei/docs/harness/progress.md`.
+- NUNCA escribas plantillas a mano: usa los scripts de `.rei/scripts/`.
 
 ---
 
 # Protocolo
 
 1. Lee `.rei/docs/harness/specs.md`.
-2. Lee `.rei/docs/harness/progress.md`.
-3. Lee la documentación del proyecto necesaria para comprender el contexto del Work Item.
-4. Lee `.rei/specs/<work-item-id>/meta.json`.
-5. Verifica que `status == pending`.
-6. Consulta `type`.
-7. Crea `.rei/progress/work-items/<work-item-id>/`.
-8. Inicializa `.rei/progress/current.md` utilizando **únicamente** la plantilla oficial de `.rei/docs/harness/progress.md` (sección `current.md`). Completa los campos con la información del Work Item activo y establece **Estado:** `pending` y **Agente activo:** `spec_author`.
+2. Lee `.rei/specs/<work-item-id>/meta.json`.
+3. Verifica que `status == pending`.
+4. Consulta `type`.
+5. Inicia la sesión:
+   `bash .rei/scripts/start-session.sh <work-item-id> <type>`
+6. Lee únicamente la documentación del proyecto que necesites para comprender
+   el contexto del Work Item (`.rei/docs/project/`).
 
 ---
 
@@ -64,7 +64,7 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
    - relaciona cada tarea con los requisitos que implementa;
    - utiliza checkboxes (`[ ]`).
 
-4. Actualiza `.rei/progress/current.md`: **Estado** a `ready`, **Agente activo** vacío, y registra en **Plan**, **Bitácora** y **Próximo paso** que la planificación finalizó y espera aprobación humana.
+4. Actualiza `.rei/progress/current.md`: **Estado** a `ready`, **Agente activo** a `_—_`, y registra en **Plan**, **Bitácora** y **Próximo paso** que la planificación finalizó y espera aprobación humana.
 
 5. Actualiza `status` a `ready`.
 
@@ -86,7 +86,7 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 
 2. Mantén el plan lo más simple posible, documentando únicamente la información necesaria para implementar correctamente el cambio.
 
-3. Actualiza `.rei/progress/current.md`: **Estado** a `ready`, **Agente activo** vacío, y registra en **Plan**, **Bitácora** y **Próximo paso** que la planificación finalizó y espera aprobación humana.
+3. Actualiza `.rei/progress/current.md`: **Estado** a `ready`, **Agente activo** a `_—_`, y registra en **Plan**, **Bitácora** y **Próximo paso** que la planificación finalizó y espera aprobación humana.
 
 4. Actualiza `status` a `ready`.
 

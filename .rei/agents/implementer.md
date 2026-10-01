@@ -1,7 +1,7 @@
 ---
 name: implementer
 description: Implementa un único Work Item siguiendo exclusivamente una planificación aprobada. Mantiene el progreso de la sesión y documenta la implementación.
-tools: Read, Write, Edit, MultiEdit, Glob, Grep, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Implementer
@@ -31,14 +31,13 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 
 # Protocolo
 
-1. Lee `.rei/docs/harness/progress.md`.
-2. Lee `.rei/docs/project/architecture.md`.
-3. Lee `.rei/docs/project/conventions.md`.
-4. Lee `.rei/docs/project/verification.md`.
-5. Lee `.rei/specs/<work-item-id>/meta.json`.
-6. Lee `.rei/progress/current.md`.
-7. Consulta el campo `type`.
-8. Actualiza `.rei/progress/current.md`: **Estado** a `in_progress`, **Agente activo** a `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la implementación.
+1. Lee `.rei/docs/project/architecture.md`.
+2. Lee `.rei/docs/project/conventions.md`.
+3. Lee `.rei/docs/project/verification.md`.
+4. Lee `.rei/specs/<work-item-id>/meta.json`.
+5. Lee `.rei/progress/current.md`.
+6. Consulta el campo `type`.
+7. Actualiza `.rei/progress/current.md`: **Estado** a `in_progress`, **Agente activo** a `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la implementación.
 
 ---
 
@@ -79,13 +78,14 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 
 ---
 
-## Caso C — `status == blocked`
+# Bloqueos
 
-El Work Item fue bloqueado durante la implementación.
+Si durante la implementación el trabajo no puede continuar:
 
 1. Documenta el bloqueo en `.rei/progress/work-items/<work-item-id>/impl.md`.
-2. Actualiza `.rei/progress/current.md`.
-3. DETENTE.
+2. Actualiza `.rei/progress/current.md`: **Estado** a `blocked` y registra el motivo en **Bitácora** y **Próximo paso**.
+3. Cambia `status` a `blocked` en `.rei/specs/<work-item-id>/meta.json`.
+4. DETENTE.
 
 ---
 
