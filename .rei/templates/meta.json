@@ -1,0 +1,8 @@
+{
+  "id": "{{ID}}",
+  "title": "{{TITLE}}",
+  "description": "{{DESCRIPTION}}",
+  "type": "{{TYPE}}",
+  "status": "{{STATUS}}",
+  "created_at": "{{CREATED_AT}}"
+}

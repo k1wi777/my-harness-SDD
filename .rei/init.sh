@@ -129,6 +129,18 @@ REQUIRED_FILES=(
     ".rei/agents/spec_author.md"
     ".rei/agents/implementer.md"
     ".rei/agents/reviewer.md"
+
+    ".rei/scripts/_lib.sh"
+    ".rei/scripts/session-status.sh"
+    ".rei/scripts/work-items-status.sh"
+    ".rei/scripts/reset-current.sh"
+    ".rei/scripts/start-session.sh"
+    ".rei/scripts/archive-session.sh"
+    ".rei/scripts/new-work-item.sh"
+
+    ".rei/templates/current.md"
+    ".rei/templates/history.md"
+    ".rei/templates/meta.json"
 )
 
 FAILED_CHECKS=()
@@ -158,56 +170,20 @@ ok ".rei/specs/"
 ok ".rei/progress/work-items/"
 
 CURRENT_FILE=".rei/progress/current.md"
+HISTORY_FILE=".rei/progress/history.md"
 
-# Plantilla definida en .rei/docs/harness/progress.md — si la modificas ahí, actualiza también este heredoc.
+# Las plantillas viven en .rei/templates/ (fuente única de verdad).
+# No se duplican aquí: se copian desde el archivo canónico.
 if [[ ! -f "$CURRENT_FILE" ]]; then
-cat > "$CURRENT_FILE" <<'EOF'
-# Sesión actual
-
-> Estado vivo de la sesión.
-> Se actualiza durante toda la ejecución.
-> Al finalizar el Work Item su resumen se mueve a `history.md`
-> y este archivo vuelve a su estado inicial.
-
-- **Work Item:** _ninguno_
-- **Tipo:** _—_
-- **Estado:** _—_
-- **Inicio:** _—_
-- **Agente activo:** _—_
-
-## Plan
-
-_—_
-
-## Bitácora
-
-_—_
-
-## Próximo paso
-
-_—_
-EOF
-
-    ok ".rei/progress/current.md creado"
+    bash .rei/scripts/reset-current.sh > /dev/null
+    ok ".rei/progress/current.md creado desde plantilla"
 else
     ok ".rei/progress/current.md"
 fi
 
-HISTORY_FILE=".rei/progress/history.md"
-
-# Plantilla definida en .rei/docs/harness/progress.md — si la modificas ahí, actualiza también este heredoc.
 if [[ ! -f "$HISTORY_FILE" ]]; then
-cat > "$HISTORY_FILE" <<'EOF'
-# Bitácora histórica (append-only)
-
-> Registro histórico de todas las sesiones completadas.
-> Nunca modifiques entradas anteriores.
-> Siempre añade nuevas entradas al final.
-
----
-EOF
-
-    ok ".rei/progress/history.md creado"
+    cp .rei/templates/history.md "$HISTORY_FILE"
+    ok ".rei/progress/history.md creado desde plantilla"
 else
     ok ".rei/progress/history.md"
 fi
@@ -220,18 +196,23 @@ echo
 
 echo "── 3. Validando invariantes ───────────────"
 
-# 3.1 — Sesión activa en .rei/progress/current.md
-#
-# .rei/progress/current.md es el único archivo que representa la sesión activa.
-# Por diseño (AGENTS.md §9: "trabaja sobre un único Work Item por sesión"),
-# la regla de .rei/docs/harness/workflow.md ("solo un Work Item en in_progress") queda
-# garantizada por esta misma estructura: basta con leer este único archivo,
-# no es necesario escanear .rei/specs/*/meta.json.
-if grep -q "_ninguno_" "$CURRENT_FILE"; then
-    ok "No existe ninguna sesión activa."
+# El estado se resuelve con código, nunca leyendo archivos desde la IA.
+# Ver .rei/scripts/session-status.sh y .rei/scripts/work-items-status.sh
+
+session_report="$(bash .rei/scripts/session-status.sh)"
+session_rc=$?
+if (( session_rc == 0 )); then
+    ok "$session_report"
 else
-    warn "Existe una sesión registrada en .rei/progress/current.md."
+    warn "$session_report"
     warn "Revisa si debe continuarse antes de iniciar un nuevo Work Item."
+fi
+
+work_items_report="$(bash .rei/scripts/work-items-status.sh)"
+work_items_rc=$?
+echo "$work_items_report"
+if (( work_items_rc != 0 )); then
+    warn "Resuelve el Work Item activo antes de iniciar uno nuevo."
 fi
 
 echo
