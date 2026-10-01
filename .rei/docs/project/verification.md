@@ -28,13 +28,28 @@ _Indica los comandos que normalmente deben ejecutarse antes de considerar un Wor
 
 Cada checkpoint posee un identificador estable (`V1`, `V2`, ...). El Implementer y el Reviewer deben referenciar estos IDs en sus reportes en vez de describir la verificación de forma libre.
 
+Los checkpoints se dividen en **rápidos** y **lentos** según su costo.
+
+### Checkpoints rápidos (se cablean en `.rei/init.sh`)
+
+Verificaciones de bajo costo que pueden ejecutarse muchas veces al día (linter, type-check, tests rápidos). `.rei/init.sh` se ejecuta de forma constante —al iniciar sesión, al implementar y al revisar—, así que **aquí no deben ir checks lentos**.
+
 | ID | Comando | Descripción |
 |----|---------|-------------|
 | `V1` | `<comando 1>` | <qué valida> |
 | `V2` | `<comando 2>` | <qué valida> |
+
+### Checkpoints lentos (NO van en `.rei/init.sh`)
+
+Build completo, e2e, integración, etc. Se ejecutan en CI o manualmente, se documentan aquí y se referencian en la evidencia, pero **no se cablean en `.rei/init.sh`**.
+
+| ID | Comando | Descripción |
+|----|---------|-------------|
 | `V3` | `<comando 3>` | <qué valida> |
 
-> Estos mismos comandos deben estar cableados en `.rei/init.sh` (Sección 4, `run_check`) para que su resultado se refleje en el código de salida del script. Si añades o modificas un checkpoint aquí, actualiza también `.rei/init.sh`.
+> Los checkpoints rápidos deben estar cableados en `.rei/init.sh` (Sección 4, `run_check`) para que su resultado se refleje en el código de salida del script. Si añades o modificas uno, actualiza también `.rei/init.sh`.
+
+> **Recomendación de personalización:** cuando el proyecto lo permita, prefiere verificar solo el módulo o los módulos afectados por el Work Item en lugar de la suite completa. REI Harness no impone cómo invocarlos porque es agnóstico al lenguaje y al framework de test.
 
 ---
 

@@ -4,10 +4,10 @@ Estos archivos describen **las reglas específicas de tu repositorio** — arqui
 
 **Debes personalizarlos** al implementar REI Harness por primera vez. Los agentes los consultan en cada implementación y revisión.
 
-| Archivo | Propósito |
-|---------|-----------|
-| `architecture.md` | Decisiones arquitectónicas del proyecto. |
-| `conventions.md` | Estilo de código y convenciones de desarrollo. |
-| `verification.md` | Checkpoints y evidencia para validar el trabajo. |
+| Archivo | Propósito | Quién lo lee por defecto |
+|---------|-----------|--------------------------|
+| `architecture.md` | Decisiones arquitectónicas del proyecto. | Implementer (siempre); Spec Author (al diseñar); Reviewer (solo si aplica) |
+| `conventions.md` | Estilo de código y convenciones de desarrollo. | Implementer (siempre); Reviewer (solo si aplica) |
+| `verification.md` | Checkpoints y evidencia para validar el trabajo. | Reviewer (siempre); Implementer (solo el mapeo de checkpoints) |
 
 También personaliza las secciones correspondientes de `AGENTS.md` (propósito, stack, comandos) y la Sección 4 de `.rei/init.sh` (comandos de verificación).
