@@ -74,6 +74,11 @@ Valores válidos:
 Define la etapa actual del workflow.
 Los estados válidos y sus transiciones se definen en `workflow.md`.
 
+> `meta.json.status` es la **fuente de verdad** del estado de un Work Item.
+> `.rei/progress/current.md` es un registro vivo de la sesión y puede reflejar
+> el estado de forma informativa; ante cualquier discrepancia, prevalece
+> `meta.json`.
+
 ---
 
 ## created_at

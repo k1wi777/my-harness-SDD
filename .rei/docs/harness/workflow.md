@@ -85,6 +85,10 @@ Todos los Work Items utilizan los mismos estados.
 | `blocked` | El trabajo no puede continuar. |
 | `changes_requested` | La revisión rechazó la implementación y requiere modificaciones. |
 
+> El estado oficial de un Work Item es `status` en `.rei/specs/<work-item-id>/meta.json`.
+> `.rei/progress/current.md` refleja la sesión activa de forma **informativa**; ante
+> cualquier discrepancia, prevalece `meta.json`.
+
 ---
 
 # Flujo general
