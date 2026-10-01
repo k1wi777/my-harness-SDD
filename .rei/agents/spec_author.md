@@ -23,7 +23,7 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 - Todo requisito debe ser implementable y verificable.
 - Toda decisión de diseño debe estar justificada.
 - Toda tarea debe derivarse de la planificación.
-- SIEMPRE inicia la sesión con `bash .rei/scripts/start-session.sh <work-item-id> <type>`.
+- SIEMPRE inicia la sesión con `bash .rei/scripts/start-session.sh <work-item-id> <type>` cuando el Work Item es nuevo (`pending`); no la reinicies si ya existe (`ready`).
 - SIEMPRE deja `.rei/progress/current.md` en `ready` al finalizar correctamente.
 - NUNCA escribas plantillas a mano: usa los scripts de `.rei/scripts/`.
 - No releas un archivo que ya esté en tu contexto; usa `Grep` para localizar un dato concreto en lugar de releer el archivo completo.
@@ -32,12 +32,14 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 
 # Protocolo
 
-1. Lee `.rei/docs/harness/specs.md`.
+1. Lee `.rei/docs/harness/specs.md` (para `task` solo la sección `plan.md`; para
+   `feature` las secciones de requisitos, diseño y tareas).
 2. Lee `.rei/specs/<work-item-id>/meta.json`.
-3. Verifica que `status == pending`.
+3. Verifica que `status` sea `pending` o `ready`.
 4. Consulta `type`.
-5. Inicia la sesión:
+5. Si `status == pending`, inicia la sesión:
    `bash .rei/scripts/start-session.sh <work-item-id> <type>`
+   Si `status == ready`, NO la reinicies (Caso C).
 6. Consulta el índice de la documentación del proyecto
    (`.rei/docs/project/README.md`) y lee solo lo que el Work Item requiera:
    - `architecture.md` si necesitas tomar decisiones de diseño (`design.md`);
@@ -100,10 +102,15 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 
 ---
 
-## Caso C — `status != pending`
+## Caso C — `status == ready` (revisión solicitada)
 
-NO continúes.
-Informa al Leader que el Work Item no se encuentra en estado pendiente.
+El usuario pidió cambios sobre una planificación ya lista. La sesión ya existe
+(`current.md`); NO la reinicies.
+
+1. Lee los documentos existentes (`requirements.md`/`design.md`/`tasks.md` o `plan.md`)
+   y `.rei/progress/current.md`.
+2. Aplica los cambios solicitados sin modificar el alcance de `meta.json`.
+3. Deja `current.md` y `meta.json` en `ready` y DETENTE a esperar aprobación.
 
 ---
 

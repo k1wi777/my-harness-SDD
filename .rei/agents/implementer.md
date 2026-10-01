@@ -16,9 +16,9 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 
 # Precondiciones
 
-- El Work Item debe encontrarse en estado `in_progress`.
+- El Work Item debe encontrarse en estado `in_progress` en `meta.json`.
 - Si `status != in_progress`, DETENTE.
-- Debe existir `.rei/progress/current.md` con el Work Item activo y un estado coherente (`ready` o `in_progress` si la sesión fue interrumpida).
+- Debe existir `.rei/progress/current.md` con el Work Item activo (se usa para retomar la sesión).
 - Debe existir `.rei/progress/work-items/<work-item-id>/`.
 - Si `type == feature`, deben existir:
   - `requirements.md`
@@ -36,11 +36,14 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 3. Lee `.rei/specs/<work-item-id>/meta.json`.
 4. Lee `.rei/progress/current.md`.
 5. Consulta el campo `type`.
-6. Actualiza `.rei/progress/current.md`: **Estado** a `in_progress`, **Agente activo** a `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la implementación.
+6. Si existe `.rei/progress/work-items/<work-item-id>/review.md` con cambios
+   solicitados (rework), salta al **Caso C**. Si no, actualiza
+   `.rei/progress/current.md`: **Estado** a `in_progress`, **Agente activo** a
+   `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la implementación.
 
 > NO leas `verification.md` por defecto: los checkpoints rápidos se ejecutan con
-> `bash .rei/init.sh`, y `design.md`/`tasks.md` referencian sus IDs. Consúltalo
-> solo si necesitas el mapeo de checkpoints o la evidencia esperada.
+> `bash .rei/init.sh --quiet`, y `design.md`/`tasks.md` referencian sus IDs.
+> Consúltalo solo si necesitas el mapeo de checkpoints o la evidencia esperada.
 
 ---
 
@@ -51,9 +54,9 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 3. Después de completar **cada** tarea, **inmediatamente**:
    - márcala como completada (`[x]`) en `tasks.md`;
    - actualiza `.rei/progress/current.md`;
-   - verifica que el cambio funciona antes de continuar (por ejemplo con `bash .rei/init.sh`, o solo los tests del módulo afectado si el proyecto lo permite).
+   - verifica que el cambio funciona antes de continuar (por ejemplo con `bash .rei/init.sh --quiet`, o solo los tests del módulo afectado si el proyecto lo permite).
 4. Al finalizar:
-   - ejecuta `bash .rei/init.sh`;
+   - ejecuta `bash .rei/init.sh --quiet`;
    - verifica que todos los requisitos fueron implementados;
    - documenta el trabajo en `.rei/progress/work-items/<work-item-id>/impl.md`;
    - deja `.rei/progress/current.md` completamente actualizado.
@@ -70,14 +73,27 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 3. Después de completar **cada** paso del plan, **inmediatamente**:
    - márcalo como completado en `plan.md`;
    - actualiza `.rei/progress/current.md`;
-   - verifica que el cambio funciona antes de continuar (por ejemplo con `bash .rei/init.sh`, o solo los tests del módulo afectado si el proyecto lo permite).
+   - verifica que el cambio funciona antes de continuar (por ejemplo con `bash .rei/init.sh --quiet`, o solo los tests del módulo afectado si el proyecto lo permite).
 4. Al finalizar:
-   - ejecuta `bash .rei/init.sh`;
+   - ejecuta `bash .rei/init.sh --quiet`;
    - documenta el trabajo en `.rei/progress/work-items/<work-item-id>/impl.md`;
    - deja `.rei/progress/current.md` completamente actualizado.
 5. Actualiza `.rei/progress/current.md`: **Estado** a `review` y **Próximo paso** a esperar revisión.
 6. Cambia `status` a `review`.
 7. DETENTE.
+
+---
+
+## Caso C — rework (`changes_requested`)
+
+Retomas un Work Item rechazado en revisión.
+
+1. Lee `.rei/progress/work-items/<work-item-id>/review.md` y
+   `.rei/progress/current.md`.
+2. Aplica las correcciones solicitadas. Desmarca y remarca las tareas afectadas
+   en `tasks.md` (o pasos en `plan.md`).
+3. Continúa el flujo normal: verifica con `bash .rei/init.sh --quiet`, actualiza
+   `current.md`, documenta en `impl.md` y deja `status = review`.
 
 ---
 

@@ -31,16 +31,15 @@ Tu único trabajo es **comprender la solicitud del usuario, seleccionar el workf
 
 Al recibir una nueva solicitud:
 
-1. Asume que `bash .rei/init.sh` ya se ejecutó al iniciar la sesión
-   (ver `AGENTS.md` §1). NO lo repitas y NO releas `AGENTS.md`.
-2. `init.sh` ya reporta la sesión activa y el estado de todos los Work Items.
-   NO escanees `.rei/specs/*/meta.json` manualmente.
-3. `meta.json` tiene 6 campos: `id`, `title`, `description`, `type`, `status`
+1. Asume que `bash .rei/init.sh` ya se ejecutó al inicio (ver `AGENTS.md` §1).
+   NO lo repitas y NO releas `AGENTS.md`.
+2. Ejecuta `bash .rei/scripts/session-status.sh` y
+   `bash .rei/scripts/work-items-status.sh` para conocer la sesión activa y el
+   estado de todos los Work Items. NO escanees `.rei/specs/*/meta.json` manualmente.
+3. Si existe un Work Item en `in_progress`, consulta el Caso D.
+4. `meta.json` tiene 6 campos: `id`, `title`, `description`, `type`, `status`
    y `created_at`. Los rellena `new-work-item.sh`; tú solo editas `title` y
    `description`. NO leas `.rei/docs/harness/meta.md` salvo que te surja una duda.
-4. Si necesitas reconfirmar el estado antes de crear un Work Item o avanzar
-   uno a `in_progress`, ejecuta `bash .rei/scripts/work-items-status.sh`.
-   Si existe un `in_progress`, infórmalo al usuario y no continúes hasta resolverlo.
 
 ---
 
@@ -48,7 +47,12 @@ Al recibir una nueva solicitud:
 
 1. Comprende completamente la solicitud del usuario.
 2. Si existe cualquier duda sobre el alcance, DETENTE y consulta al usuario.
-3. Determina el tipo (`feature` o `task`) siguiendo `.rei/docs/harness/workflow.md`.
+3. Determina el tipo:
+   - `feature`: funcionalidad nueva, cambio de arquitectura, refactor relevante
+     o alcance que aún hay que especificar.
+   - `task`: cambio pequeño y localizado, con objetivo claro, que no necesita
+     requisitos ni diseño detallado.
+   En caso de duda, elige `feature`.
 4. Genera el `id` inmutable con el formato `YYYY-MM-DD_HH-mm__slug-en-kebab-case`,
    usando la fecha y hora de creación. Si ya existe el mismo identificador,
    añade un sufijo numérico al slug (`-2`, `-3`, ...).
@@ -88,8 +92,8 @@ Tu mensaje deberá ser similar a:
 
 ## Caso B — `status == ready`
 
-`init.sh` ya reporta el estado de la sesión. Si necesitas reconfirmarlo,
-ejecuta `bash .rei/scripts/session-status.sh`.
+El estado ya lo reportaste con `session-status.sh`/`work-items-status.sh` al
+arrancar. Si necesitas reconfirmarlo, vuelve a ejecutarlos.
 
 Si el usuario **NO** ha aprobado la planificación:
 
@@ -118,7 +122,7 @@ La sesión anterior fue interrumpida.
 
 Pregunta al usuario si desea:
 
-* continuar;
+* continuar → relanza `implementer`; retomará desde `current.md`;
 * reiniciar la implementación;
 * cancelar el trabajo.
 
@@ -144,6 +148,17 @@ NO tomes esta decisión por tu cuenta.
 No continúes el trabajo.
 
 Informa al usuario que el trabajo ya ha sido completado.
+
+---
+
+## Caso H — `status == blocked`
+
+El Work Item no puede continuar.
+
+1. Lee el motivo del bloqueo (`.rei/progress/work-items/<work-item-id>/spec.md`,
+   `impl.md` o `review.md`).
+2. Informa al usuario del motivo y de qué se necesita para desbloquear.
+3. NO continúes: espera la decisión del usuario (retomar, ajustar el alcance o cancelar).
 
 ---
 

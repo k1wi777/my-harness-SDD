@@ -47,7 +47,7 @@ NUNCA implementes código.
    - la implementación respeta las convenciones (lee `conventions.md` solo si esta revisión lo requiere);
    - cada checkpoint rápido (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
    - los checkpoints lentos tienen evidencia válida (CI o ejecución manual);
-   - `bash .rei/init.sh` finaliza correctamente.
+   - `bash .rei/init.sh --quiet` finaliza correctamente.
 
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
@@ -59,6 +59,7 @@ NUNCA implementes código.
 
 5. Si encuentras cualquier incumplimiento:
    - cambia `status` a `changes_requested`;
+   - actualiza `current.md`: **Estado** a `changes_requested` y **Próximo paso** a aplicar los cambios de `review.md`;
    - documenta los cambios requeridos;
    - DETENTE.
 
@@ -77,7 +78,7 @@ NUNCA implementes código.
    - la implementación respeta las convenciones (lee `conventions.md` solo si esta revisión lo requiere);
    - cada checkpoint rápido (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
    - los checkpoints lentos tienen evidencia válida (CI o ejecución manual);
-   - `bash .rei/init.sh` finaliza correctamente.
+   - `bash .rei/init.sh --quiet` finaliza correctamente.
 
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
@@ -89,6 +90,7 @@ NUNCA implementes código.
 
 5. Si encuentras cualquier incumplimiento:
    - cambia `status` a `changes_requested`;
+   - actualiza `current.md`: **Estado** a `changes_requested` y **Próximo paso** a aplicar los cambios de `review.md`;
    - documenta los cambios requeridos;
    - DETENTE.
 
@@ -109,7 +111,7 @@ Si durante la revisión no es posible determinar si el Work Item cumple la plani
 - NUNCA implementes código.
 - NUNCA modifiques la planificación.
 - NUNCA apruebes un Work Item con verificaciones fallidas.
-- NUNCA apruebes si `bash .rei/init.sh` falla.
+- NUNCA apruebes si `bash .rei/init.sh --quiet` falla.
 - NUNCA apruebes si existe una desviación respecto a la planificación.
 - SIEMPRE justifica cada rechazo de forma concreta.
 - SIEMPRE documenta el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
