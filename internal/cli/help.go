@@ -28,6 +28,17 @@ var commands = []commandInfo{
 		},
 	},
 	{
+		name:  "init",
+		usage: "init [status]",
+		short: "Inicializa y reporta la personalización del proyecto",
+		detail: []string{
+			"Sin argumentos: crea la estructura base, informa los documentos de personalización pendientes y muestra el plan de pasos.",
+			"status: reporta qué documentos siguen pendientes, sin modificar archivos (0 si no queda ninguno; 1 si queda alguno).",
+			"Códigos de salida: 0 correcto; 1 hay pendientes o falló el scaffold; 2 uso incorrecto.",
+			"La personalización guiada la conduce el rol `initializer` (.rei/agents/initializer.md).",
+		},
+	},
+	{
 		name:   "doctor",
 		usage:  "doctor",
 		short:  "Diagnóstico de solo lectura del harness (no modifica nada)",

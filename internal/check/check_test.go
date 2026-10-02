@@ -37,6 +37,60 @@ func TestRunMissingFile(t *testing.T) {
 	}
 }
 
+func setupTemplates(t *testing.T, p *paths.Project) {
+	t.Helper()
+	if err := os.MkdirAll(p.TemplatesDir(), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for _, f := range []string{"current.md", "history.md"} {
+		if err := os.WriteFile(filepath.Join(p.TemplatesDir(), f), []byte("plantilla "+f), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
+func TestEnsureStructureOK(t *testing.T) {
+	p := &paths.Project{Root: t.TempDir()}
+	setupTemplates(t, p)
+	var buf bytes.Buffer
+	if code := EnsureStructure(p, &buf); code != 0 {
+		t.Fatalf("EnsureStructure = %d, salida:\n%s", code, buf.String())
+	}
+	for _, dir := range []string{p.SpecsDir(), p.WorkItemsDir()} {
+		if fi, err := os.Stat(dir); err != nil || !fi.IsDir() {
+			t.Errorf("no se creó %s (err=%v)", dir, err)
+		}
+	}
+	for _, f := range []string{p.CurrentFile(), p.HistoryFile()} {
+		if _, err := os.Stat(f); err != nil {
+			t.Errorf("no se creó %s (err=%v)", f, err)
+		}
+	}
+}
+
+func TestEnsureStructureIdempotente(t *testing.T) {
+	p := &paths.Project{Root: t.TempDir()}
+	setupTemplates(t, p)
+	var buf bytes.Buffer
+	if code := EnsureStructure(p, &buf); code != 0 {
+		t.Fatalf("primera llamada = %d, salida:\n%s", code, buf.String())
+	}
+	if err := os.WriteFile(p.CurrentFile(), []byte("modificado"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	buf.Reset()
+	if code := EnsureStructure(p, &buf); code != 0 {
+		t.Fatalf("segunda llamada = %d, salida:\n%s", code, buf.String())
+	}
+	data, err := os.ReadFile(p.CurrentFile())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(data) != "modificado" {
+		t.Errorf("current.md se sobrescribió: %q", string(data))
+	}
+}
+
 func writeConfig(t *testing.T, p *paths.Project, body string) {
 	t.Helper()
 	if err := os.MkdirAll(p.ReiDir(), 0o755); err != nil {

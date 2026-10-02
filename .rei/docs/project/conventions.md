@@ -5,6 +5,8 @@
 > Este documento define las convenciones de desarrollo del proyecto.
 > El Implementer debe seguirlas durante la implementación y el Reviewer las utilizará para validar la calidad del código.
 
+<!-- REI:PENDIENTE -->
+
 ---
 
 # Objetivo

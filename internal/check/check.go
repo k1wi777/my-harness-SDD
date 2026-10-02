@@ -29,6 +29,7 @@ var RequiredFiles = []string{
 	".rei/agents/leader.md",
 	".rei/agents/spec_author.md",
 	".rei/agents/implementer.md",
+	".rei/agents/initializer.md",
 	".rei/agents/reviewer.md",
 	".rei/templates/current.md",
 	".rei/templates/history.md",
@@ -44,9 +45,6 @@ func Run(p *paths.Project, quiet bool, out io.Writer) int {
 			fmt.Fprintf(out, "[OK]    %s\n", fmt.Sprintf(format, a...))
 		}
 	}
-	warn := func(format string, a ...any) {
-		fmt.Fprintf(out, "[WARN]  %s\n", fmt.Sprintf(format, a...))
-	}
 	fail := func(format string, a ...any) {
 		fmt.Fprintf(out, "[FAIL]  %s\n", fmt.Sprintf(format, a...))
 		exit = 1
@@ -61,53 +59,9 @@ func Run(p *paths.Project, quiet bool, out io.Writer) int {
 		}
 	}
 
-	// 2. Estructura
-	if err := os.MkdirAll(p.SpecsDir(), 0o755); err != nil {
-		fail("No se pudo crear .rei/specs/: %v", err)
-	} else {
-		ok(".rei/specs/")
-	}
-	if err := os.MkdirAll(p.WorkItemsDir(), 0o755); err != nil {
-		fail("No se pudo crear .rei/progress/work-items/: %v", err)
-	} else {
-		ok(".rei/progress/work-items/")
-	}
-
-	// 3. current.md / history.md
-	if !fileExists(p.CurrentFile()) {
-		if err := template.ResetCurrent(p); err != nil {
-			fail("No se pudo crear current.md: %v", err)
-		} else {
-			ok(".rei/progress/current.md creado desde plantilla")
-		}
-	} else {
-		ok(".rei/progress/current.md")
-	}
-	if !fileExists(p.HistoryFile()) {
-		data, err := os.ReadFile(filepath.Join(p.TemplatesDir(), "history.md"))
-		if err != nil {
-			fail("No se pudo leer la plantilla de history.md: %v", err)
-		} else if err := os.WriteFile(p.HistoryFile(), data, 0o644); err != nil {
-			fail("No se pudo crear history.md: %v", err)
-		} else {
-			ok(".rei/progress/history.md creado desde plantilla")
-		}
-	} else {
-		ok(".rei/progress/history.md")
-	}
-
-	// 4. Repositorio git (opcional, mejora el review por diff)
-	switch {
-	case !hasGit():
-		warn("git no disponible; REI funciona, pero el review por diff quedará deshabilitado.")
-	case gitx.IsRepo(p.Root):
-		ok("Repositorio git detectado.")
-	default:
-		if err := exec.Command("git", "-C", p.Root, "init").Run(); err != nil {
-			warn("No se pudo inicializar git; el review por diff quedará deshabilitado.")
-		} else {
-			ok("Repositorio git inicializado.")
-		}
+	// 2-4. Estructura (specs, progreso, plantillas) y repositorio git
+	if ensureStructure(p, out, quiet) != 0 {
+		exit = 1
 	}
 
 	// 5. Checks del proyecto (.rei/config.json)
@@ -142,6 +96,87 @@ func Run(p *paths.Project, quiet bool, out io.Writer) int {
 	} else {
 		fail("REI Harness contiene errores.")
 	}
+	return exit
+}
+
+// EnsureStructure crea .rei/specs/, .rei/progress/work-items/, current.md e
+// history.md si faltan, e inicializa git si no existe. Devuelve un código de
+// salida (0 correcto; 1 si no pudo crear los archivos base). No ejecuta los
+// checks de .rei/config.json.
+//
+// Es la pieza compartida entre `rei check` y `rei init`: reutilizarla evita
+// duplicar el scaffold. El fallo al inicializar git es un aviso, no un error.
+func EnsureStructure(p *paths.Project, out io.Writer) int {
+	return ensureStructure(p, out, false)
+}
+
+// ensureStructure implementa EnsureStructure. El parámetro quiet permite a
+// check.Run conservar su salida actual (sin [OK] con --quiet) sin que
+// EnsureStructure tenga que conocer los flags del CLI.
+func ensureStructure(p *paths.Project, out io.Writer, quiet bool) int {
+	exit := 0
+	ok := func(format string, a ...any) {
+		if !quiet {
+			fmt.Fprintf(out, "[OK]    %s\n", fmt.Sprintf(format, a...))
+		}
+	}
+	warn := func(format string, a ...any) {
+		fmt.Fprintf(out, "[WARN]  %s\n", fmt.Sprintf(format, a...))
+	}
+	fail := func(format string, a ...any) {
+		fmt.Fprintf(out, "[FAIL]  %s\n", fmt.Sprintf(format, a...))
+		exit = 1
+	}
+
+	// 1. Estructura
+	if err := os.MkdirAll(p.SpecsDir(), 0o755); err != nil {
+		fail("No se pudo crear .rei/specs/: %v", err)
+	} else {
+		ok(".rei/specs/")
+	}
+	if err := os.MkdirAll(p.WorkItemsDir(), 0o755); err != nil {
+		fail("No se pudo crear .rei/progress/work-items/: %v", err)
+	} else {
+		ok(".rei/progress/work-items/")
+	}
+
+	// 2. current.md / history.md
+	if !fileExists(p.CurrentFile()) {
+		if err := template.ResetCurrent(p); err != nil {
+			fail("No se pudo crear current.md: %v", err)
+		} else {
+			ok(".rei/progress/current.md creado desde plantilla")
+		}
+	} else {
+		ok(".rei/progress/current.md")
+	}
+	if !fileExists(p.HistoryFile()) {
+		data, err := os.ReadFile(filepath.Join(p.TemplatesDir(), "history.md"))
+		if err != nil {
+			fail("No se pudo leer la plantilla de history.md: %v", err)
+		} else if err := os.WriteFile(p.HistoryFile(), data, 0o644); err != nil {
+			fail("No se pudo crear history.md: %v", err)
+		} else {
+			ok(".rei/progress/history.md creado desde plantilla")
+		}
+	} else {
+		ok(".rei/progress/history.md")
+	}
+
+	// 3. Repositorio git (opcional, mejora el review por diff)
+	switch {
+	case !hasGit():
+		warn("git no disponible; REI funciona, pero el review por diff quedará deshabilitado.")
+	case gitx.IsRepo(p.Root):
+		ok("Repositorio git detectado.")
+	default:
+		if err := exec.Command("git", "-C", p.Root, "init").Run(); err != nil {
+			warn("No se pudo inicializar git; el review por diff quedará deshabilitado.")
+		} else {
+			ok("Repositorio git inicializado.")
+		}
+	}
+
 	return exit
 }
 

@@ -10,6 +10,7 @@ import (
 	"github.com/k1wi777/my-harness-SDD/internal/check"
 	"github.com/k1wi777/my-harness-SDD/internal/config"
 	"github.com/k1wi777/my-harness-SDD/internal/gitx"
+	"github.com/k1wi777/my-harness-SDD/internal/initwizard"
 	"github.com/k1wi777/my-harness-SDD/internal/paths"
 	"github.com/k1wi777/my-harness-SDD/internal/state"
 	"github.com/k1wi777/my-harness-SDD/internal/validate"
@@ -56,6 +57,19 @@ func Run(p *paths.Project, out io.Writer) int {
 			ok("%s", f)
 		} else {
 			fail("Falta %s", f)
+		}
+	}
+
+	// 1b. Personalización del proyecto (WARN, no incrementa fallos)
+	pending, err := initwizard.Pending(p)
+	switch {
+	case err != nil:
+		warn("No se pudo comprobar la personalización: %v", err)
+	case len(pending) == 0:
+		ok("Documentación del proyecto personalizada.")
+	default:
+		for _, d := range pending {
+			warn("Personalización pendiente: %s", d.Path)
 		}
 	}
 

@@ -116,3 +116,41 @@ de salida, restricciones, validaciones y pasos.
 
 Esperar revisión del Reviewer.
 
+
+## 2026-10-02 12:39 — 2026-10-02_12-18__rei-init-wizard
+
+- **Work Item:** 2026-10-02_12-18__rei-init-wizard
+- **Tipo:** feature
+- **Estado:** review
+- **Inicio:** 2026-10-02T12:18:31-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Planificación completada (feature `rei init wizard`):
+`requirements.md` (R1–R41, EARS), `design.md` (estrategia, archivos, decisiones
+D1–D7 y alternativas A1–A6) y `tasks.md` (T1–T16 con trazabilidad a R-id).
+
+## Bitácora
+
+- 2026-10-02 12:18 — Sesión iniciada (`rei session start`) por spec_author.
+- 2026-10-02 — Lectura de `AGENTS.md`, `.rei/agents/*`, `.rei/docs/harness/specs.md`,
+  `.rei/docs/project/*` y del código del CLI (`internal/{cli,check,doctor,template,paths,meta}`).
+- 2026-10-02 — Redactados `requirements.md`, `design.md` y `tasks.md`.
+  Decisión clave: el estado del wizard vive en los marcadores `<!-- REI:PENDIENTE -->`
+  de los documentos (sin archivo de estado), y `rei init` reutiliza
+  `check.EnsureStructure` sin ejecutar los checks del proyecto.
+- 2026-10-02 — Implementación iniciada por el rol `implementer` (T1–T16).
+- 2026-10-02 — T1–T16 completadas: marcadores, `check.EnsureStructure`, paquete
+  `internal/initwizard`, dispatch `init`/`init status`, ayuda, WARN en `doctor`,
+  rol `initializer` y alta en `RequiredFiles`.
+- 2026-10-02 — Validación T15 superada: `gofmt -l internal` sin salida,
+  `make vet`, `make test`, `make build` y `rei check --quiet` → exit 0.
+  Verificación manual de `rei init` (idempotente), `rei init status` (0/1),
+  `rei doctor` (WARN sin fallar) y `rei help`/`rei help init`. Evidencia en
+  `.rei/progress/work-items/2026-10-02_12-18__rei-init-wizard/impl.md`.
+
+## Próximo paso
+
+Esperar la revisión (rol `reviewer`).
+

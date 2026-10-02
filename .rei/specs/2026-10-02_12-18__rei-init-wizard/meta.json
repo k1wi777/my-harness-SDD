@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_12-18__rei-init-wizard",
+  "title": "rei init wizard",
+  "description": "Implementar `rei init` como wizard de personalizacion de REI por proyecto, con dos niveles: (1) CLI determinista `rei init` que crea la estructura, hace git init si falta, detecta documentos pendientes de personalizacion y muestra el plan de pasos; y (2) un rol de agente `initializer` (IA) que conduce una entrevista guiada, interpreta las respuestas del usuario y las redacta en el formato correcto de cada documento, y sugiere opciones cuando el usuario no sabe. Pasos previstos: identidad/proposito (AGENTS §2), stack y comandos (AGENTS §3), arquitectura (architecture.md, con sugerencias), convenciones (conventions.md), verificacion (verification.md + .rei/config.json) y cierre/validacion. Introducir marcadores `<!-- REI:PENDIENTE -->` en las plantillas de proyecto para detectar lo pendiente; `rei init` y `rei doctor` los reportan. Interaccion: la IA escribe directo y confirma por paso. Fuera de alcance: adaptadores de runtime (`rei init <runtime>`).",
+  "type": "feature",
+  "status": "done",
+  "created_at": "2026-10-02T12:18:00-05:00",
+  "base_commit": "dae4ad3a1b4c6784c7904c8d9d17e3b32390f5e2",
+  "last_review_commit": ""
+}

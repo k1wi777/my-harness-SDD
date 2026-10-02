@@ -20,11 +20,17 @@ Antes de realizar cualquier modificación en el proyecto:
 
 No continúes hasta completar estos pasos.
 
+Si `rei init status` reporta documentos de personalización pendientes, el
+**Leader** DEBE delegar primero en el rol `initializer`
+(`.rei/agents/initializer.md`) antes de continuar con cualquier otro trabajo.
+
 ---
 
 # 2. Propósito del proyecto
 
 > **Personaliza esta sección** al adaptar REI Harness a tu repositorio. Describe el producto concreto, no el arnés.
+
+<!-- REI:PENDIENTE -->
 
 *Resume aquí el objetivo del proyecto. Esta información guía las decisiones del agente y evita cambios que contradigan la visión del producto.*
 
@@ -58,6 +64,8 @@ No continúes hasta completar estos pasos.
 # 3. Stack técnico
 
 > **Personaliza esta sección** con el stack y los comandos reales de tu proyecto.
+
+<!-- REI:PENDIENTE -->
 
 *Documenta únicamente la información técnica esencial para comprender el proyecto.*
 

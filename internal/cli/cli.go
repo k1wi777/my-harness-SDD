@@ -9,6 +9,7 @@ import (
 	"github.com/k1wi777/my-harness-SDD/internal/check"
 	"github.com/k1wi777/my-harness-SDD/internal/doctor"
 	"github.com/k1wi777/my-harness-SDD/internal/gitx"
+	"github.com/k1wi777/my-harness-SDD/internal/initwizard"
 	"github.com/k1wi777/my-harness-SDD/internal/meta"
 	"github.com/k1wi777/my-harness-SDD/internal/paths"
 	"github.com/k1wi777/my-harness-SDD/internal/show"
@@ -45,6 +46,8 @@ func Run(args []string) int {
 		return 0
 	case "check":
 		return cmdCheck(rest)
+	case "init":
+		return cmdInit(rest)
 	case "doctor":
 		return cmdDoctor(rest)
 	case "new":
@@ -93,6 +96,23 @@ func cmdCheck(args []string) int {
 		return code
 	}
 	return check.Run(p, quiet, os.Stdout)
+}
+
+// cmdInit implementa `rei init [status]`: scaffold y reporte de personalización
+// sin argumentos; reporte de solo lectura con `status`.
+func cmdInit(args []string) int {
+	if len(args) > 1 || (len(args) == 1 && args[0] != "status") {
+		fmt.Fprintln(os.Stderr, "uso: rei init [status]")
+		return 2
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	if len(args) == 1 {
+		return initwizard.Status(p, os.Stdout)
+	}
+	return initwizard.Init(p, os.Stdout)
 }
 
 // cmdTest ejecuta solo los checks declarados en .rei/config.json, sin efectos

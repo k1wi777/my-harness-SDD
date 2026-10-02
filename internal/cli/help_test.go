@@ -7,7 +7,7 @@ import (
 
 func TestCommandHelpTextConocidos(t *testing.T) {
 	for _, name := range []string{
-		"check", "doctor", "new", "session", "items", "status",
+		"check", "init", "doctor", "new", "session", "items", "status",
 		"commit", "validate", "review-diff", "test", "item", "version", "help",
 	} {
 		text, ok := commandHelpText(name)
@@ -45,9 +45,36 @@ func TestHelpTestMencionaMakeTest(t *testing.T) {
 
 func TestHelpGeneralIncluyeNuevosComandos(t *testing.T) {
 	text := helpText()
-	for _, want := range []string{"test", "item"} {
+	for _, want := range []string{"test", "item", "init [status]"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("la ayuda general no incluye %q:\n%s", want, text)
 		}
+	}
+}
+
+func TestHelpInitDocumentaStatusYInitializer(t *testing.T) {
+	text, ok := commandHelpText("init")
+	if !ok {
+		t.Fatal("no hay ayuda para init")
+	}
+	for _, want := range []string{"status", "initializer"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("la ayuda de init debe mencionar %q:\n%s", want, text)
+		}
+	}
+}
+
+func TestPrintCommandHelpInit(t *testing.T) {
+	if code := printCommandHelp("init"); code != 0 {
+		t.Fatalf("printCommandHelp(init) = %d, esperaba 0", code)
+	}
+}
+
+func TestCmdInitArgumentoInvalido(t *testing.T) {
+	if code := cmdInit([]string{"bogus"}); code != 2 {
+		t.Fatalf("cmdInit(bogus) = %d, esperaba 2", code)
+	}
+	if code := cmdInit([]string{"status", "extra"}); code != 2 {
+		t.Fatalf("cmdInit(status extra) = %d, esperaba 2", code)
 	}
 }

@@ -5,6 +5,8 @@
 > Este documento define las decisiones arquitectónicas del proyecto.
 > El Implementer debe respetarlas durante la implementación y el Reviewer las utilizará como criterio de validación.
 
+<!-- REI:PENDIENTE -->
+
 ---
 
 # Objetivo

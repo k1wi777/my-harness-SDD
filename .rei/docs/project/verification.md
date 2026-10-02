@@ -6,6 +6,8 @@
 >
 > El objetivo no es indicar **qué** se implementó, sino **cómo demostrar que funciona**.
 
+<!-- REI:PENDIENTE -->
+
 ## Estrategia de verificación
 
 _Describe aquí cómo debe verificarse el proyecto._

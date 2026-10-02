@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/k1wi777/my-harness-SDD/internal/check"
@@ -52,6 +53,32 @@ func TestRunMissingFile(t *testing.T) {
 	var buf bytes.Buffer
 	if code := Run(p, &buf); code == 0 {
 		t.Fatalf("esperaba fallo por archivos faltantes, salida:\n%s", buf.String())
+	}
+}
+
+func TestRunPersonalizacionPendiente(t *testing.T) {
+	p := setupValidHarness(t)
+	doc := filepath.Join(p.Root, ".rei", "docs", "project", "architecture.md")
+	if err := os.WriteFile(doc, []byte("<!-- REI:PENDIENTE -->"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	var buf bytes.Buffer
+	if code := Run(p, &buf); code != 0 {
+		t.Fatalf("Run = %d, esperaba 0 (los pendientes son WARN), salida:\n%s", code, buf.String())
+	}
+	if !strings.Contains(buf.String(), "Personalización pendiente: .rei/docs/project/architecture.md") {
+		t.Errorf("faltó el WARN de personalización pendiente:\n%s", buf.String())
+	}
+}
+
+func TestRunPersonalizacionCompleta(t *testing.T) {
+	p := setupValidHarness(t)
+	var buf bytes.Buffer
+	if code := Run(p, &buf); code != 0 {
+		t.Fatalf("Run = %d, salida:\n%s", code, buf.String())
+	}
+	if !strings.Contains(buf.String(), "Documentación del proyecto personalizada.") {
+		t.Errorf("faltó el OK de documentación personalizada:\n%s", buf.String())
 	}
 }
 
