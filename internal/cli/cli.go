@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/k1wi777/my-harness-SDD/internal/check"
 	"github.com/k1wi777/my-harness-SDD/internal/gitx"
 	"github.com/k1wi777/my-harness-SDD/internal/paths"
 	"github.com/k1wi777/my-harness-SDD/internal/state"
+	"github.com/k1wi777/my-harness-SDD/internal/template"
 	"github.com/k1wi777/my-harness-SDD/internal/validate"
+	"github.com/k1wi777/my-harness-SDD/internal/workitem"
 )
 
 const version = "0.1.0-dev"
@@ -26,10 +29,16 @@ func Run(args []string) int {
 	case "help", "--help", "-h":
 		printHelp()
 		return 0
+	case "check":
+		return cmdCheck(args[1:])
+	case "new":
+		return cmdNew(args[1:])
 	case "session":
-		return cmdSession()
+		return cmdSession(args[1:])
 	case "items":
 		return cmdItems(args[1:])
+	case "commit":
+		return cmdCommit(args[1:])
 	case "validate":
 		return cmdValidate(args[1:])
 	case "review-diff":
@@ -48,13 +57,20 @@ Uso:
   rei <comando> [argumentos]
 
 Comandos:
-  session                 Muestra la sesión activa
-  items status            Lista el estado de todos los Work Items
-  validate [<id>]         Comprueba la consistencia interna de un Work Item
-  review-diff <id> [--full]
-                          Genera el paquete de revisión de un Work Item
-  version                 Muestra la versión
-  help                    Muestra esta ayuda
+  check [--quiet]              Verifica el harness, inicializa la estructura y corre los checks
+  new <id> <feature|task> [title]
+                               Crea un Work Item nuevo
+  session                      Muestra la sesión activa
+  session start <id> <type>    Inicia la sesión de un Work Item
+  session archive              Archiva la sesión en history.md y resetea current.md
+  session reset                Restablece current.md
+  items status                 Lista el estado de todos los Work Items
+  commit set <id> <base_commit|last_review_commit>
+                               Registra el commit actual de git en meta.json
+  validate [<id>]              Comprueba la consistencia interna de un Work Item
+  review-diff <id> [--full]    Genera el paquete de revisión de un Work Item
+  version                      Muestra la versión
+  help                         Muestra esta ayuda
 `)
 }
 
@@ -67,7 +83,89 @@ func project() (*paths.Project, int) {
 	return p, 0
 }
 
-func cmdSession() int {
+func cmdCheck(args []string) int {
+	quiet := false
+	for _, a := range args {
+		if a == "--quiet" || a == "-q" {
+			quiet = true
+		}
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	return check.Run(p, quiet, os.Stdout)
+}
+
+func cmdNew(args []string) int {
+	if len(args) < 2 {
+		fmt.Fprintln(os.Stderr, "uso: rei new <id> <feature|task> [title]")
+		return 2
+	}
+	id, typ := args[0], args[1]
+	title := ""
+	if len(args) > 2 {
+		title = args[2]
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	if err := workitem.New(p, id, typ, title); err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+		return 1
+	}
+	fmt.Printf("Work Item creado: .rei/specs/%s/ (type: %s, status: pending)\n", id, typ)
+	fmt.Printf("Completa 'description' en .rei/specs/%s/meta.json.\n", id)
+	return 0
+}
+
+func cmdSession(args []string) int {
+	if len(args) == 0 || args[0] == "status" {
+		return cmdSessionStatus()
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	switch args[0] {
+	case "start":
+		if len(args) < 3 {
+			fmt.Fprintln(os.Stderr, "uso: rei session start <id> <feature|task>")
+			return 2
+		}
+		if err := template.StartSession(p, args[1], args[2]); err != nil {
+			fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+			return 1
+		}
+		fmt.Printf("Sesión iniciada: %s (%s) -> pending (agente: spec_author)\n", args[1], args[2])
+		return 0
+	case "archive":
+		id, err := template.ArchiveSession(p)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+			return 1
+		}
+		if id == "" {
+			fmt.Println("No hay sesión activa que archivar.")
+			return 0
+		}
+		fmt.Printf("Sesión '%s' archivada en history.md. current.md restablecido.\n", id)
+		return 0
+	case "reset":
+		if err := template.ResetCurrent(p); err != nil {
+			fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+			return 1
+		}
+		fmt.Println("current.md restablecido.")
+		return 0
+	default:
+		fmt.Fprintf(os.Stderr, "subcomando desconocido: session %s\n", args[0])
+		return 2
+	}
+}
+
+func cmdSessionStatus() int {
 	p, code := project()
 	if p == nil {
 		return code
@@ -112,6 +210,24 @@ func cmdItems(args []string) int {
 	if active > 0 {
 		fmt.Println("AVISO: existe un Work Item en in_progress.")
 	}
+	return 0
+}
+
+func cmdCommit(args []string) int {
+	if len(args) < 3 || args[0] != "set" {
+		fmt.Fprintln(os.Stderr, "uso: rei commit set <id> <base_commit|last_review_commit>")
+		return 2
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	msg, err := gitx.SetCommit(p, args[1], args[2])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+		return 1
+	}
+	fmt.Println(msg)
 	return 0
 }
 
