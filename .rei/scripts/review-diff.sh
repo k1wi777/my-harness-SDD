@@ -106,11 +106,21 @@ fi
 
 if (( full )); then
     echo
-    echo "--- Diff completo ---"
-    if (( ${#tracked[@]} > 0 )); then
-        git diff "$base" -- "${tracked[@]}"
+    echo "--- Diff completo (solo código; la spec se lista arriba) ---"
+    code_tracked=()
+    for p in "${tracked[@]}"; do
+        case "$p" in
+            .rei/*) ;;
+            *) code_tracked+=("$p") ;;
+        esac
+    done
+    if (( ${#code_tracked[@]} > 0 )); then
+        git diff "$base" -- "${code_tracked[@]}"
     fi
     for p in "${untracked[@]}"; do
+        case "$p" in
+            .rei/*) continue ;;
+        esac
         echo
         echo "--- nuevo: $p ---"
         git diff --no-index -- /dev/null "$p" 2>/dev/null || true
