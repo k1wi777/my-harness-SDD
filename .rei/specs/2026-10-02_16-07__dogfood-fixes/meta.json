@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_16-07__dogfood-fixes",
+  "title": "corregir hallazgos del dogfooding",
+  "description": "Corregir dos hallazgos del dogfooding de subagentes nativos. (1) Filtro de `rei review-diff`: hoy descarta todo `.rei/` salvo la spec del Work Item, ocultando cambios legitimos en `.rei/docs/**`, `.rei/agents/**`, `.rei/adapters/**`, `.rei/templates/**`, `.rei/config.json` y `AGENTS.md`. Debe excluir SOLO `.rei/progress/**` (bookkeeping de sesion) y conservar el resto (codigo y docs/agentes/adaptadores/spec). (2) Handoff coherente del Leader: al ejecutar `rei validate <id>` tras cada subagente, si hay un WARN de incoherencia entre `current.md` (Estado) y `meta.json` (status), el Leader debe corregir `current.md` para alinearlo antes de avanzar; documentarlo en el `## Contrato` de `.rei/agents/leader.md`. Fuera de alcance: slimming de Contratos y otros runtimes.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T16:07:00-05:00",
+  "base_commit": "e635e8f357fb9f8bd23c3a9ec18dbf348a8c502f",
+  "last_review_commit": ""
+}

@@ -263,3 +263,40 @@ cambiando al agente `leader`, detección de deriva con `rei init opencode
 
 Aprobado; sesión archivada y Work Item cerrado (`done`).
 
+
+## 2026-10-02 16:12 — 2026-10-02_16-07__dogfood-fixes
+
+- **Work Item:** 2026-10-02_16-07__dogfood-fixes
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T16:08:28-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Task `2026-10-02_16-07__dogfood-fixes`: (1) `rei review-diff` debe excluir solo
+`.rei/progress/**` y conservar el resto (código, `AGENTS.md`, spec y harness);
+(2) documentar en el `## Contrato` de `.rei/agents/leader.md` la corrección de
+`current.md` cuando `rei validate` reporte incoherencia con `meta.json`.
+Plan completo en `.rei/specs/2026-10-02_16-07__dogfood-fixes/plan.md`.
+
+## Bitácora
+
+- Sesión iniciada con `rei session start 2026-10-02_16-07__dogfood-fixes task`.
+- Leídos `task.md`, `meta.json`, `internal/gitx/gitx.go` y su test, y el
+  `## Contrato` de `.rei/agents/leader.md`.
+- Redactado `plan.md` con objetivo, archivos, cambios, restricciones y pasos.
+- Implementado el plan: `filterPaths` excluye solo `.rei/progress/**`
+  (se eliminó `filterCode` y el parámetro `id`), rótulos del paquete
+  actualizados y salto de no rastreados en `--full` acotado a `.rei/progress/**`.
+- Actualizado `gitx_test.go`; documentada en `.rei/agents/leader.md` la
+  corrección de `current.md` ante el `WARN` de `rei validate`.
+- Regenerado `.opencode/agents/leader.md` con `rei init opencode`
+  (`--check` exit 0).
+- Verificado: `rei check --quiet`, `go test ./...`, `make build` en verde, y
+  `rei review-diff` muestra cambios bajo `.rei/docs`/`.rei/agents`.
+
+## Próximo paso
+
+Implementación finalizada; espera revisión.
+

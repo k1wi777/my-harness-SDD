@@ -100,21 +100,20 @@ func ReviewDiff(p *paths.Project, id string, full bool) (string, error) {
 		return "", ErrNoBase
 	}
 
-	tracked := filterPaths(gitLines(p.Root, "diff", "--name-only", base), id)
-	untracked := filterPaths(gitLines(p.Root, "ls-files", "--others", "--exclude-standard"), id)
+	tracked := filterPaths(gitLines(p.Root, "diff", "--name-only", base))
+	untracked := filterPaths(gitLines(p.Root, "ls-files", "--others", "--exclude-standard"))
 
 	var b strings.Builder
 	fmt.Fprintf(&b, "== Paquete de revisión: %s ==\n", id)
 	fmt.Fprintf(&b, "Base: %s (%s)\n\n", base, origin)
 
-	codeTracked := filterCode(tracked)
-	b.WriteString("--- Resumen (código) ---\n")
-	if len(codeTracked) > 0 {
-		args := append([]string{"diff", "--stat", base, "--"}, codeTracked...)
+	b.WriteString("--- Resumen ---\n")
+	if len(tracked) > 0 {
+		args := append([]string{"diff", "--stat", base, "--"}, tracked...)
 		stat, _ := gitOut(p.Root, args...)
 		b.WriteString(stat)
 	} else {
-		b.WriteString("(sin cambios de código)\n")
+		b.WriteString("(sin cambios)\n")
 	}
 
 	if len(untracked) > 0 {
@@ -125,15 +124,14 @@ func ReviewDiff(p *paths.Project, id string, full bool) (string, error) {
 	}
 
 	if full {
-		b.WriteString("\n--- Diff completo (solo código; la spec se lista arriba) ---\n")
-		code := filterCode(tracked)
-		if len(code) > 0 {
-			args := append([]string{"diff", base, "--"}, code...)
+		b.WriteString("\n--- Diff completo ---\n")
+		if len(tracked) > 0 {
+			args := append([]string{"diff", base, "--"}, tracked...)
 			diff, _ := gitOut(p.Root, args...)
 			b.WriteString(diff)
 		}
 		for _, u := range untracked {
-			if strings.HasPrefix(u, ".rei/") {
+			if strings.HasPrefix(u, ".rei/progress/") {
 				continue
 			}
 			fmt.Fprintf(&b, "\n--- nuevo: %s ---\n", u)
@@ -157,31 +155,16 @@ func gitLines(dir string, args ...string) []string {
 	return lines
 }
 
-// filterPaths conserva el código del proyecto y la spec del Work Item;
-// descarta el resto del harness (.rei/progress, otros specs, docs...).
-func filterPaths(paths []string, id string) []string {
-	specPrefix := ".rei/specs/" + id + "/"
+// filterPaths descarta solo el bookkeeping de sesión (.rei/progress/**);
+// conserva el resto: código del proyecto, AGENTS.md, la spec del Work Item,
+// docs, agentes, adaptadores y plantillas del harness.
+func filterPaths(paths []string) []string {
 	var kept []string
 	for _, p := range paths {
-		switch {
-		case strings.HasPrefix(p, specPrefix):
-			kept = append(kept, p)
-		case strings.HasPrefix(p, ".rei/"):
-			// ruido del harness
-		default:
-			kept = append(kept, p)
+		if strings.HasPrefix(p, ".rei/progress/") {
+			continue
 		}
-	}
-	return kept
-}
-
-// filterCode conserva solo rutas fuera de .rei/.
-func filterCode(paths []string) []string {
-	var kept []string
-	for _, p := range paths {
-		if !strings.HasPrefix(p, ".rei/") {
-			kept = append(kept, p)
-		}
+		kept = append(kept, p)
 	}
 	return kept
 }

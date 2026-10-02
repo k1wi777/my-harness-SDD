@@ -188,7 +188,10 @@ Restricciones: <si las hay>
 * Proporciona la ruta del trabajo dentro de `.rei/specs/<work-item-id>/`.
 * Proporciona únicamente el contexto necesario para esa etapa.
 * Tras cada subagente, ejecuta `rei validate <work-item-id>` para confirmar la
-  consistencia antes de avanzar.
+  consistencia antes de avanzar. Si `rei validate` emite el `WARN` de
+  incoherencia entre `current.md` (Estado) y `meta.json` (status), corrige el
+  campo **Estado** de `.rei/progress/current.md` para alinearlo con el `status`
+  de `meta.json` antes de continuar.
 
 Cada subagente es responsable exclusivamente de su propia etapa.
 
@@ -213,6 +216,8 @@ Si una solicitud resulta demasiado grande:
 * NUNCA inventes requisitos.
 * NUNCA modifiques el trabajo de otro subagente.
 * NUNCA avances el workflow sin completar correctamente la etapa actual.
+* NUNCA avances mientras `current.md` (Estado) y `meta.json` (status) estén
+  incoherentes: corrígelos primero.
 * NUNCA omitas etapas del workflow.
 * NUNCA asumas una aprobación implícita del usuario.
 * NUNCA permitas que un subagente implemente trabajo directamente a partir de
