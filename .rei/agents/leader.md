@@ -186,6 +186,8 @@ Restricciones: <si las hay>
 
 * Proporciona la ruta del trabajo dentro de `.rei/specs/<work-item-id>/`.
 * Proporciona únicamente el contexto necesario para esa etapa.
+* Tras cada subagente, ejecuta `bash .rei/scripts/validate.sh <work-item-id>`
+  para confirmar la consistencia antes de avanzar.
 
 Cada subagente es responsable exclusivamente de su propia etapa.
 

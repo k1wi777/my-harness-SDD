@@ -57,6 +57,7 @@ NUNCA implementes código.
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 4. Si todo es correcto:
+   - ejecuta `bash .rei/scripts/validate.sh <work-item-id>` (consistencia interna);
    - cierra la sesión con `bash .rei/scripts/archive-session.sh`
      (archiva el resumen en `history.md` y restablece `current.md`);
    - cambia `status` a `done`;
@@ -90,6 +91,7 @@ NUNCA implementes código.
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 4. Si todo es correcto:
+   - ejecuta `bash .rei/scripts/validate.sh <work-item-id>` (consistencia interna);
    - cierra la sesión con `bash .rei/scripts/archive-session.sh`
      (archiva el resumen en `history.md` y restablece `current.md`);
    - cambia `status` a `done`;

@@ -106,3 +106,5 @@ bash .rei/scripts/set-commit.sh <work-item-id> last_review_commit
 ```
 
 Si está presente, `review-diff.sh` calcula el diff desde ese punto, para que la próxima revisión vea solo los cambios pedidos y no revalide lo anterior. Vacío si no aplica.
+
+> Para que acote de verdad, la implementación debe estar **commiteada** antes de solicitar la revisión. Si no lo está, el diff cubre todo lo pendiente desde `base_commit`: sigue siendo correcto, solo menos acotado.

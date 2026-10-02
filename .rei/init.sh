@@ -137,6 +137,7 @@ REQUIRED_FILES=(
 
     ".rei/docs/harness/workflow.md"
     ".rei/docs/harness/specs.md"
+    ".rei/docs/harness/task.md"
     ".rei/docs/harness/meta.md"
     ".rei/docs/harness/progress.md"
     ".rei/docs/project/architecture.md"
@@ -157,6 +158,7 @@ REQUIRED_FILES=(
     ".rei/scripts/new-work-item.sh"
     ".rei/scripts/review-diff.sh"
     ".rei/scripts/set-commit.sh"
+    ".rei/scripts/validate.sh"
 
     ".rei/templates/current.md"
     ".rei/templates/history.md"
