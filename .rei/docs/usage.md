@@ -20,7 +20,7 @@ Ninguna de las dos es un trámite. Son los dos puntos donde el proceso se detien
 
 # 1. Primera vez en el repositorio
 
-1. Instala el CLI `rei` (ver el `README.md`; requiere Go para compilar).
+1. Obtén el binario `rei` para tu sistema operativo (compílalo con `make build` si tienes Go, o descarga una release publicada). El binario **no necesita Go ni ninguna dependencia** para ejecutarse.
 2. Copia `AGENTS.md` y la carpeta `.rei/` dentro de tu proyecto.
 3. **Personaliza la documentación de tu proyecto** (ver Sección 1.1).
 4. Ejecuta:
