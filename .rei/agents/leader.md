@@ -37,9 +37,11 @@ Al recibir una nueva solicitud:
    `bash .rei/scripts/work-items-status.sh` para conocer la sesión activa y el
    estado de todos los Work Items. NO escanees `.rei/specs/*/meta.json` manualmente.
 3. Si existe un Work Item en `in_progress`, consulta el Caso D.
-4. `meta.json` tiene 6 campos: `id`, `title`, `description`, `type`, `status`
-   y `created_at`. Los rellena `new-work-item.sh`; tú solo editas `title` y
-   `description`. NO leas `.rei/docs/harness/meta.md` salvo que te surja una duda.
+4. `meta.json` incluye `id`, `title`, `description`, `type`, `status`,
+   `created_at`, `base_commit` y `last_review_commit`. Los rellena
+   `new-work-item.sh`; tú solo editas `title` y `description`, y registras
+   `base_commit` con `set-commit.sh` al aprobar (Caso C). NO leas
+   `.rei/docs/harness/meta.md` salvo que te surja una duda.
 
 ---
 
