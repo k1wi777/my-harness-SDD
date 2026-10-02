@@ -125,7 +125,7 @@ func Run(p *paths.Project, quiet bool, out io.Writer) int {
 			if desc == "" {
 				desc = ch.ID
 			}
-			if runCheck(p.Root, ch.Command, out) {
+			if Exec(p.Root, ch.Command, out) {
 				ok("%s", desc)
 			} else {
 				fail("%s", desc)
@@ -145,7 +145,7 @@ func Run(p *paths.Project, quiet bool, out io.Writer) int {
 	return exit
 }
 
-func runCheck(dir string, command []string, out io.Writer) bool {
+func Exec(dir string, command []string, out io.Writer) bool {
 	if len(command) == 0 {
 		return false
 	}
@@ -163,6 +163,35 @@ func runCheck(dir string, command []string, out io.Writer) bool {
 		return false
 	}
 	return true
+}
+
+// RunDeclared ejecuta solo los checks de .rei/config.json, sin efectos
+// secundarios (no crea estructura, no inicializa git, no valida integridad).
+// NO es la suite de tests de REI (esa es `make test`).
+func RunDeclared(p *paths.Project, out io.Writer) int {
+	cfg, err := config.Load(filepath.Join(p.ReiDir(), "config.json"))
+	switch {
+	case err != nil:
+		fmt.Fprintf(out, "[FAIL]  .rei/config.json inválido: %v\n", err)
+		return 1
+	case len(cfg.Checks) == 0:
+		fmt.Fprintln(out, "[INFO]  Sin checks configurados (.rei/config.json). Nada que ejecutar.")
+		return 0
+	}
+	exit := 0
+	for _, ch := range cfg.Checks {
+		desc := ch.Description
+		if desc == "" {
+			desc = ch.ID
+		}
+		if Exec(p.Root, ch.Command, out) {
+			fmt.Fprintf(out, "[OK]    %s\n", desc)
+		} else {
+			fmt.Fprintf(out, "[FAIL]  %s\n", desc)
+			exit = 1
+		}
+	}
+	return exit
 }
 
 func fileExists(path string) bool {

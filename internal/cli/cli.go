@@ -11,6 +11,7 @@ import (
 	"github.com/k1wi777/my-harness-SDD/internal/gitx"
 	"github.com/k1wi777/my-harness-SDD/internal/meta"
 	"github.com/k1wi777/my-harness-SDD/internal/paths"
+	"github.com/k1wi777/my-harness-SDD/internal/show"
 	"github.com/k1wi777/my-harness-SDD/internal/state"
 	"github.com/k1wi777/my-harness-SDD/internal/template"
 	"github.com/k1wi777/my-harness-SDD/internal/validate"
@@ -25,63 +26,50 @@ func Run(args []string) int {
 		printHelp()
 		return 0
 	}
-	switch args[0] {
+	cmd := args[0]
+	rest := args[1:]
+	for _, a := range rest {
+		if a == "--help" || a == "-h" {
+			return printCommandHelp(cmd)
+		}
+	}
+	switch cmd {
 	case "version", "--version", "-v":
 		fmt.Printf("rei %s\n", version)
 		return 0
 	case "help", "--help", "-h":
+		if len(rest) > 0 {
+			return printCommandHelp(rest[0])
+		}
 		printHelp()
 		return 0
 	case "check":
-		return cmdCheck(args[1:])
+		return cmdCheck(rest)
 	case "doctor":
-		return cmdDoctor(args[1:])
+		return cmdDoctor(rest)
 	case "new":
-		return cmdNew(args[1:])
+		return cmdNew(rest)
 	case "session":
-		return cmdSession(args[1:])
+		return cmdSession(rest)
 	case "items":
-		return cmdItems(args[1:])
+		return cmdItems(rest)
 	case "status":
-		return cmdStatus(args[1:])
+		return cmdStatus(rest)
 	case "commit":
-		return cmdCommit(args[1:])
+		return cmdCommit(rest)
 	case "validate":
-		return cmdValidate(args[1:])
+		return cmdValidate(rest)
 	case "review-diff":
-		return cmdReviewDiff(args[1:])
+		return cmdReviewDiff(rest)
+	case "test":
+		return cmdTest(rest)
+	case "item":
+		return cmdItem(rest)
 	default:
-		fmt.Fprintf(os.Stderr, "comando desconocido: %s\n\n", args[0])
+		fmt.Fprintf(os.Stderr, "comando desconocido: %s\n\n", cmd)
 		printHelp()
 		return 2
 	}
-}
-
-func printHelp() {
-	fmt.Print(`rei — CLI de REI Harness
-
-Uso:
-  rei <comando> [argumentos]
-
-Comandos:
-  check [--quiet]              Verifica el harness, inicializa la estructura y corre los checks
-  doctor                       Diagnóstico de solo lectura del harness (no modifica nada)
-  new <id> <feature|task> [title]
-                               Crea un Work Item nuevo
-  session                      Muestra la sesión activa
-  session start <id> <type>    Inicia la sesión de un Work Item
-  session archive              Archiva la sesión en history.md y resetea current.md
-  session reset                Restablece current.md
-  items status                 Lista el estado de todos los Work Items
-  status set <id> <status> [--force]
-                               Cambia el estado de un Work Item en meta.json
-  commit set <id> <base_commit|last_review_commit>
-                               Registra el commit actual de git en meta.json
-  validate [<id>]              Comprueba la consistencia interna de un Work Item
-  review-diff <id> [--full]    Genera el paquete de revisión de un Work Item
-  version                      Muestra la versión
-  help                         Muestra esta ayuda
-`)
 }
 
 func project() (*paths.Project, int) {
@@ -105,6 +93,33 @@ func cmdCheck(args []string) int {
 		return code
 	}
 	return check.Run(p, quiet, os.Stdout)
+}
+
+// cmdTest ejecuta solo los checks declarados en .rei/config.json, sin efectos
+// secundarios. NO es la suite de tests de REI (esa es `make test`).
+func cmdTest(args []string) int {
+	if len(args) > 0 {
+		fmt.Fprintln(os.Stderr, "uso: rei test")
+		return 2
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	return check.RunDeclared(p, os.Stdout)
+}
+
+// cmdItem muestra la ficha de un Work Item (solo lectura).
+func cmdItem(args []string) int {
+	if len(args) != 2 || args[0] != "show" {
+		fmt.Fprintln(os.Stderr, "uso: rei item show <id>")
+		return 2
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	return show.WorkItem(p, args[1], os.Stdout)
 }
 
 func cmdDoctor(args []string) int {

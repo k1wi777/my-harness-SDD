@@ -80,3 +80,39 @@ transición según `workflow.md`. Plan en `plan.md`; se modifican
 
 Esperando revisión (agente: reviewer).
 
+
+## 2026-10-02 02:02 — 2026-10-02_01-55__rei-cli-v1
+
+- **Work Item:** 2026-10-02_01-55__rei-cli-v1
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T01:55:48-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Planificación de la CLI v1 completada: `plan.md` define `rei item show <id>`,
+`rei test` (solo checks de `.rei/config.json`, sin efectos secundarios) y la
+ayuda por comando (`rei <cmd> --help`), con archivos, cambios concretos, códigos
+de salida, restricciones, validaciones y pasos.
+
+## Bitácora
+
+- `rei check --quiet` → exit 0.
+- `rei session start 2026-10-02_01-55__rei-cli-v1 task` → sesión iniciada.
+- Se redactó `plan.md` reutilizando `meta`, `state`, `validate`, `config` y el
+  runner de `internal/check` (se exporta `Exec` y se añade `RunDeclared` sin
+  side effects), sin duplicar lógica.
+- La ayuda se centraliza en una tabla única (`internal/cli/help.go`) para no
+  duplicar texto entre la ayuda general y la de cada comando.
+- Implementación completada: `internal/show` (nuevo), `Exec`/`RunDeclared` en
+  `internal/check`, `internal/cli/help.go` (nuevo), dispatch de `--help`, `test`
+  e `item` en `internal/cli/cli.go`, y tests. 11/11 pasos de `plan.md` en `[x]`.
+- Validado: `gofmt`, `make vet`, `make test`, `make build`, `rei check --quiet`
+  (exit 0) y verificación manual de `item show`, `test` y ayuda.
+- Detalle en `.rei/progress/work-items/2026-10-02_01-55__rei-cli-v1/impl.md`.
+
+## Próximo paso
+
+Esperar revisión del Reviewer.
+
