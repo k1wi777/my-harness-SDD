@@ -1,0 +1,8 @@
+# Build output
+/bin/
+/dist/
+*.test
+*.out
+
+# Go local toolchain (si se instala dentro del repo)
+/.gocache/
