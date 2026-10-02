@@ -67,7 +67,7 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 3. Redacta `tasks.md`:
    - divide la implementación en tareas discretas;
    - ordénalas según su ejecución;
-   - relaciona cada tarea con los requisitos que implementa;
+   - indica en cada tarea los `R-id` que implementa (p. ej. `T2 — … (R1, R3)`);
    - utiliza checkboxes (`[ ]`).
 
 4. Actualiza `.rei/progress/current.md`: **Estado** a `ready`, **Agente activo** a `_—_`, y registra en **Plan**, **Bitácora** y **Próximo paso** que la planificación finalizó y espera aprobación humana.

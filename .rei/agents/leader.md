@@ -111,8 +111,11 @@ Si el usuario solicita cambios:
 ## Caso C — `status == ready` y el usuario aprobó
 
 1. Actualiza `.rei/specs/<work-item-id>/meta.json` → `status = in_progress`.
-2. Lanza **1 subagente `implementer`** indicando como entrada `.rei/specs/<work-item-id>/`.
-3. Espera a que finalice.
+2. Registra el punto de partida de la implementación:
+   `bash .rei/scripts/set-commit.sh <work-item-id> base_commit`
+   Si no hay git, el review por diff se deshabilita y el Reviewer usa el modo lectura.
+3. Lanza **1 subagente `implementer`** indicando como entrada `.rei/specs/<work-item-id>/`.
+4. Espera a que finalice.
 
 ---
 

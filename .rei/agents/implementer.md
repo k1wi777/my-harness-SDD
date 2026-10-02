@@ -121,6 +121,7 @@ Si durante la implementación el trabajo no puede continuar:
 - SIEMPRE documenta la implementación en `.rei/progress/work-items/<work-item-id>/impl.md`.
 - SIEMPRE verifica tu trabajo antes de solicitar revisión.
 - No releas un archivo que ya esté en tu contexto; usa `Grep` para localizar un dato concreto en lugar de releer el archivo completo.
+- Si el proyecto usa git, registra los archivos nuevos del Work Item con `git add` (nunca `.rei/progress/`).
 
 ---
 

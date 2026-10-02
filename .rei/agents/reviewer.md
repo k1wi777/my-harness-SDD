@@ -26,6 +26,11 @@ NUNCA implementes código.
 1. Lee `.rei/docs/project/verification.md`.
 2. Lee `.rei/specs/<work-item-id>/meta.json`.
 3. Consulta `type`.
+4. Ejecuta `bash .rei/scripts/review-diff.sh <work-item-id>` para obtener el
+   paquete de revisión (cambios reales del Work Item).
+   - Si devuelve 0, revisa sobre ese paquete.
+   - Si devuelve 2 (sin git o sin `base_commit`), cae al **modo lectura**: lee el
+     spec completo como hasta ahora.
 
 > NO leas `architecture.md` ni `conventions.md` por defecto. Consúltalos solo
 > si esta revisión concreta lo requiere.
@@ -35,14 +40,14 @@ NUNCA implementes código.
 ## Caso A — `type == feature`
 
 1. Lee:
-   - `requirements.md`
-   - `design.md`
-   - `tasks.md`
+   - `tasks.md` (trazabilidad tarea ↔ `R-id`)
    - `.rei/progress/work-items/<work-item-id>/impl.md`
+   - el paquete de `review-diff.sh`
+   Lee `requirements.md`/`design.md` solo si el diff o la trazabilidad son ambiguos.
 
 2. Comprueba que:
-   - todos los requisitos fueron implementados;
-   - todas las tareas están completadas;
+   - todas las tareas están completadas y el diff corresponde a lo planificado;
+   - cada requisito cubierto por las tareas está implementado (usa `requirements.md` solo si la trazabilidad es ambigua);
    - la implementación respeta la arquitectura (lee `architecture.md` solo si esta revisión lo requiere);
    - la implementación respeta las convenciones (lee `conventions.md` solo si esta revisión lo requiere);
    - cada checkpoint rápido (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
@@ -59,6 +64,7 @@ NUNCA implementes código.
 
 5. Si encuentras cualquier incumplimiento:
    - cambia `status` a `changes_requested`;
+   - registra el punto revisado con `bash .rei/scripts/set-commit.sh <work-item-id> last_review_commit` (así la próxima revisión verá solo los cambios pedidos);
    - actualiza `current.md`: **Estado** a `changes_requested` y **Próximo paso** a aplicar los cambios de `review.md`;
    - documenta los cambios requeridos;
    - DETENTE.
@@ -70,6 +76,7 @@ NUNCA implementes código.
 1. Lee:
    - `plan.md`
    - `.rei/progress/work-items/<work-item-id>/impl.md`
+   - el paquete de `review-diff.sh`
 
 2. Comprueba que:
    - el objetivo fue cumplido;
@@ -90,6 +97,7 @@ NUNCA implementes código.
 
 5. Si encuentras cualquier incumplimiento:
    - cambia `status` a `changes_requested`;
+   - registra el punto revisado con `bash .rei/scripts/set-commit.sh <work-item-id> last_review_commit` (así la próxima revisión verá solo los cambios pedidos);
    - actualiza `current.md`: **Estado** a `changes_requested` y **Próximo paso** a aplicar los cambios de `review.md`;
    - documenta los cambios requeridos;
    - DETENTE.
@@ -112,6 +120,7 @@ Si durante la revisión no es posible determinar si el Work Item cumple la plani
 - NUNCA modifiques la planificación.
 - NUNCA apruebes un Work Item con verificaciones fallidas.
 - NUNCA apruebes si `bash .rei/init.sh --quiet` falla.
+- SIEMPRE usa `review-diff.sh`; si devuelve 2 (sin git/base), cae al modo lectura.
 - NUNCA apruebes si existe una desviación respecto a la planificación.
 - SIEMPRE justifica cada rechazo de forma concreta.
 - SIEMPRE documenta el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.

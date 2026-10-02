@@ -101,11 +101,11 @@ Divide la implementación en pasos concretos y ordenados.
 
 Cada tarea representa una unidad de trabajo que el Implementer ejecutará de forma secuencial.
 
-Formato recomendado:
+Formato recomendado (cada tarea indica los requisitos que implementa):
 
 ```md
-- [ ] T1 — ...
-- [ ] T2 — ...
+- [ ] T1 — ... (R1, R3)
+- [ ] T2 — ... (R2)
 - [ ] T3 — ...
 ```
 
