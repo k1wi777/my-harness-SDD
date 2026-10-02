@@ -64,6 +64,18 @@ func TestHelpInitDocumentaStatusYInitializer(t *testing.T) {
 	}
 }
 
+func TestHelpInitDocumentaInstalador(t *testing.T) {
+	text, ok := commandHelpText("init")
+	if !ok {
+		t.Fatal("no hay ayuda para init")
+	}
+	for _, want := range []string{"esqueleto", "git", "Códigos de salida", ".rei/config.json"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("la ayuda de init debe mencionar %q:\n%s", want, text)
+		}
+	}
+}
+
 func TestPrintCommandHelpInit(t *testing.T) {
 	if code := printCommandHelp("init"); code != 0 {
 		t.Fatalf("printCommandHelp(init) = %d, esperaba 0", code)

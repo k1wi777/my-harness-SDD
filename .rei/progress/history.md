@@ -154,3 +154,42 @@ D1–D7 y alternativas A1–A6) y `tasks.md` (T1–T16 con trazabilidad a R-id).
 
 Esperar la revisión (rol `reviewer`).
 
+
+## 2026-10-02 13:51 — 2026-10-02_13-21__rei-init-installer
+
+- **Work Item:** 2026-10-02_13-21__rei-init-installer
+- **Tipo:** feature
+- **Estado:** review
+- **Inicio:** 2026-10-02T13:22:21-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Planificación completa del Work Item `rei init installer` (feature): `requirements.md` (R1–R27), `design.md` y `tasks.md` (T1–T11) redactados.
+
+Inicio de implementación (Caso A, type=feature). Orden: T1–T11.
+
+## Bitácora
+
+Planificación finalizada: alcance definido en `meta.json` convertido en requisitos EARS, diseño técnico (paquete raíz `rei` con `go:embed`, `InstallSkeleton`, resolución de destino, integración en `initwizard.Init`) y tareas discretas con trazabilidad a los R-id.
+
+2026-10-02: inicio de implementación por el rol `implementer` (estado `in_progress`).
+2026-10-02: T1 completada — `embed.go` (raíz, `package rei`) con `//go:embed` y `var Skeleton embed.FS`.
+2026-10-02: T2 completada — `embed_test.go` verifica contenido embebido y exclusión de specs/progress.
+2026-10-02: T3 completada — `ResolveRootFrom`/`ResolveRoot` en `internal/initwizard/installer.go`.
+2026-10-02: T4 completada — `InstallSkeleton` (walk, no sobrescritura, aviso AGENTS.md, reporte creados/omitidos).
+2026-10-02: T5 completada — `Init` despliega el esqueleto antes de `check.EnsureStructure`.
+2026-10-02: T6 completada — `installer_test.go` (despliegue, idempotencia, aviso, resumen, resolución de destino).
+2026-10-02: T7 completada — `cmdInit` usa `ResolveRoot()` en modo instalador; `status` sigue con `project()`.
+2026-10-02: T8 completada — ayuda de `init` y `help_test.go` actualizados (esqueleto, git, códigos).
+2026-10-02: T9 completada — test de integridad tras instalación limpia (`check.Run` sin faltantes, `Status`=1).
+2026-10-02: T10 completada — `gofmt -l .` limpio, `make vet/test/build` OK, `rei check --quiet`=0 y verificación manual en directorios temporales (instalación, idempotencia, AGENTS.md preexistente, status=1, subdirectorio sin anidar `.rei/`).
+2026-10-02: T11 completada — todas las tareas de `tasks.md` marcadas `[x]`.
+2026-10-02: implementación documentada en `.rei/progress/work-items/2026-10-02_13-21__rei-init-installer/impl.md`; Work Item pasado a `review`.
+2026-10-02: revisión del rol `reviewer`: R1–R27 verificados (instalación limpia, byte a byte, idempotencia, git, sin git, resolución de destino, códigos) y batería en verde, pero `tasks.md` deja **T5** sin marcar (`[ ]`) contradiciendo `impl.md`/`current.md` y a T11. Resultado: `changes_requested`; detalle en `.rei/progress/work-items/2026-10-02_13-21__rei-init-installer/review.md`.
+2026-10-02: rework (Caso C) por el rol `implementer`: única acción requerida aplicada — **T5** marcada `[x]` en `tasks.md` (sin cambio de código), quedando T1–T11 completadas. `rei check --quiet`=0 y `make test`=0; nota registrada en `impl.md`. Work Item devuelto a `review`.
+
+## Próximo paso
+
+Esperar la revisión del rol `reviewer` sobre la trazabilidad corregida (T5 `[x]`); sin cambios de código pendientes.
+

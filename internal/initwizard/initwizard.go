@@ -95,10 +95,14 @@ func Pending(p *paths.Project) ([]Doc, error) {
 	return pending, nil
 }
 
-// Init ejecuta el scaffold, reporta los documentos pendientes y muestra el plan
-// de pasos. Devuelve 0 en el camino correcto y 1 si falla la creación base.
+// Init despliega el esqueleto embebido, crea la estructura de estado, reporta
+// los documentos pendientes y muestra el plan de pasos. Devuelve 0 en el camino
+// correcto y 1 si falla el despliegue o la creación base.
 func Init(p *paths.Project, out io.Writer) int {
 	fmt.Fprintln(out, "== rei init ==")
+	fmt.Fprintln(out)
+
+	installed := InstallSkeleton(p, out)
 	fmt.Fprintln(out)
 
 	scaffold := check.EnsureStructure(p, out)
@@ -121,7 +125,7 @@ func Init(p *paths.Project, out io.Writer) int {
 		fmt.Fprintln(out, "Documentación del proyecto personalizada. No hay pasos pendientes.")
 	}
 
-	if scaffold != 0 {
+	if installed != 0 || scaffold != 0 {
 		return 1
 	}
 	return 0

@@ -98,19 +98,27 @@ func cmdCheck(args []string) int {
 	return check.Run(p, quiet, os.Stdout)
 }
 
-// cmdInit implementa `rei init [status]`: scaffold y reporte de personalización
-// sin argumentos; reporte de solo lectura con `status`.
+// cmdInit implementa `rei init [status]`: en modo instalador (sin argumentos)
+// despliega el esqueleto embebido en el proyecto destino —resuelto con
+// initwizard.ResolveRoot, sin exigir un .rei/ previo— y reporta la
+// personalización; `status` es un reporte de solo lectura que sigue exigiendo
+// un proyecto REI existente (project()).
 func cmdInit(args []string) int {
 	if len(args) > 1 || (len(args) == 1 && args[0] != "status") {
 		fmt.Fprintln(os.Stderr, "uso: rei init [status]")
 		return 2
 	}
-	p, code := project()
-	if p == nil {
-		return code
-	}
 	if len(args) == 1 {
+		p, code := project()
+		if p == nil {
+			return code
+		}
 		return initwizard.Status(p, os.Stdout)
+	}
+	p, err := initwizard.ResolveRoot()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return 1
 	}
 	return initwizard.Init(p, os.Stdout)
 }

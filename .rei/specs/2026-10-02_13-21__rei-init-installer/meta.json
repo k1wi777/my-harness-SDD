@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_13-21__rei-init-installer",
+  "title": "rei init installer",
+  "description": "Convertir `rei init` en un instalador completo autosuficiente: el binario debe poder inicializar REI en cualquier proyecto sin clonar el repo fuente. Embeber el esqueleto del harness (AGENTS.md + .rei/docs/** + .rei/agents/** + .rei/templates/** + .rei/config.json) con go:embed, con patron selectivo (`all:.rei/docs` etc.); NO embeber .rei/specs ni .rei/progress. `rei init` debe desplegar todo el esqueleto en el proyecto destino, crear la estructura de estado (.rei/specs/, .rei/progress/work-items/, current.md, history.md) y git init si falta. Reglas: NO sobrescribir archivos existentes (idempotente, marker-aware); si AGENTS.md ya existe, avisar y omitirlo; reportar creados/omitidos. `rei init status` se mantiene. Fuera de alcance: `rei init --update` (actualizaciones) y adaptadores de runtime. Nota tecnica ya verificada con Go 1.27: `//go:embed all:.rei/docs AGENTS.md` funciona y excluye specs/progress.",
+  "type": "feature",
+  "status": "done",
+  "created_at": "2026-10-02T13:21:00-05:00",
+  "base_commit": "c9a11cd0dfd5636e7aea4cdb3e75fa564731ee33",
+  "last_review_commit": "c9a11cd0dfd5636e7aea4cdb3e75fa564731ee33"
+}

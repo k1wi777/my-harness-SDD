@@ -30,11 +30,12 @@ var commands = []commandInfo{
 	{
 		name:  "init",
 		usage: "init [status]",
-		short: "Inicializa y reporta la personalización del proyecto",
+		short: "Instala el esqueleto del harness y reporta la personalización",
 		detail: []string{
-			"Sin argumentos: crea la estructura base, informa los documentos de personalización pendientes y muestra el plan de pasos.",
+			"Sin argumentos: despliega el esqueleto embebido (AGENTS.md, .rei/docs/, .rei/agents/, .rei/templates/ y .rei/config.json) sin sobrescribir archivos existentes, crea la estructura de estado (.rei/specs/, .rei/progress/work-items/, current.md, history.md) y, si falta y git está disponible, inicializa el repositorio.",
 			"status: reporta qué documentos siguen pendientes, sin modificar archivos (0 si no queda ninguno; 1 si queda alguno).",
-			"Códigos de salida: 0 correcto; 1 hay pendientes o falló el scaffold; 2 uso incorrecto.",
+			"Códigos de salida: 0 si completa la instalación; 1 si no puede crear algún archivo del esqueleto o de la estructura; 2 uso incorrecto.",
+			"Si AGENTS.md ya existe se avisa y se conserva sin cambios.",
 			"La personalización guiada la conduce el rol `initializer` (.rei/agents/initializer.md).",
 		},
 	},
