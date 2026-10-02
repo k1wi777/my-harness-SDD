@@ -26,7 +26,7 @@ NUNCA implementes código.
 1. Lee `.rei/docs/project/verification.md`.
 2. Lee `.rei/specs/<work-item-id>/meta.json`.
 3. Consulta `type`.
-4. Ejecuta `bash .rei/scripts/review-diff.sh <work-item-id>` para obtener el
+4. Ejecuta `rei review-diff <work-item-id>` para obtener el
    paquete de revisión (cambios reales del Work Item).
    - Si devuelve 0, revisa sobre ese paquete.
    - Si devuelve 2 (sin git o sin `base_commit`), cae al **modo lectura**: lee el
@@ -42,7 +42,7 @@ NUNCA implementes código.
 1. Lee:
    - `tasks.md` (trazabilidad tarea ↔ `R-id`)
    - `.rei/progress/work-items/<work-item-id>/impl.md`
-   - el paquete de `review-diff.sh`
+   - el paquete de `rei review-diff`
    Lee `requirements.md`/`design.md` solo si el diff o la trazabilidad son ambiguos.
 
 2. Comprueba que:
@@ -52,20 +52,20 @@ NUNCA implementes código.
    - la implementación respeta las convenciones (lee `conventions.md` solo si esta revisión lo requiere);
    - cada checkpoint rápido (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
    - los checkpoints lentos tienen evidencia válida (CI o ejecución manual);
-   - `bash .rei/init.sh --quiet` finaliza correctamente.
+   - `rei check --quiet` finaliza correctamente.
 
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 4. Si todo es correcto:
-   - ejecuta `bash .rei/scripts/validate.sh <work-item-id>` (consistencia interna);
-   - cierra la sesión con `bash .rei/scripts/archive-session.sh`
+   - ejecuta `rei validate <work-item-id>` (consistencia interna);
+   - cierra la sesión con `rei session archive`
      (archiva el resumen en `history.md` y restablece `current.md`);
    - cambia `status` a `done`;
    - DETENTE.
 
 5. Si encuentras cualquier incumplimiento:
    - cambia `status` a `changes_requested`;
-   - registra el punto revisado con `bash .rei/scripts/set-commit.sh <work-item-id> last_review_commit` (así la próxima revisión verá solo los cambios pedidos);
+   - registra el punto revisado con `rei commit set <work-item-id> last_review_commit` (así la próxima revisión verá solo los cambios pedidos);
    - actualiza `current.md`: **Estado** a `changes_requested` y **Próximo paso** a aplicar los cambios de `review.md`;
    - documenta los cambios requeridos;
    - DETENTE.
@@ -77,7 +77,7 @@ NUNCA implementes código.
 1. Lee:
    - `plan.md`
    - `.rei/progress/work-items/<work-item-id>/impl.md`
-   - el paquete de `review-diff.sh`
+   - el paquete de `rei review-diff`
 
 2. Comprueba que:
    - el objetivo fue cumplido;
@@ -86,20 +86,20 @@ NUNCA implementes código.
    - la implementación respeta las convenciones (lee `conventions.md` solo si esta revisión lo requiere);
    - cada checkpoint rápido (`V1`, `V2`, ...) definido en `.rei/docs/project/verification.md` pasa;
    - los checkpoints lentos tienen evidencia válida (CI o ejecución manual);
-   - `bash .rei/init.sh --quiet` finaliza correctamente.
+   - `rei check --quiet` finaliza correctamente.
 
 3. Escribe el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
 
 4. Si todo es correcto:
-   - ejecuta `bash .rei/scripts/validate.sh <work-item-id>` (consistencia interna);
-   - cierra la sesión con `bash .rei/scripts/archive-session.sh`
+   - ejecuta `rei validate <work-item-id>` (consistencia interna);
+   - cierra la sesión con `rei session archive`
      (archiva el resumen en `history.md` y restablece `current.md`);
    - cambia `status` a `done`;
    - DETENTE.
 
 5. Si encuentras cualquier incumplimiento:
    - cambia `status` a `changes_requested`;
-   - registra el punto revisado con `bash .rei/scripts/set-commit.sh <work-item-id> last_review_commit` (así la próxima revisión verá solo los cambios pedidos);
+   - registra el punto revisado con `rei commit set <work-item-id> last_review_commit` (así la próxima revisión verá solo los cambios pedidos);
    - actualiza `current.md`: **Estado** a `changes_requested` y **Próximo paso** a aplicar los cambios de `review.md`;
    - documenta los cambios requeridos;
    - DETENTE.
@@ -121,13 +121,13 @@ Si durante la revisión no es posible determinar si el Work Item cumple la plani
 - NUNCA implementes código.
 - NUNCA modifiques la planificación.
 - NUNCA apruebes un Work Item con verificaciones fallidas.
-- NUNCA apruebes si `bash .rei/init.sh --quiet` falla.
-- SIEMPRE usa `review-diff.sh`; si devuelve 2 (sin git/base), cae al modo lectura.
+- NUNCA apruebes si `rei check --quiet` falla.
+- SIEMPRE usa `rei review-diff`; si devuelve 2 (sin git/base), cae al modo lectura.
 - NUNCA apruebes si existe una desviación respecto a la planificación.
 - SIEMPRE justifica cada rechazo de forma concreta.
 - SIEMPRE documenta el resultado en `.rei/progress/work-items/<work-item-id>/review.md`.
-- SIEMPRE cierra la sesión con `bash .rei/scripts/archive-session.sh` al aprobar (feature o task).
-- NUNCA escribas plantillas a mano: usa los scripts de `.rei/scripts/`.
+- SIEMPRE cierra la sesión con `rei session archive` al aprobar (feature o task).
+- NUNCA escribas plantillas a mano: usa el CLI (`rei`).
 - No releas un archivo que ya esté en tu contexto; usa `Grep` para localizar un dato concreto en lugar de releer el archivo completo.
 
 ---

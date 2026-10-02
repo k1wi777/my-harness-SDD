@@ -14,7 +14,7 @@
 
 Antes de realizar cualquier modificación en el proyecto:
 
-1. Ejecuta `bash .rei/init.sh`.
+1. Ejecuta `rei check`.
 2. Si falla, DETENTE e informa el problema.
 3. Carga únicamente la documentación necesaria para la tarea actual siguiendo el orden de la Sección 8.
 
@@ -94,7 +94,7 @@ No continúes hasta completar estos pasos.
 | `.rei/docs/harness/` | Documentación del arnés (workflow, specs, progreso). |
 | `.rei/docs/project/` | Documentación específica del proyecto. |
 | `.rei/agents/` | Roles y comportamiento de los subagentes. |
-| `.rei/scripts/` | Automatización: estado de sesión/Work Items y gestión de plantillas (cero dependencias). |
+| `cmd/`, `internal/` | Código del CLI `rei` (Go). |
 | `.rei/templates/` | Plantillas canónicas (`current.md`, `history.md`, `meta.json`). Fuente única de verdad. |
 
 ---
@@ -187,7 +187,7 @@ Estas reglas aplican a cualquier agente del repositorio.
 - No omitas etapas del workflow.
 - Consulta la documentación antes de asumir comportamientos no especificados.
 - Si encuentras documentación contradictoria, DETENTE y repórtala.
-- Para conocer el estado de la sesión o de los Work Items, ejecuta los scripts de `.rei/scripts/`; no escanees `meta.json` manualmente.
+- Para conocer el estado de la sesión o de los Work Items, usa el CLI (`rei session`, `rei items status`); no escanees `meta.json` manualmente.
 - No releas un archivo que ya esté en tu contexto; para localizar un dato concreto usa búsquedas en lugar de releer el archivo completo.
 - En caso de conflicto entre documentos, prevalece el orden inverso de la Sección 8:
   `.rei/specs/<work-item-id>/` > `.rei/docs/...` > `.rei/agents/<role>.md` > `AGENTS.md`.

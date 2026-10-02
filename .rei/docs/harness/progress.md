@@ -6,7 +6,7 @@
 >
 > Ningún agente debe inventar nuevos formatos. Todos los archivos de `.rei/progress/` deben respetar las plantillas canónicas de `.rei/templates/`.
 >
-> Las plantillas se generan y restablecen con los scripts de `.rei/scripts/` — **nunca las escribas a mano**.
+> Las plantillas se generan y restablecen con el CLI (`rei`) — **nunca las escribas a mano**.
 
 ---
 
@@ -36,15 +36,15 @@ Cada Work Item tiene su propia carpeta `.rei/progress/work-items/<work-item-id>/
 Representa el estado **actual** de la sesión.
 
 > La plantilla canónica vive en `.rei/templates/current.md` (fuente única de verdad).
-> No la copies a mano: usa los scripts de `.rei/scripts/`.
+> No la copies a mano: usa el CLI (`rei`).
 
 > Este archivo es el **contexto vivo de la sesión activa**: sirve para retomar un
 > Work Item exactamente donde quedó si la sesión se interrumpe. El registro
 > duradero y el diagnóstico global del conjunto de Work Items viven en
-> `.rei/specs/<work-item-id>/meta.json` (consulta `work-items-status.sh`).
+> `.rei/specs/<work-item-id>/meta.json` (consulta `rei items status`).
 
 El **Spec Author** lo inicializa ejecutando
-`bash .rei/scripts/start-session.sh <work-item-id> <type>` al comenzar la
+`rei session start <work-item-id> <type>` al comenzar la
 planificación (`pending`) y lo deja en `ready` al terminar, esperando aprobación humana.
 
 El **Implementer** lo actualiza al iniciar la implementación (`in_progress`) y lo mantiene durante toda la ejecución hasta pasar a `review`.
@@ -55,7 +55,7 @@ No debe rellenarse únicamente al finalizar el trabajo.
 
 Su propósito es permitir que una sesión pueda retomarse en cualquier momento, incluso durante la planificación o la espera de aprobación.
 
-Al cerrar el Work Item, `bash .rei/scripts/archive-session.sh` mueve su resumen a `history.md` y restablece este archivo a su estado inicial.
+Al cerrar el Work Item, `rei session archive` mueve su resumen a `history.md` y restablece este archivo a su estado inicial.
 
 ---
 
@@ -64,13 +64,13 @@ Al cerrar el Work Item, `bash .rei/scripts/archive-session.sh` mueve su resumen 
 Es la bitácora histórica del proyecto.
 
 > La plantilla canónica vive en `.rei/templates/history.md` (fuente única de verdad).
-> No la copies a mano: `bash .rei/scripts/archive-session.sh` la usa.
+> No la copies a mano: `rei session archive` la usa.
 
 Su contenido es **append-only**.
 
 Nunca deben modificarse entradas anteriores.
 
-Al finalizar correctamente un Work Item, `bash .rei/scripts/archive-session.sh` añade el resumen de `current.md` al final de este archivo.
+Al finalizar correctamente un Work Item, `rei session archive` añade el resumen de `current.md` al final de este archivo.
 
 Cada entrada debe resumir:
 
@@ -135,9 +135,9 @@ Si no existen bloqueos, este archivo no debe crearse.
 
 | Archivo | Responsable | Cómo |
 |----------|-------------|------|
-| `current.md` (inicio: `pending`) | Spec Author | `bash .rei/scripts/start-session.sh <id> <type>` |
+| `current.md` (inicio: `pending`) | Spec Author | `rei session start <id> <type>` |
 | `current.md` (implementación: `in_progress` → `review`) | Implementer | edición directa |
-| `history.md` + reset de `current.md` | Reviewer | `bash .rei/scripts/archive-session.sh` |
+| `history.md` + reset de `current.md` | Reviewer | `rei session archive` |
 | `work-items/<work-item-id>/impl.md` | Implementer | edición directa |
 | `work-items/<work-item-id>/review.md` | Reviewer | edición directa |
 | `work-items/<work-item-id>/spec.md` | Spec Author | edición directa (solo en bloqueo) |
@@ -150,5 +150,5 @@ Si no existen bloqueos, este archivo no debe crearse.
 - Crea `.rei/progress/work-items/<work-item-id>/` al iniciar el trabajo sobre un Work Item.
 - Nunca sobrescribas el historial.
 - No elimines documentación existente.
-- Utiliza siempre las plantillas canónicas de `.rei/templates/` (vía `.rei/scripts/`).
+- Utiliza siempre las plantillas canónicas de `.rei/templates/` (vía el CLI `rei`).
 - Todo Work Item debe dejar evidencia suficiente para poder comprender qué ocurrió sin depender del historial del chat.

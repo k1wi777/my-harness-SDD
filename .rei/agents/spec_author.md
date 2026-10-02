@@ -23,9 +23,9 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 - Todo requisito debe ser implementable y verificable.
 - Toda decisión de diseño debe estar justificada.
 - Toda tarea debe derivarse de la planificación.
-- SIEMPRE inicia la sesión con `bash .rei/scripts/start-session.sh <work-item-id> <type>` cuando el Work Item es nuevo (`pending`); no la reinicies si ya existe (`ready`).
+- SIEMPRE inicia la sesión con `rei session start <work-item-id> <type>` cuando el Work Item es nuevo (`pending`); no la reinicies si ya existe (`ready`).
 - SIEMPRE deja `.rei/progress/current.md` en `ready` al finalizar correctamente.
-- NUNCA escribas plantillas a mano: usa los scripts de `.rei/scripts/`.
+- NUNCA escribas plantillas a mano: usa el CLI (`rei`).
 - No releas un archivo que ya esté en tu contexto; usa `Grep` para localizar un dato concreto en lugar de releer el archivo completo.
 
 ---
@@ -38,7 +38,7 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 3. Verifica que `status` sea `pending` o `ready`.
 4. Consulta `type`.
 5. Si `status == pending`, inicia la sesión:
-   `bash .rei/scripts/start-session.sh <work-item-id> <type>`
+   `rei session start <work-item-id> <type>`
    Si `status == ready`, NO la reinicies (Caso C).
 6. Consulta el índice de la documentación del proyecto
    (`.rei/docs/project/README.md`) y lee solo lo que el Work Item requiera:

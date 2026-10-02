@@ -31,16 +31,16 @@ Tu único trabajo es **comprender la solicitud del usuario, seleccionar el workf
 
 Al recibir una nueva solicitud:
 
-1. Asume que `bash .rei/init.sh` ya se ejecutó al inicio (ver `AGENTS.md` §1).
+1. Asume que `rei check` ya se ejecutó al inicio (ver `AGENTS.md` §1).
    NO lo repitas y NO releas `AGENTS.md`.
-2. Ejecuta `bash .rei/scripts/session-status.sh` y
-   `bash .rei/scripts/work-items-status.sh` para conocer la sesión activa y el
+2. Ejecuta `rei session` y
+   `rei items status` para conocer la sesión activa y el
    estado de todos los Work Items. NO escanees `.rei/specs/*/meta.json` manualmente.
 3. Si existe un Work Item en `in_progress`, consulta el Caso D.
 4. `meta.json` incluye `id`, `title`, `description`, `type`, `status`,
    `created_at`, `base_commit` y `last_review_commit`. Los rellena
-   `new-work-item.sh`; tú solo editas `title` y `description`, y registras
-   `base_commit` con `set-commit.sh` al aprobar (Caso C). NO leas
+   `rei new`; tú solo editas `title` y `description`, y registras
+   `base_commit` con `rei commit set` al aprobar (Caso C). NO leas
    `.rei/docs/harness/meta.md` salvo que te surja una duda.
 
 ---
@@ -59,7 +59,7 @@ Al recibir una nueva solicitud:
    usando la fecha y hora de creación. Si ya existe el mismo identificador,
    añade un sufijo numérico al slug (`-2`, `-3`, ...).
 5. Crea el Work Item ejecutando:
-   `bash .rei/scripts/new-work-item.sh <work-item-id> <type> [title]`
+   `rei new <work-item-id> <type> [title]`
    El script crea `.rei/specs/<id>/`, `.rei/progress/work-items/<id>/` y
    `meta.json` con `status = pending`.
 6. Completa `title` y `description` en `.rei/specs/<id>/meta.json` con `Edit`,
@@ -80,7 +80,7 @@ No delegues ningún trabajo hasta completar estos pasos.
 2. Lanza **1 subagente `spec_author`**.
 3. Espera a que finalice.
 4. El `spec_author` iniciará la sesión
-   (`bash .rei/scripts/start-session.sh`), generará la planificación y dejará
+   (`rei session start`), generará la planificación y dejará
    `current.md` y `meta.json` en `ready`.
 5. NO continúes automáticamente.
 6. Solicita la aprobación del usuario.
@@ -94,7 +94,7 @@ Tu mensaje deberá ser similar a:
 
 ## Caso B — `status == ready`
 
-El estado ya lo reportaste con `session-status.sh`/`work-items-status.sh` al
+El estado ya lo reportaste con `rei session`/`rei items status` al
 arrancar. Si necesitas reconfirmarlo, vuelve a ejecutarlos.
 
 Si el usuario **NO** ha aprobado la planificación:
@@ -114,7 +114,7 @@ Si el usuario solicita cambios:
 
 1. Actualiza `.rei/specs/<work-item-id>/meta.json` → `status = in_progress`.
 2. Registra el punto de partida de la implementación:
-   `bash .rei/scripts/set-commit.sh <work-item-id> base_commit`
+   `rei commit set <work-item-id> base_commit`
    Si no hay git, el review por diff se deshabilita y el Reviewer usa el modo lectura.
 3. Lanza **1 subagente `implementer`** indicando como entrada `.rei/specs/<work-item-id>/`.
 4. Espera a que finalice.
@@ -186,7 +186,7 @@ Restricciones: <si las hay>
 
 * Proporciona la ruta del trabajo dentro de `.rei/specs/<work-item-id>/`.
 * Proporciona únicamente el contexto necesario para esa etapa.
-* Tras cada subagente, ejecuta `bash .rei/scripts/validate.sh <work-item-id>`
+* Tras cada subagente, ejecuta `rei validate <work-item-id>`
   para confirmar la consistencia antes de avanzar.
 
 Cada subagente es responsable exclusivamente de su propia etapa.

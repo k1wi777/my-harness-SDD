@@ -42,7 +42,7 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
    `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la implementación.
 
 > NO leas `verification.md` por defecto: los checkpoints rápidos se ejecutan con
-> `bash .rei/init.sh --quiet`, y `design.md`/`tasks.md` referencian sus IDs.
+> `rei check --quiet`, y `design.md`/`tasks.md` referencian sus IDs.
 > Consúltalo solo si necesitas el mapeo de checkpoints o la evidencia esperada.
 
 ---
@@ -54,9 +54,9 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 3. Después de completar **cada** tarea, **inmediatamente**:
    - márcala como completada (`[x]`) en `tasks.md`;
    - actualiza `.rei/progress/current.md`;
-   - verifica que el cambio funciona antes de continuar (por ejemplo con `bash .rei/init.sh --quiet`, o solo los tests del módulo afectado si el proyecto lo permite).
+   - verifica que el cambio funciona antes de continuar (por ejemplo con `rei check --quiet`, o solo los tests del módulo afectado si el proyecto lo permite).
 4. Al finalizar:
-   - ejecuta `bash .rei/init.sh --quiet`;
+   - ejecuta `rei check --quiet`;
    - verifica que todos los requisitos fueron implementados;
    - documenta el trabajo en `.rei/progress/work-items/<work-item-id>/impl.md`;
    - deja `.rei/progress/current.md` completamente actualizado.
@@ -73,9 +73,9 @@ Nunca planifiques el trabajo. Nunca modifiques la planificación.
 3. Después de completar **cada** paso del plan, **inmediatamente**:
    - márcalo como completado en `plan.md`;
    - actualiza `.rei/progress/current.md`;
-   - verifica que el cambio funciona antes de continuar (por ejemplo con `bash .rei/init.sh --quiet`, o solo los tests del módulo afectado si el proyecto lo permite).
+   - verifica que el cambio funciona antes de continuar (por ejemplo con `rei check --quiet`, o solo los tests del módulo afectado si el proyecto lo permite).
 4. Al finalizar:
-   - ejecuta `bash .rei/init.sh --quiet`;
+   - ejecuta `rei check --quiet`;
    - documenta el trabajo en `.rei/progress/work-items/<work-item-id>/impl.md`;
    - deja `.rei/progress/current.md` completamente actualizado.
 5. Actualiza `.rei/progress/current.md`: **Estado** a `review` y **Próximo paso** a esperar revisión.
@@ -92,7 +92,7 @@ Retomas un Work Item rechazado en revisión.
    `.rei/progress/current.md`.
 2. Aplica las correcciones solicitadas. Desmarca y remarca las tareas afectadas
    en `tasks.md` (o pasos en `plan.md`).
-3. Continúa el flujo normal: verifica con `bash .rei/init.sh --quiet`, actualiza
+3. Continúa el flujo normal: verifica con `rei check --quiet`, actualiza
    `current.md`, documenta en `impl.md` y deja `status = review`.
 
 ---

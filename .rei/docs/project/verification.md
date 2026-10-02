@@ -30,24 +30,34 @@ Cada checkpoint posee un identificador estable (`V1`, `V2`, ...). El Implementer
 
 Los checkpoints se dividen en **rápidos** y **lentos** según su costo.
 
-### Checkpoints rápidos (se cablean en `.rei/init.sh`)
+### Checkpoints rápidos (se declaran en `.rei/config.json`)
 
-Verificaciones de bajo costo que pueden ejecutarse muchas veces al día (linter, type-check, tests rápidos). `.rei/init.sh` se ejecuta de forma constante —al iniciar sesión, al implementar y al revisar—, así que **aquí no deben ir checks lentos**.
+Verificaciones de bajo costo que pueden ejecutarse muchas veces al día (linter, type-check, tests rápidos). `rei check` se ejecuta de forma constante —al iniciar sesión, al implementar y al revisar—, así que **aquí no deben ir checks lentos**.
 
 | ID | Comando | Descripción |
 |----|---------|-------------|
 | `V1` | `<comando 1>` | <qué valida> |
 | `V2` | `<comando 2>` | <qué valida> |
 
-### Checkpoints lentos (NO van en `.rei/init.sh`)
+### Checkpoints lentos (NO van en `.rei/config.json`)
 
-Build completo, e2e, integración, etc. Se ejecutan en CI o manualmente, se documentan aquí y se referencian en la evidencia, pero **no se cablean en `.rei/init.sh`**.
+Build completo, e2e, integración, etc. Se ejecutan en CI o manualmente, se documentan aquí y se referencian en la evidencia, pero **no se declaran en `.rei/config.json`**.
 
 | ID | Comando | Descripción |
 |----|---------|-------------|
 | `V3` | `<comando 3>` | <qué valida> |
 
-> Los checkpoints rápidos deben estar cableados en `.rei/init.sh` (Sección 4, `run_check`) para que su resultado se refleje en el código de salida del script. Si añades o modificas uno, actualiza también `.rei/init.sh`.
+> Los checkpoints rápidos se declaran en `.rei/config.json`:
+>
+> ```json
+> {
+>   "checks": [
+>     { "id": "V1", "description": "<qué valida>", "command": ["<cmd>", "<arg>"] }
+>   ]
+> }
+> ```
+>
+> `rei check` ejecuta cada `command` (sin shell intermedio) y refleja su resultado en el código de salida. Si añades o modificas un checkpoint, actualiza también `.rei/config.json`.
 
 > **Recomendación de personalización:** cuando el proyecto lo permita, prefiere verificar solo el módulo o los módulos afectados por el Work Item en lugar de la suite completa. REI Harness no impone cómo invocarlos porque es agnóstico al lenguaje y al framework de test.
 

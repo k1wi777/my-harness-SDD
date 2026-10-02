@@ -20,25 +20,20 @@ Ninguna de las dos es un trámite. Son los dos puntos donde el proceso se detien
 
 # 1. Primera vez en el repositorio
 
-1. Copia `AGENTS.md` y la carpeta `.rei/` dentro de tu proyecto.
-2. **Personaliza la documentación de tu proyecto** (ver Sección 1.1).
-3. Ejecuta:
+1. Instala el CLI `rei` (ver el `README.md`; requiere Go para compilar).
+2. Copia `AGENTS.md` y la carpeta `.rei/` dentro de tu proyecto.
+3. **Personaliza la documentación de tu proyecto** (ver Sección 1.1).
+4. Ejecuta:
    ```bash
-   bash .rei/init.sh
+   rei check
    ```
-4. El script verificará que REI Harness esté completo y preparará las carpetas `.rei/specs/` y `.rei/progress/work-items/` si no existen todavía.
+5. `rei check` verificará que REI Harness esté completo y preparará las carpetas `.rei/specs/` y `.rei/progress/work-items/` si no existen todavía.
 
-Si `.rei/init.sh` reporta `[FAIL]`, falta algún archivo de REI Harness — revisa el listado que imprime antes de continuar. No inicies trabajo hasta que el resumen final diga "REI Harness listo para trabajar".
+Si `rei check` reporta `[FAIL]`, falta algún archivo de REI Harness — revisa el listado que imprime antes de continuar. No inicies trabajo hasta que el resumen final diga "REI Harness listo para trabajar".
 
 ### Permisos de ejecución
 
-Al copiar REI Harness, `.rei/init.sh` puede no tener permiso de ejecución. En ese caso `./.rei/init.sh` fallará con "Permiso denegado".
-
-Usa siempre `bash .rei/init.sh` — funciona sin permisos de ejecución. Si prefieres `./.rei/init.sh`, otórgalo una vez:
-
-```bash
-chmod +x .rei/init.sh
-```
+El CLI `rei` es un binario compilado; no necesita permisos de ejecución especiales más allá de estar disponible en el `PATH`.
 
 ---
 
@@ -55,7 +50,7 @@ La documentación en `docs/` está dividida en dos carpetas. Solo una de ellas d
 | `.rei/docs/project/verification.md` | Checkpoints (`V1`, `V2`, ...) y cómo demostrar que el trabajo funciona. |
 | `AGENTS.md` — Sección 2 | Propósito del producto, usuarios, principios y límites. |
 | `AGENTS.md` — Sección 3 | Stack técnico y comandos principales del proyecto. |
-| `.rei/init.sh` — Sección 4 | Comandos de verificación (`run_check`) alineados con `verification.md`. |
+| `.rei/config.json` | Checks de verificación (`checks`) alineados con `verification.md`. |
 
 ### No personalices (documentación de REI Harness)
 
@@ -116,7 +111,7 @@ Lo mismo aplica después de la revisión: si el Reviewer rechaza el trabajo (`ch
 
 Si cierras la conversación con un Work Item a medias, no se pierde nada — vive en `.rei/specs/<work-item-id>/` y `.rei/progress/work-items/<work-item-id>/`, no en el historial del chat.
 
-La próxima vez que ejecutes `bash .rei/init.sh` y hables con el agente, el Leader leerá el estado de la sesión y de los Work Items mediante los scripts de `.rei/scripts/`, y te preguntará si quieres continuar, reiniciar o cancelar ese Work Item. Tú decides; el Leader nunca lo asume por su cuenta.
+La próxima vez que ejecutes `rei check` y hables con el agente, el Leader consultará el estado mediante el CLI (`rei session`, `rei items status`) y te preguntará si quieres continuar, reiniciar o cancelar ese Work Item. Tú decides; el Leader nunca lo asume por su cuenta.
 
 ---
 
@@ -125,11 +120,11 @@ La próxima vez que ejecutes `bash .rei/init.sh` y hables con el agente, el Lead
 **¿Puedo tener varios Work Items en paralelo?**
 No al mismo tiempo en estado `in_progress` — REI Harness solo permite uno activo a la vez (ver `.rei/docs/harness/workflow.md`). Sí puedes tener varios `pending` esperando su turno.
 
-**¿Qué hago si `./.rei/init.sh` dice "Permiso denegado"?**
-Usa `bash .rei/init.sh` en su lugar, o ejecuta `chmod +x .rei/init.sh` una vez y vuelve a intentar con `./.rei/init.sh`.
+**¿Dónde declaro los checks de mi proyecto?**
+En `.rei/config.json` (ver `.rei/docs/project/verification.md`). `rei check` los ejecuta y refleja el resultado en su código de salida.
 
-**¿Qué hago si `.rei/init.sh` falla en la Sección 4 (verificación del proyecto)?**
-Significa que algún comando del proyecto (tests, build, lint) falló. Revisa el detalle en el resumen final del script y corrige antes de solicitar revisión de un Work Item.
+**¿Qué hago si `rei check` falla por un check del proyecto?**
+Significa que algún comando del proyecto (tests, build, lint) falló. Revisa el detalle en la salida y corrige antes de solicitar revisión de un Work Item.
 
 **¿Dónde veo el historial de todo lo que se ha hecho?**
 En `.rei/progress/history.md` — es un registro permanente, nunca se sobrescribe.
@@ -138,4 +133,4 @@ En `.rei/progress/history.md` — es un registro permanente, nunca se sobrescrib
 No. Esta guía es suficiente para el uso diario. Los agentes cargan solo lo necesario según la etapa — como humano, consulta `.rei/docs/project/` si quieres revisar las reglas de tu proyecto, o `.rei/docs/harness/` si quieres entender el detalle del arnés.
 
 **¿REI Harness necesita git?**
-No, pero funciona mejor con él. Si el repositorio usa git, el Reviewer revisa solo los cambios reales del Work Item (`review-diff.sh`) en lugar de releer toda la especificación, y en `changes_requested` puede acotar la revisión a lo que cambió. Si no hay git, el flujo sigue funcionando en modo lectura. `init.sh` inicializa git automáticamente si no existe.
+No, pero funciona mejor con él. Si el repositorio usa git, el Reviewer revisa solo los cambios reales del Work Item (`rei review-diff`) en lugar de releer toda la especificación, y en `changes_requested` puede acotar la revisión a lo que cambió. Si no hay git, el flujo sigue funcionando en modo lectura. `rei check` inicializa git automáticamente si no existe.

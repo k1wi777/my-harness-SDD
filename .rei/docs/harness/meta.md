@@ -77,7 +77,7 @@ Define la etapa actual del workflow.
 Los estados válidos y sus transiciones se definen en `workflow.md`.
 
 > `meta.json` es el **registro duradero** de cada Work Item y la referencia para
-> diagnosticar el conjunto de Work Items (`bash .rei/scripts/work-items-status.sh`).
+> diagnosticar el conjunto de Work Items (`rei items status`).
 > El contexto vivo de la sesión activa vive en `.rei/progress/current.md` (para
 > retomarla); ambos se mantienen y son complementarios.
 
@@ -92,19 +92,19 @@ Fecha y hora exactas de creación del Work Item en formato ISO 8601, incluyendo 
 SHA del commit que marca el **inicio de la implementación**. Lo registra el Leader al aprobar el Work Item:
 
 ```bash
-bash .rei/scripts/set-commit.sh <work-item-id> base_commit
+rei commit set <work-item-id> base_commit
 ```
 
-Vacío si el proyecto no usa git. `review-diff.sh` lo usa como punto base del paquete de revisión.
+Vacío si el proyecto no usa git. `rei review-diff` lo usa como punto base del paquete de revisión.
 
 ## last_review_commit
 
 SHA del punto ya revisado. Lo registra el Reviewer al rechazar (`changes_requested`):
 
 ```bash
-bash .rei/scripts/set-commit.sh <work-item-id> last_review_commit
+rei commit set <work-item-id> last_review_commit
 ```
 
-Si está presente, `review-diff.sh` calcula el diff desde ese punto, para que la próxima revisión vea solo los cambios pedidos y no revalide lo anterior. Vacío si no aplica.
+Si está presente, `rei review-diff` calcula el diff desde ese punto, para que la próxima revisión vea solo los cambios pedidos y no revalide lo anterior. Vacío si no aplica.
 
 > Para que acote de verdad, la implementación debe estar **commiteada** antes de solicitar la revisión. Si no lo está, el diff cubre todo lo pendiente desde `base_commit`: sigue siendo correcto, solo menos acotado.

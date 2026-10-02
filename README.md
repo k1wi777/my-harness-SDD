@@ -13,7 +13,7 @@ El repositorio actúa como la fuente de verdad del sistema: toda la planificaci�
 Para entender cómo se usa REI Harness en el día a día (aprobar planificaciones, continuar una sesión interrumpida, preguntas frecuentes), consulta **`.rei/docs/usage.md`**.
 
 1. Copia `AGENTS.md` y la carpeta `.rei/` dentro de tu proyecto.
-2. Ejecuta `bash .rei/init.sh` para verificar REI Harness e inicializar `.rei/specs/` y `.rei/progress/`.
+2. Ejecuta `rei check` para verificar REI Harness e inicializar `.rei/specs/` y `.rei/progress/`.
 3. Empieza a hablar con el agente describiendo lo que necesitas — actuará como Leader y coordinará el resto.
 
 ---
@@ -111,12 +111,14 @@ La aprobación humana forma parte del workflow y nunca puede omitirse.
 ```text
 .
 ├── AGENTS.md                     # Punto de entrada para los agentes
-├── README.md                     # Descripción del repositorio de la plantilla
+├── README.md                     # Descripción del repositorio
+├── go.mod                        # Módulo Go del CLI
+├── cmd/rei/                      # Punto de entrada del CLI `rei`
+├── internal/                     # Paquetes internos del CLI
 ├── .rei/                         # REI Harness
-│   ├── init.sh                   # Inicialización y verificación del entorno
 │   ├── agents/                   # Roles y protocolos de los agentes
-│   ├── scripts/                  # Automatización de estado y plantillas
 │   ├── templates/                # Plantillas canónicas (fuente única de verdad)
+│   ├── config.json               # Checks de verificación del proyecto
 │   ├── docs/                     # Documentación de REI Harness y del proyecto
 │   ├── specs/                    # Work Items y planificaciones por fecha
 │   └── progress/                 # Estado e historial del trabajo
@@ -164,7 +166,7 @@ Describe las reglas de **tu repositorio**. **Debes personalizarla** al implement
 | `conventions.md` | Convenciones de desarrollo. |
 | `verification.md` | Checkpoints y reglas de validación. |
 
-También personaliza las secciones 2 y 3 de `AGENTS.md` (propósito y stack) y la Sección 4 de `.rei/init.sh` (comandos de verificación).
+También personaliza las secciones 2 y 3 de `AGENTS.md` (propósito y stack) y los checks en `.rei/config.json` (verificación).
 
 Los agentes cargan únicamente la documentación necesaria para su etapa.
 
@@ -194,9 +196,9 @@ Esto permite:
 
 # Revisión por diff (git)
 
-REI Harness funciona sin git, pero está optimizado para usarlo. Cuando el proyecto es un repositorio git, el Reviewer recibe un **paquete de revisión** (`.rei/scripts/review-diff.sh`) con los cambios reales del Work Item en lugar de releer toda la especificación. Al aprobar se registra un `base_commit`, y en un `changes_requested` se registra un `last_review_commit` para que la próxima revisión vea solo los cambios pedidos.
+REI Harness funciona sin git, pero está optimizado para usarlo. Cuando el proyecto es un repositorio git, el Reviewer recibe un **paquete de revisión** (`rei review-diff`) con los cambios reales del Work Item en lugar de releer toda la especificación. Al aprobar se registra un `base_commit`, y en un `changes_requested` se registra un `last_review_commit` para que la próxima revisión vea solo los cambios pedidos.
 
-Si no hay git, el flujo sigue funcionando en modo lectura. `init.sh` inicializa git automáticamente si no existe.
+Si no hay git, el flujo sigue funcionando en modo lectura. `rei check` inicializa git automáticamente si no existe.
 
 ---
 
