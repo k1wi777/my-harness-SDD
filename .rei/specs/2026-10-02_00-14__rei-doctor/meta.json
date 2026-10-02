@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_00-14__rei-doctor",
+  "title": "rei doctor",
+  "description": "Agregar el comando `rei doctor`: diagnóstico de solo lectura que verifica la integridad del harness (sin crear nada ni inicializar git), valida todos los Work Items, reporta la sesión activa y el estado de git, informa cuántos checks hay en .rei/config.json (sin ejecutarlos) y devuelve veredicto (exit 0 si todo OK, 1 si hay algún FAIL). Actualiza rei help. Fuera de alcance: no crea archivos, no inicializa git, no ejecuta los checks del proyecto.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T00:14:00-05:00",
+  "base_commit": "25bfe9c1f34fa1536b8a20d37c9973bde2ed80d9",
+  "last_review_commit": ""
+}

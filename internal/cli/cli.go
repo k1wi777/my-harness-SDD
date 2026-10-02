@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/k1wi777/my-harness-SDD/internal/check"
+	"github.com/k1wi777/my-harness-SDD/internal/doctor"
 	"github.com/k1wi777/my-harness-SDD/internal/gitx"
 	"github.com/k1wi777/my-harness-SDD/internal/paths"
 	"github.com/k1wi777/my-harness-SDD/internal/state"
@@ -31,6 +32,8 @@ func Run(args []string) int {
 		return 0
 	case "check":
 		return cmdCheck(args[1:])
+	case "doctor":
+		return cmdDoctor(args[1:])
 	case "new":
 		return cmdNew(args[1:])
 	case "session":
@@ -58,6 +61,7 @@ Uso:
 
 Comandos:
   check [--quiet]              Verifica el harness, inicializa la estructura y corre los checks
+  doctor                       Diagnóstico de solo lectura del harness (no modifica nada)
   new <id> <feature|task> [title]
                                Crea un Work Item nuevo
   session                      Muestra la sesión activa
@@ -95,6 +99,18 @@ func cmdCheck(args []string) int {
 		return code
 	}
 	return check.Run(p, quiet, os.Stdout)
+}
+
+func cmdDoctor(args []string) int {
+	if len(args) > 0 {
+		fmt.Fprintln(os.Stderr, "uso: rei doctor")
+		return 2
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	return doctor.Run(p, os.Stdout)
 }
 
 func cmdNew(args []string) int {
