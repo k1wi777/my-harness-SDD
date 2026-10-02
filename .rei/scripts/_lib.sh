@@ -19,6 +19,28 @@ TEMPLATES_DIR=".rei/templates"
 # Se construye con printf para no depender de literales multibyte frágiles.
 REI_EMPTY="_$(printf '\xe2\x80\x94')_"
 
+# meta_field <meta.json> <clave> — imprime el valor string de una clave.
+meta_field() {
+    grep -m1 -o "\"$2\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" "$1" 2>/dev/null \
+        | sed -E "s/.*\"$2\"[[:space:]]*:[[:space:]]*\"//; s/\"$//"
+}
+
+# meta_set <meta.json> <clave> <valor> — reemplaza el valor string de una clave.
+meta_set() {
+    local file="$1" key="$2" value="$3"
+    local tmp="${file}.tmp.$$"
+    local value_esc
+
+    value_esc="$(printf '%s' "$value" | sed 's/[&\\]/\\&/g')"
+
+    if sed -E "s/(\"$key\"[[:space:]]*:[[:space:]]*\")[^\"]*(\")/\1${value_esc}\2/" "$file" > "$tmp"; then
+        mv "$tmp" "$file"
+    else
+        rm -f "$tmp"
+        return 1
+    fi
+}
+
 # render_template <plantilla> <destino> CLAVE=valor [CLAVE=valor ...]
 #
 # Sustituye cada {{CLAVE}} por su valor. La sustitución es literal (bash), así

@@ -65,7 +65,9 @@ if ! render_template "$TEMPLATES_DIR/meta.json" "$SPECS_DIR/$id/meta.json" \
     "DESCRIPTION=" \
     "TYPE=$type" \
     "STATUS=pending" \
-    "CREATED_AT=$created_at"; then
+    "CREATED_AT=$created_at" \
+    "BASE_COMMIT=" \
+    "LAST_REVIEW_COMMIT="; then
     echo "ERROR: no se pudo crear meta.json." >&2
     exit 1
 fi

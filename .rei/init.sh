@@ -155,6 +155,8 @@ REQUIRED_FILES=(
     ".rei/scripts/start-session.sh"
     ".rei/scripts/archive-session.sh"
     ".rei/scripts/new-work-item.sh"
+    ".rei/scripts/review-diff.sh"
+    ".rei/scripts/set-commit.sh"
 
     ".rei/templates/current.md"
     ".rei/templates/history.md"
@@ -204,6 +206,19 @@ if [[ ! -f "$HISTORY_FILE" ]]; then
     ok ".rei/progress/history.md creado desde plantilla"
 else
     ok ".rei/progress/history.md"
+fi
+
+# Repositorio git: REI funciona sin git, pero el review por diff es más óptimo.
+if command -v git >/dev/null 2>&1; then
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        ok "Repositorio git detectado."
+    elif git init >/dev/null 2>&1; then
+        ok "Repositorio git inicializado."
+    else
+        warn "No se pudo inicializar git; el review por diff quedará deshabilitado."
+    fi
+else
+    warn "git no disponible; REI funciona, pero el review por diff quedará deshabilitado."
 fi
 
 echo
