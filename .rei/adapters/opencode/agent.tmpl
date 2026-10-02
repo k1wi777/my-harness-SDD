@@ -1,0 +1,11 @@
+---
+description: {{.Description}}
+mode: {{.Mode}}
+{{if .Model}}model: {{.Model}}
+{{end}}permission:
+{{range .Permissions}}  {{.Key}}: {{.Value}}
+{{end}}---
+
+{{.Mark}}
+
+{{.Contract}}

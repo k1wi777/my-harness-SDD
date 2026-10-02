@@ -15,8 +15,19 @@ func TestSkeletonContieneArchivosRequeridos(t *testing.T) {
 	}
 }
 
+func TestSkeletonContieneAdaptadores(t *testing.T) {
+	for _, path := range []string{
+		".rei/adapters/opencode/agent.tmpl",
+		".rei/adapters/opencode/tools.json",
+	} {
+		if _, err := fs.Stat(Skeleton, path); err != nil {
+			t.Errorf("Skeleton no contiene %s: %v", path, err)
+		}
+	}
+}
+
 func TestSkeletonContieneSubarbolesDelHarness(t *testing.T) {
-	prefixes := []string{".rei/docs/", ".rei/agents/", ".rei/templates/"}
+	prefixes := []string{".rei/docs/", ".rei/agents/", ".rei/adapters/", ".rei/templates/"}
 	found := map[string]bool{}
 	err := fs.WalkDir(Skeleton, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {

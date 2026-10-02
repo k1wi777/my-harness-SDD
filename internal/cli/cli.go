@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/k1wi777/my-harness-SDD/internal/adapter"
 	"github.com/k1wi777/my-harness-SDD/internal/check"
 	"github.com/k1wi777/my-harness-SDD/internal/doctor"
 	"github.com/k1wi777/my-harness-SDD/internal/gitx"
@@ -106,29 +107,46 @@ func cmdCheck(args []string) int {
 	return check.Run(p, quiet, os.Stdout)
 }
 
-// cmdInit implementa `rei init [status]`: en modo instalador (sin argumentos)
-// despliega el esqueleto embebido en el proyecto destino —resuelto con
-// initwizard.ResolveRoot, sin exigir un .rei/ previo— y reporta la
-// personalización; `status` es un reporte de solo lectura que sigue exigiendo
-// un proyecto REI existente (project()).
+// cmdInit implementa `rei init [status|opencode [--check]]`. En modo instalador
+// (sin argumentos) despliega el esqueleto embebido en el proyecto destino
+// —resuelto con initwizard.ResolveRoot, sin exigir un .rei/ previo— y reporta
+// la personalización. `status` es un reporte de solo lectura que exige un
+// proyecto REI existente (project()). `opencode` instala el esqueleto (incluido
+// .rei/adapters/) y genera los agentes nativos; `opencode --check` verifica sin
+// escribir. Cualquier otra combinación es uso incorrecto (2, R30).
 func cmdInit(args []string) int {
-	if len(args) > 1 || (len(args) == 1 && args[0] != "status") {
-		fmt.Fprintln(os.Stderr, "uso: rei init [status]")
-		return 2
-	}
-	if len(args) == 1 {
+	switch {
+	case len(args) == 0:
+		p, err := initwizard.ResolveRoot()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		return initwizard.Init(p, os.Stdout)
+	case len(args) == 1 && args[0] == "status":
 		p, code := project()
 		if p == nil {
 			return code
 		}
 		return initwizard.Status(p, os.Stdout)
+	case len(args) == 1 && args[0] == "opencode":
+		p, err := initwizard.ResolveRoot()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		return adapter.Install(p, os.Stdout)
+	case len(args) == 2 && args[0] == "opencode" && args[1] == "--check":
+		p, err := initwizard.ResolveRoot()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		return adapter.Check(p, os.Stdout)
+	default:
+		fmt.Fprintln(os.Stderr, "uso: rei init [status|opencode [--check]]")
+		return 2
 	}
-	p, err := initwizard.ResolveRoot()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return 1
-	}
-	return initwizard.Init(p, os.Stdout)
 }
 
 // cmdTest ejecuta solo los checks declarados en .rei/config.json, sin efectos

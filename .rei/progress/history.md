@@ -193,3 +193,43 @@ Planificación finalizada: alcance definido en `meta.json` convertido en requisi
 
 Esperar la revisión del rol `reviewer` sobre la trazabilidad corregida (T5 `[x]`); sin cambios de código pendientes.
 
+
+## 2026-10-02 15:38 — 2026-10-02_15-24__rei-adapters
+
+- **Work Item:** 2026-10-02_15-24__rei-adapters
+- **Tipo:** feature
+- **Estado:** review
+- **Inicio:** 2026-10-02T15:25:18-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Formato canónico de rol (frontmatter + `## Contrato` autosuficiente + `## Referencia`)
+y adaptador de runtime para OpenCode que genera `.opencode/agents/<rol>.md` a partir
+del Contrato, con `rei init opencode [--check]` y empaquetado en el esqueleto.
+
+## Bitácora
+
+- Planificación redactada: `requirements.md`, `design.md` y `tasks.md`.
+- Decisión relevante: el adaptador se orienta a OpenCode V2 (versión instalada
+  v2.0.21), generando `.opencode/agents/<rol>.md` (plural) con frontmatter nativo
+  `permission` (mapa `clave: allow`, no la lista legacy `permissions`); la
+  delegación mencionaba el `agent/` singular y el formato V1, documentado en
+  `design.md` (D1, D2).
+- Se definen 21 tareas en 5 fases: refactor de los 5 roles, infraestructura de
+  adaptadores, tests, CLI/embed y verificación (cobertura + medición de tokens).
+- Revisión solicitada: corregido el formato nativo de OpenCode a `permission`
+  (mapa) y el mapeo genéricas → claves de permiso (`read`, `edit`, `glob`, `grep`,
+  `bash`, `task`); se deduplican `write`+`edit` en `edit`.
+- Implementación iniciada por el Implementer (T1–T21).
+- T1–T21 completadas: 5 roles en formato canónico, adaptador OpenCode
+  (`internal/adapter`, `.rei/adapters/opencode/`), tests, CLI `rei init opencode
+  [--check]`, empaquetado en el esqueleto y documentación (`adapters.md`).
+- Verificación: `gofmt`, `make vet`, `make test`, `make build` y
+  `rei check --quiet` en verde; verificación manual del adaptador y de la
+  conservación de `rei init`/`rei init status`.
+
+## Próximo paso
+
+Esperar la revisión del Reviewer (`review.md`).
+

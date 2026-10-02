@@ -45,7 +45,7 @@ func TestHelpTestMencionaMakeTest(t *testing.T) {
 
 func TestHelpGeneralIncluyeNuevosComandos(t *testing.T) {
 	text := helpText()
-	for _, want := range []string{"test", "item", "init [status]"} {
+	for _, want := range []string{"test", "item", "init [status|opencode [--check]]"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("la ayuda general no incluye %q:\n%s", want, text)
 		}
@@ -70,6 +70,18 @@ func TestHelpInitDocumentaInstalador(t *testing.T) {
 		t.Fatal("no hay ayuda para init")
 	}
 	for _, want := range []string{"esqueleto", "git", "Códigos de salida", ".rei/config.json"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("la ayuda de init debe mencionar %q:\n%s", want, text)
+		}
+	}
+}
+
+func TestHelpInitDocumentaOpencodeYCheck(t *testing.T) {
+	text, ok := commandHelpText("init")
+	if !ok {
+		t.Fatal("no hay ayuda para init")
+	}
+	for _, want := range []string{"opencode", "--check", ".opencode/agents/", "GENERATED"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("la ayuda de init debe mencionar %q:\n%s", want, text)
 		}

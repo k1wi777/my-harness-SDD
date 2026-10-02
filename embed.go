@@ -9,12 +9,14 @@ package rei
 import "embed"
 
 // Skeleton contiene el esqueleto desplegable por `rei init`: AGENTS.md,
-// .rei/docs/**, .rei/agents/**, .rei/templates/** y .rei/config.json.
+// .rei/docs/**, .rei/agents/**, .rei/adapters/** (plantillas y mapas de
+// herramientas de los adaptadores de runtime), .rei/templates/** y
+// .rei/config.json.
 //
 // El patrón selectivo con prefijo `all:` incluye los subárboles completos bajo
 // `.rei/` (incluidos nombres que empiezan por `.`) y, a la vez, excluye
 // deliberadamente .rei/specs/ y .rei/progress/ (estado del proyecto destino,
 // no del arnés).
 //
-//go:embed all:.rei/docs all:.rei/agents all:.rei/templates all:.rei/config.json AGENTS.md
+//go:embed all:.rei/docs all:.rei/agents all:.rei/adapters all:.rei/templates all:.rei/config.json AGENTS.md
 var Skeleton embed.FS

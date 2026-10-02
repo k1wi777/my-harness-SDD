@@ -1,0 +1,230 @@
+package adapter
+
+import (
+	"bytes"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+
+	"github.com/k1wi777/my-harness-SDD/internal/paths"
+)
+
+const testToolsJSON = `{
+  "read": { "permission": ["read"] },
+  "write": { "permission": ["edit"] },
+  "edit": { "permission": ["edit"] },
+  "search": { "permission": ["glob", "grep"] },
+  "shell": { "permission": ["bash"] },
+  "subagent": { "permission": ["task"] }
+}
+`
+
+const testAgentTmpl = `---
+description: {{.Description}}
+mode: {{.Mode}}
+{{if .Model}}model: {{.Model}}
+{{end}}permission:
+{{range .Permissions}}  {{.Key}}: {{.Value}}
+{{end}}---
+
+{{.Mark}}
+
+{{.Contract}}
+`
+
+// setupProject crea un proyecto temporal con los 5 roles canónicos y el
+// adaptador OpenCode para ejercitar la generación sin depender del esqueleto.
+func setupProject(t *testing.T) *paths.Project {
+	t.Helper()
+	p := &paths.Project{Root: t.TempDir()}
+
+	agentsDir := filepath.Join(p.ReiDir(), "agents")
+	if err := os.MkdirAll(agentsDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range Roles {
+		mode, tools := "subagent", "[read, write, edit, search, shell]"
+		if name == "leader" {
+			mode, tools = "primary", "[read, search, shell, write, edit, subagent]"
+		}
+		writeTestFile(t, filepath.Join(agentsDir, name+".md"), canonicalRole(name, mode, tools))
+	}
+
+	adapterDir := opencodeDir(p)
+	if err := os.MkdirAll(adapterDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeTestFile(t, filepath.Join(adapterDir, "tools.json"), testToolsJSON)
+	writeTestFile(t, filepath.Join(adapterDir, "agent.tmpl"), testAgentTmpl)
+	return p
+}
+
+func writeTestFile(t *testing.T, path, content string) {
+	t.Helper()
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func readTestFile(t *testing.T, path string) string {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(data)
+}
+
+func testToolMap() toolMap {
+	return toolMap{
+		"read":     {Permission: []string{"read"}},
+		"write":    {Permission: []string{"edit"}},
+		"edit":     {Permission: []string{"edit"}},
+		"search":   {Permission: []string{"glob", "grep"}},
+		"shell":    {Permission: []string{"bash"}},
+		"subagent": {Permission: []string{"task"}},
+	}
+}
+
+func TestBuildPermissionsOrdenYDedup(t *testing.T) {
+	got, err := buildPermissions([]string{"read", "write", "edit", "search", "shell"}, testToolMap())
+	if err != nil {
+		t.Fatalf("buildPermissions: %v", err)
+	}
+	want := []string{"read", "edit", "glob", "grep", "bash"}
+	if len(got) != len(want) {
+		t.Fatalf("permisos = %v, esperaba %v", got, want)
+	}
+	for i, perm := range got {
+		if perm.Key != want[i] || perm.Value != "allow" {
+			t.Errorf("permisos[%d] = %+v, esperaba %s: allow", i, perm, want[i])
+		}
+	}
+}
+
+func TestBuildPermissionsSubagent(t *testing.T) {
+	got, err := buildPermissions([]string{"subagent"}, testToolMap())
+	if err != nil {
+		t.Fatalf("buildPermissions: %v", err)
+	}
+	if len(got) != 1 || got[0].Key != "task" {
+		t.Fatalf("subagent debe mapear a task: %+v", got)
+	}
+}
+
+func TestValidateToolMapIncompleto(t *testing.T) {
+	tm := testToolMap()
+	delete(tm, "subagent")
+	if err := validateToolMap(tm); err == nil {
+		t.Fatal("se esperaba error por mapa de herramientas incompleto")
+	}
+}
+
+func TestValidateToolMapPermisoInvalido(t *testing.T) {
+	tm := testToolMap()
+	tm["read"] = toolEntry{Permission: []string{"superpoder"}}
+	if err := validateToolMap(tm); err == nil {
+		t.Fatal("se esperaba error por clave de permiso desconocida")
+	}
+}
+
+func TestGenerateAllCreaArchivos(t *testing.T) {
+	p := setupProject(t)
+	var buf bytes.Buffer
+
+	if code := GenerateAll(p, &buf); code != 0 {
+		t.Fatalf("GenerateAll = %d, esperaba 0:\n%s", code, buf.String())
+	}
+	for _, name := range Roles {
+		got := readTestFile(t, agentPath(p, name))
+		if !strings.Contains(got, generatedMark) {
+			t.Errorf("%s.md no lleva la marca GENERATED", name)
+		}
+		if !strings.Contains(got, "## Contrato") || !strings.Contains(got, "### Identidad") {
+			t.Errorf("%s.md no contiene el Contrato", name)
+		}
+		if !strings.Contains(got, "permission:") || !strings.Contains(got, "  read: allow") {
+			t.Errorf("%s.md no contiene el frontmatter nativo:\n%s", name, got)
+		}
+	}
+	leader := readTestFile(t, agentPath(p, "leader"))
+	if !strings.Contains(leader, "mode: primary") || !strings.Contains(leader, "  task: allow") {
+		t.Errorf("leader.md debe ser primary y permitir task:\n%s", leader)
+	}
+}
+
+func TestGenerateAllIdempotente(t *testing.T) {
+	p := setupProject(t)
+	var first bytes.Buffer
+	if code := GenerateAll(p, &first); code != 0 {
+		t.Fatalf("primera ejecución = %d:\n%s", code, first.String())
+	}
+	before := readTestFile(t, agentPath(p, "implementer"))
+
+	var second bytes.Buffer
+	if code := GenerateAll(p, &second); code != 0 {
+		t.Fatalf("segunda ejecución = %d:\n%s", code, second.String())
+	}
+	after := readTestFile(t, agentPath(p, "implementer"))
+	if before != after {
+		t.Error("la segunda ejecución alteró el archivo generado")
+	}
+	if strings.Contains(second.String(), "[UPD]") || strings.Contains(second.String(), "[WARN]") {
+		t.Errorf("la segunda ejecución debe ser idempotente:\n%s", second.String())
+	}
+}
+
+func TestGenerateAllNoSobrescribeSinMarca(t *testing.T) {
+	p := setupProject(t)
+	custom := "# agente manual del usuario\n"
+	dest := agentPath(p, "leader")
+	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeTestFile(t, dest, custom)
+
+	var buf bytes.Buffer
+	if code := GenerateAll(p, &buf); code != 0 {
+		t.Fatalf("GenerateAll = %d, esperaba 0:\n%s", code, buf.String())
+	}
+	if got := readTestFile(t, dest); got != custom {
+		t.Errorf("el archivo sin marca fue sobrescrito:\n%s", got)
+	}
+	if !strings.Contains(buf.String(), "[WARN]") {
+		t.Errorf("debe avisar del archivo sin marca:\n%s", buf.String())
+	}
+	if _, err := os.Stat(agentPath(p, "reviewer")); err != nil {
+		t.Errorf("los demás roles deben generarse: %v", err)
+	}
+}
+
+func TestCheckDetectaDeriva(t *testing.T) {
+	p := setupProject(t)
+	var buf bytes.Buffer
+	if code := GenerateAll(p, &buf); code != 0 {
+		t.Fatalf("GenerateAll = %d:\n%s", code, buf.String())
+	}
+
+	buf.Reset()
+	if code := Check(p, &buf); code != 0 {
+		t.Fatalf("Check con todo generado = %d, esperaba 0:\n%s", code, buf.String())
+	}
+
+	// Falta un archivo.
+	if err := os.Remove(agentPath(p, "reviewer")); err != nil {
+		t.Fatal(err)
+	}
+	buf.Reset()
+	if code := Check(p, &buf); code != 1 {
+		t.Fatalf("Check con un archivo ausente = %d, esperaba 1:\n%s", code, buf.String())
+	}
+
+	// Contenido alterado.
+	dest := agentPath(p, "implementer")
+	writeTestFile(t, dest, readTestFile(t, dest)+"\nlínea manual\n")
+	buf.Reset()
+	if code := Check(p, &buf); code != 1 {
+		t.Fatalf("Check con contenido alterado = %d, esperaba 1:\n%s", code, buf.String())
+	}
+}

@@ -29,12 +29,14 @@ var commands = []commandInfo{
 	},
 	{
 		name:  "init",
-		usage: "init [status]",
-		short: "Instala el esqueleto del harness y reporta la personalización",
+		usage: "init [status|opencode [--check]]",
+		short: "Instala el esqueleto del harness, reporta la personalización y genera agentes nativos",
 		detail: []string{
-			"Sin argumentos: despliega el esqueleto embebido (AGENTS.md, .rei/docs/, .rei/agents/, .rei/templates/ y .rei/config.json) sin sobrescribir archivos existentes, crea la estructura de estado (.rei/specs/, .rei/progress/work-items/, current.md, history.md) y, si falta y git está disponible, inicializa el repositorio.",
+			"Sin argumentos: despliega el esqueleto embebido (AGENTS.md, .rei/docs/, .rei/agents/, .rei/adapters/, .rei/templates/ y .rei/config.json) sin sobrescribir archivos existentes, crea la estructura de estado (.rei/specs/, .rei/progress/work-items/, current.md, history.md) y, si falta y git está disponible, inicializa el repositorio.",
 			"status: reporta qué documentos siguen pendientes, sin modificar archivos (0 si no queda ninguno; 1 si queda alguno).",
-			"Códigos de salida: 0 si completa la instalación; 1 si no puede crear algún archivo del esqueleto o de la estructura; 2 uso incorrecto.",
+			"opencode: instala el esqueleto (incluido .rei/adapters/), asegura la estructura y genera los agentes nativos de OpenCode en .opencode/agents/<rol>.md a partir del `## Contrato` de cada rol. No sobrescribe archivos que no lleven la marca GENERATED.",
+			"opencode --check: verifica que los agentes nativos existen y coinciden con la generación canónica, sin escribir (0 si todo coincide; 1 si falta alguno, no lleva la marca o difiere).",
+			"Códigos de salida: 0 si completa la instalación; 1 si no puede crear algún archivo del esqueleto o de la estructura, o si la generación/verificación de OpenCode falla; 2 uso incorrecto.",
 			"Si AGENTS.md ya existe se avisa y se conserva sin cambios.",
 			"La personalización guiada la conduce el rol `initializer` (.rei/agents/initializer.md).",
 		},

@@ -5,6 +5,9 @@
 > Su objetivo es proporcionar únicamente el contexto esencial para orientarse dentro del proyecto y saber dónde encontrar información adicional. **No debe contener toda la documentación del proyecto.**
 >Carga únicamente el contexto necesario para la tarea actual.
 > Las responsabilidades específicas de cada rol se encuentran en `.rei/agents/`.
+> Cada rol se define en `.rei/agents/<rol>.md` con frontmatter, un `## Contrato`
+> autosuficiente y una `## Referencia` opcional; a los subagentes se les
+> transmite únicamente el `## Contrato`. Consulta `.rei/docs/harness/adapters.md`.
 
 **No ignores estas reglas.**
 
@@ -101,7 +104,8 @@ Si `rei init status` reporta documentos de personalización pendientes, el
 | `.rei/progress/work-items/` | Registros detallados de cada Work Item, organizados cronológicamente. |
 | `.rei/docs/harness/` | Documentación del arnés (workflow, specs, progreso). |
 | `.rei/docs/project/` | Documentación específica del proyecto. |
-| `.rei/agents/` | Roles y comportamiento de los subagentes. |
+| `.rei/agents/` | Roles y comportamiento de los subagentes (frontmatter + `## Contrato` + `## Referencia`). |
+| `.rei/adapters/` | Adaptadores de runtime (plantilla + mapa de herramientas); p. ej. `opencode/`. |
 | `cmd/`, `internal/` | Código del CLI `rei` (Go). |
 | `.rei/templates/` | Plantillas canónicas (`current.md`, `history.md`, `meta.json`). Fuente única de verdad. |
 
@@ -135,6 +139,11 @@ El Leader es el único responsable de:
 
 Ningún otro agente debe asumir estas responsabilidades.
 
+Al delegar en un subagente, el Leader transmite únicamente la sección `## Contrato`
+del rol correspondiente, nunca el archivo completo (`## Referencia` es detalle
+opcional y no se envía). Si el runtime dispone de un adaptador nativo
+(`rei init opencode`), el subagente recibe ese mismo Contrato como system prompt.
+
 ---
 
 # 7. Documentación
@@ -151,6 +160,7 @@ Define cómo funciona el arnés. No requiere personalización por proyecto.
 | Spec Driven Development | `.rei/docs/harness/specs.md` |
 | Sistema de progreso | `.rei/docs/harness/progress.md` |
 | Estructura de `meta.json` | `.rei/docs/harness/meta.md` |
+| Roles y adaptadores | `.rei/docs/harness/adapters.md` |
 | El comportamiento de un agente | `.rei/agents/<role>.md` |
 
 ## Documentación del proyecto

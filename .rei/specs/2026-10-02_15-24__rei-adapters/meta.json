@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_15-24__rei-adapters",
+  "title": "rei runtime adapters",
+  "description": "Disenar y construir adaptadores de runtime para REI, empezando por OpenCode. Introducir un formato canonico de rol en `.rei/agents/<rol>.md`: frontmatter (`name`, `description`, `mode`, `tools` genericos: read/write/edit/search/shell/subagent, `model` opcional) + seccion `## Contrato` (conciso y AUTOSUFICIENTE: identidad, objetivo, precondiciones, protocolo completo paso a paso, reglas duras, formato de salida, herramientas permitidas y punteros a los docs del harness) + seccion `## Referencia` (detalle opcional: racional, ejemplos, casos limite). El Contrato es lo que reciben los subagentes para ahorrar tokens; nativos y no nativos reciben el MISMO Contrato y deben comportarse igual (mismo flujo y capacidades; el nativo ademas impone tools/model). Crear infraestructura de adaptadores en `.rei/adapters/opencode/` (plantilla + mapa de herramientas) y el comando `rei init opencode` (instalacion + adaptacion) que genera `.opencode/agents/<rol>.md` (frontmatter nativo `permission` mapeado + Contrato), marcados como GENERATED, con `--check` para detectar deriva. Actualizar el fallback: el Leader pasa el Contrato (no el archivo completo). Incluir `.rei/adapters/**` en el esqueleto embebido. Verificacion: cobertura del Contrato frente a las reglas/protocolo actuales, tests, y medicion de tokens por spawn. Fuera de alcance: otros runtimes (formato extensible).",
+  "type": "feature",
+  "status": "done",
+  "created_at": "2026-10-02T15:24:00-05:00",
+  "base_commit": "05dcdae6b06d72822be55a43adfe14efca555b5e",
+  "last_review_commit": ""
+}
