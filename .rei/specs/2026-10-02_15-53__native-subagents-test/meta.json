@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_15-53__native-subagents-test",
+  "title": "probar subagentes nativos",
+  "description": "Documentar en `.rei/docs/usage.md` el uso de los subagentes nativos de OpenCode: `rei init opencode` genera `.opencode/agents/<rol>.md`; se invocan con `@spec_author`/`@implementer`/`@reviewer`/`@initializer` o cambiando al agente `leader`; `rei init opencode --check` detecta deriva de los archivos generados; y aclarar que, sin adaptador nativo (fallback), el Leader transmite el mismo `## Contrato` del rol. Fuera de alcance: otros runtimes.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T15:53:00-05:00",
+  "base_commit": "5e9bd7d7921901317ec078d3e2dfc1d7a025f44c",
+  "last_review_commit": ""
+}

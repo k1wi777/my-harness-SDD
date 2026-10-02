@@ -134,3 +134,32 @@ No. Esta guía es suficiente para el uso diario. Los agentes cargan solo lo nece
 
 **¿REI Harness necesita git?**
 No, pero funciona mejor con él. Si el repositorio usa git, el Reviewer revisa solo los cambios reales del Work Item (`rei review-diff`) en lugar de releer toda la especificación, y en `changes_requested` puede acotar la revisión a lo que cambió. Si no hay git, el flujo sigue funcionando en modo lectura. `rei check` inicializa git automáticamente si no existe.
+
+---
+
+# 7. Subagentes nativos de OpenCode
+
+REI Harness define sus roles en `.rei/agents/`: el `leader` coordina el workflow y delega en el Spec Author, el Implementer, el Reviewer y el Initializer. Si trabajas con OpenCode, puedes instalarlos como **subagentes nativos** para invocarlos directamente, sin que el Leader tenga que reenviarles el contrato cada vez.
+
+Para generarlos, ejecuta:
+
+```bash
+rei init opencode
+```
+
+Esto crea un archivo por rol en `.opencode/agents/<rol>.md` —por ejemplo `.opencode/agents/implementer.md`— a partir del `## Contrato` canónico de `.rei/agents/<rol>.md`. Los archivos generados llevan la marca `GENERATED` y el comando es idempotente: si ya están al día, volver a ejecutarlo no los modifica. `rei init opencode` **no sobrescribe** archivos que no haya generado él; si encuentra uno, te avisa y lo conserva tal cual.
+
+Una vez generados, tienes dos formas de trabajar con ellos:
+
+- **Invocar el subagente directamente** con `@spec_author`, `@implementer`, `@reviewer` o `@initializer`, según la etapa del ciclo (Sección 3).
+- **Cambiar al agente `leader`**, que es el agente principal desde el que coordinas el workflow y que delega en el resto.
+
+Si editas el `## Contrato` de un rol en `.rei/agents/`, los archivos generados quedan desactualizados. Para comprobarlo sin escribir nada:
+
+```bash
+rei init opencode --check
+```
+
+El comando devuelve `0` si todos los archivos coinciden con la generación canónica, y `1` si falta alguno o difiere. Así detectas la **deriva** entre `.rei/agents/` y `.opencode/agents/` antes de que afecte al trabajo.
+
+Si tu entorno no dispone de un adaptador nativo, el resultado es equivalente: el Leader transmite al subagente únicamente el `## Contrato` del rol —nunca el archivo completo—, de modo que obtienes el mismo contrato operativo sin configuración adicional.

@@ -233,3 +233,33 @@ del Contrato, con `rei init opencode [--check]` y empaquetado en el esqueleto.
 
 Esperar la revisión del Reviewer (`review.md`).
 
+
+## 2026-10-02 16:02 — 2026-10-02_15-53__native-subagents-test
+
+- **Work Item:** 2026-10-02_15-53__native-subagents-test
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T15:53:00-05:00
+- **Agente activo:** reviewer
+
+## Plan
+
+Documentar en `.rei/docs/usage.md` el uso de los subagentes nativos de
+OpenCode: generación de `.opencode/agents/<rol>.md` con `rei init opencode`,
+invocación con `@spec_author`/`@implementer`/`@reviewer`/`@initializer` o
+cambiando al agente `leader`, detección de deriva con `rei init opencode
+--check` y el fallback (el Leader transmite el `## Contrato` del rol).
+
+## Bitácora
+
+- Planificación redactada en `.rei/specs/2026-10-02_15-53__native-subagents-test/plan.md`.
+- Planificación aprobada; inicio de la implementación (`in_progress`).
+- Pasos 1–2 completados: sección "Subagentes nativos de OpenCode" añadida como Sección 7 en `.rei/docs/usage.md` sin alterar secciones existentes.
+- Pasos 3–4 completados: coherencia de estilo y numeración verificada; sin menciones a otros runtimes.
+- `rei check --quiet` ejecutado: `exit 0`.
+- Revisión (`reviewer`): los 4 puntos del objetivo verificados contra `.rei/docs/usage.md` y `adapters.md`; único archivo de contenido modificado; sin otros runtimes; `rei check --quiet` = `exit 0`; `rei validate` = OK. Veredicto: `done`. Detalle en `review.md`.
+
+## Próximo paso
+
+Aprobado; sesión archivada y Work Item cerrado (`done`).
+
