@@ -44,9 +44,8 @@ dejando la evidencia necesaria para su revisión.
    `implementer`, y registra en **Bitácora** y **Próximo paso** el inicio de la
    implementación.
 
-> NO leas `verification.md` por defecto: los checkpoints rápidos se ejecutan con
-> `rei check --quiet`, y `design.md`/`tasks.md` referencian sus IDs.
-> Consúltalo solo si necesitas el mapeo de checkpoints o la evidencia esperada.
+> Consulta `.rei/docs/project/verification.md` solo si necesitas el mapeo de
+> checkpoints o la evidencia esperada.
 
 #### Caso A — `type == feature`
 
@@ -55,19 +54,9 @@ dejando la evidencia necesaria para su revisión.
 3. Después de completar **cada** tarea, **inmediatamente**:
    - márcala como completada (`[x]`) en `tasks.md`;
    - actualiza `.rei/progress/current.md`;
-   - verifica que el cambio funciona antes de continuar (por ejemplo con
-     `rei check --quiet`, o solo los tests del módulo afectado si el proyecto lo
-     permite).
-4. Al finalizar:
-   - ejecuta `rei check --quiet`;
-   - verifica que todos los requisitos fueron implementados;
-   - documenta el trabajo en
-     `.rei/progress/work-items/<work-item-id>/impl.md`;
-   - deja `.rei/progress/current.md` completamente actualizado.
-5. Actualiza `.rei/progress/current.md`: **Estado** a `review` y **Próximo
-   paso** a esperar revisión.
-6. Cambia `status` a `review`.
-7. DETENTE.
+   - verifica que el cambio funciona antes de continuar con `rei check --quiet`.
+4. Verifica que todos los requisitos fueron implementados y cierra según
+   **Cierre**.
 
 #### Caso B — `type == task`
 
@@ -76,18 +65,18 @@ dejando la evidencia necesaria para su revisión.
 3. Después de completar **cada** paso del plan, **inmediatamente**:
    - márcalo como completado en `plan.md`;
    - actualiza `.rei/progress/current.md`;
-   - verifica que el cambio funciona antes de continuar (por ejemplo con
-     `rei check --quiet`, o solo los tests del módulo afectado si el proyecto lo
-     permite).
-4. Al finalizar:
-   - ejecuta `rei check --quiet`;
-   - documenta el trabajo en
-     `.rei/progress/work-items/<work-item-id>/impl.md`;
-   - deja `.rei/progress/current.md` completamente actualizado.
-5. Actualiza `.rei/progress/current.md`: **Estado** a `review` y **Próximo
-   paso** a esperar revisión.
-6. Cambia `status` a `review`.
-7. DETENTE.
+   - verifica que el cambio funciona antes de continuar con `rei check --quiet`.
+4. Cierra según **Cierre**.
+
+#### Cierre (común a Caso A y Caso B)
+
+1. Ejecuta `rei check --quiet`.
+2. Documenta el trabajo en
+   `.rei/progress/work-items/<work-item-id>/impl.md`.
+3. Deja `.rei/progress/current.md` completamente actualizado: **Estado** a
+   `review` y **Próximo paso** a esperar revisión.
+4. Cambia `status` a `review`.
+5. DETENTE.
 
 #### Caso C — rework (`changes_requested`)
 
@@ -128,8 +117,6 @@ Si durante la implementación el trabajo no puede continuar:
 - SIEMPRE documenta la implementación en
   `.rei/progress/work-items/<work-item-id>/impl.md`.
 - SIEMPRE verifica tu trabajo antes de solicitar revisión.
-- No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar
-  un dato concreto en lugar de releer el archivo completo.
 - Si el proyecto usa git, registra los archivos nuevos del Work Item con
   `git add` (nunca `.rei/progress/`).
 
@@ -165,5 +152,16 @@ Nunca devuelvas el código implementado en el chat.
 
 ## Referencia
 
-Sin detalle adicional: toda la información necesaria para ejecutar el rol está
-en el `## Contrato`.
+Detalle opcional (no necesario para ejecutar el rol).
+
+### Verificación rápida
+
+No leas `.rei/docs/project/verification.md` por defecto: los checkpoints rápidos
+se ejecutan con `rei check --quiet`, y `design.md`/`tasks.md` referencian sus
+IDs. Para un cambio pequeño puedes verificar solo el módulo afectado si el
+proyecto lo permite.
+
+### Duplicado de `AGENTS.md` §9
+
+No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar un
+dato concreto en lugar de releer el archivo completo.

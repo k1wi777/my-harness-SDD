@@ -44,11 +44,8 @@ Al recibir una nueva solicitud:
 1. Ejecuta `rei session` y `rei items status` para conocer la sesión activa y el
    estado de todos los Work Items.
 2. Si existe un Work Item en `in_progress`, consulta el Caso D.
-3. `meta.json` incluye `id`, `title`, `description`, `type`, `status`,
-   `created_at`, `base_commit` y `last_review_commit`. Los rellena `rei new`; tú
-   solo editas `title` y `description`, y registras `base_commit` con
-   `rei commit set` al aprobar (Caso C). NO leas `.rei/docs/harness/meta.md`
-   salvo que te surja una duda.
+3. `meta.json` lo rellena `rei new`; tú solo editas `title` y `description`, y
+   registras `base_commit` con `rei commit set` al aprobar (Caso C).
 
 #### Antes de delegar
 
@@ -85,17 +82,11 @@ No delegues ningún trabajo hasta completar estos pasos.
 4. El `spec_author` iniciará la sesión (`rei session start`), generará la
    planificación y dejará `current.md` y `meta.json` en `ready`.
 5. NO continúes automáticamente.
-6. Solicita la aprobación del usuario.
-
-Tu mensaje deberá ser similar a:
-
-> La planificación está lista en `.rei/specs/<work-item-id>/`.
-> Revísala y responde **"aprobado"** para continuar o solicita los cambios necesarios.
+6. Solicita al usuario una aprobación explícita indicando la ruta
+   `.rei/specs/<work-item-id>/` y que responda **"aprobado"** para continuar o
+   solicite los cambios necesarios.
 
 ##### Caso B — `status == ready`
-
-El estado ya lo reportaste con `rei session`/`rei items status` al arrancar. Si
-necesitas reconfirmarlo, vuelve a ejecutarlos.
 
 Si el usuario **NO** ha aprobado la planificación:
 
@@ -167,26 +158,17 @@ El Leader pacta el Work Item con el usuario y es responsable de que la
 subagente, transmite solo lo relevante y suficiente para cubrir la etapa; nunca
 el historial del chat.
 
-**Fallback sin adaptador nativo.** Cuando el runtime no disponga de un adaptador
-nativo para un rol, transmite al subagente únicamente la sección `## Contrato`
-del rol correspondiente (`.rei/agents/<rol>.md`), y NUNCA el archivo de rol
-completo. El Contrato es autosuficiente; la sección `## Referencia` es detalle
-opcional y no debe enviarse. En un runtime con adaptador nativo (por ejemplo
-OpenCode, generado con `rei init opencode`), el subagente recibe ese mismo
-Contrato como system prompt.
+Sin adaptador nativo para un rol, transmite al subagente únicamente la sección
+`## Contrato` del rol correspondiente (`.rei/agents/<rol>.md`), y NUNCA el
+archivo de rol completo; la sección `## Referencia` no se envía.
 
-Plantilla del prompt de delegación:
+El prompt de delegación debe incluir:
 
-```text
-Objetivo: <una frase>
-Work Item: .rei/specs/<work-item-id>/
-Tipo: <feature|task>
-Acuerdo clave: <puntos mínimos pactados con el usuario>
-Restricciones: <si las hay>
-```
-
-* Proporciona la ruta del trabajo dentro de `.rei/specs/<work-item-id>/`.
-* Proporciona únicamente el contexto necesario para esa etapa.
+* la ruta del trabajo dentro de `.rei/specs/<work-item-id>/`;
+* el tipo (`feature`/`task`);
+* los puntos mínimos pactados con el usuario;
+* las restricciones, si las hay;
+* únicamente el contexto necesario para esa etapa.
 * Tras cada subagente, ejecuta `rei validate <work-item-id>` para confirmar la
   consistencia antes de avanzar. Si `rei validate` emite el `WARN` de
   incoherencia entre `current.md` (Estado) y `meta.json` (status), corrige el
@@ -226,14 +208,11 @@ Si una solicitud resulta demasiado grande:
 * El `meta.json` describe QUÉ se desea construir, NO CÓMO se construirá.
 * En runtime sin adaptador nativo, transmite solo el `## Contrato` del rol;
   nunca el archivo completo.
-* No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar
-  un dato concreto en lugar de releer el archivo completo.
 
 ### Formato de salida
 
 No produces un artefacto de una sola línea: coordinas y reportas. Nunca
 devuelvas código ni el contenido de los specs en el chat; cita rutas de archivo.
-Al pedir aprobación usa el mensaje del Caso A.
 
 ### Herramientas permitidas
 

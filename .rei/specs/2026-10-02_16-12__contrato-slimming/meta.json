@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_16-12__contrato-slimming",
+  "title": "slimming de contratos de rol",
+  "description": "Reducir el tamano del `## Contrato` de los 5 roles (leader, spec_author, implementer, reviewer, initializer) para que el subagente reciba menos tokens por spawn, SIN perder capacidad: mover a `## Referencia` el detalle NO esencial (duplicaciones, ejemplos, racional, aclaraciones no operativas) y mantener en el Contrato todo lo necesario para ejecutar correctamente (identidad, objetivo, precondiciones, protocolo completo, reglas duras, formato de salida, herramientas permitidas, punteros a docs). Criterio: el Contrato debe seguir siendo autosuficiente; la Referencia es detalle opcional. Verificacion: checklist de cobertura (cada regla/paso necesario sigue en el Contrato) + test estructural + medicion antes/despues (chars/palabras del Contrato) reportando el ahorro real. Regenerar los agentes nativos (`rei init opencode`) y verificar `rei init opencode --check` (exit 0). Fuera de alcance: cambiar el flujo o comportamiento de los roles, y otros runtimes.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T16:12:00-05:00",
+  "base_commit": "7195524e3c7d9a6ce0448d870ee0e03599caaba6",
+  "last_review_commit": ""
+}

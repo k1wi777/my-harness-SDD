@@ -300,3 +300,46 @@ Plan completo en `.rei/specs/2026-10-02_16-07__dogfood-fixes/plan.md`.
 
 Implementación finalizada; espera revisión.
 
+
+## 2026-10-02 16:24 — 2026-10-02_16-12__contrato-slimming
+
+- **Work Item:** 2026-10-02_16-12__contrato-slimming
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T16:12:00-05:00
+- **Agente activo:** _—_
+
+## Plan
+
+Task `2026-10-02_16-12__contrato-slimming`: reducir el tamaño del `## Contrato`
+de los 5 roles (leader, spec_author, implementer, reviewer, initializer) moviendo
+a `## Referencia` el detalle no esencial (ejemplos, racional, duplicaciones,
+aclaraciones no operativas), sin cambiar el flujo ni el comportamiento. Incluye
+criterio de recorte, checklist de cobertura por rol, medición antes/después y
+regeneración de agentes nativos. Plan completo en
+`.rei/specs/2026-10-02_16-12__contrato-slimming/plan.md`.
+
+## Bitácora
+
+- Sesión iniciada con `rei session start 2026-10-02_16-12__contrato-slimming task`.
+- Leídos `task.md`, `meta.json`, `workflow.md`, `adapters.md`, los 5
+  `.rei/agents/*.md` y la lógica de adaptación (`internal/adapter/*.go`).
+- Confirmado `rei init opencode --check` en exit 0 y capturado el baseline:
+  Contrato 31272 bytes / 4182 palabras; nativos 33070 bytes.
+- Redactado `plan.md` con objetivo, archivos, criterio de recorte, invariante del
+  Contrato, qué se mueve a Referencia por rol, checklist de cobertura, método de
+  medición, regeneración y pasos.
+- Implementación iniciada. Baseline reconfirmado (Contrato 31272 bytes / 4182
+  palabras; nativos 33070 bytes). `rei check --quiet` y
+  `rei init opencode --check` en exit 0.
+- Pasos 2–6: recortados los 5 Contratos (detalle no esencial a `## Referencia`,
+  cierres A/B consolidados). Pasos 7–10: checklist §4 verificado (8 subsecciones
+  por rol, sin `Sin detalle adicional`), nativos regenerados y sincronizados
+  (`rei init opencode --check` exit 0), medición registrada en `impl.md`
+  (Contrato −2975 bytes / −9.51 %; nativos −2975 bytes / −9.00 %),
+  `rei check --quiet`, `go test ./...` y `rei validate` en verde.
+
+## Próximo paso
+
+Trabajo implementado y documentado en `impl.md`; espera revisión.
+

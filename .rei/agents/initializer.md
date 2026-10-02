@@ -76,9 +76,6 @@ plantillas.
 | 5. Verificación | `.rei/docs/project/verification.md` + `.rei/config.json` | los de `verification.md` |
 | 6. Cierre y validación | `rei init status` / `rei doctor` | — (verificación final) |
 
-`AGENTS.md` contiene dos marcadores (uno por sección). Debe quedar sin ninguno
-para considerarse completo.
-
 #### Entrevista guiada
 
 - Haz **una pregunta o un bloque corto** de preguntas por paso.
@@ -121,8 +118,6 @@ necesaria):
 - SIEMPRE pide confirmación al usuario antes de pasar al siguiente paso.
 - SIEMPRE actualiza `.rei/config.json` al completar el paso de verificación.
 - SIEMPRE verifica el cierre con `rei init status` y `rei doctor`.
-- No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar
-  un dato concreto en lugar de releer el archivo completo.
 
 ### Formato de salida
 
@@ -155,5 +150,14 @@ Nunca devuelvas el contenido de la entrevista en el chat.
 
 ## Referencia
 
-Sin detalle adicional: toda la información necesaria para ejecutar el rol está
-en el `## Contrato`.
+Detalle opcional (no necesario para ejecutar el rol).
+
+### Marcadores de `AGENTS.md`
+
+`AGENTS.md` contiene dos marcadores (uno por sección). Debe quedar sin ninguno
+para considerarse completo.
+
+### Duplicado de `AGENTS.md` §9
+
+No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar un
+dato concreto en lugar de releer el archivo completo.

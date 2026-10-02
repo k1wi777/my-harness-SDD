@@ -58,23 +58,7 @@ finalizado, dejando el resultado documentado.
      `.rei/docs/project/verification.md` pasa;
    - los checkpoints lentos tienen evidencia válida (CI o ejecución manual);
    - `rei check --quiet` finaliza correctamente.
-3. Escribe el resultado en
-   `.rei/progress/work-items/<work-item-id>/review.md`.
-4. Si todo es correcto:
-   - ejecuta `rei validate <work-item-id>` (consistencia interna);
-   - cierra la sesión con `rei session archive` (archiva el resumen en
-     `history.md` y restablece `current.md`);
-   - cambia `status` a `done`;
-   - DETENTE.
-5. Si encuentras cualquier incumplimiento:
-   - cambia `status` a `changes_requested`;
-   - registra el punto revisado con
-     `rei commit set <work-item-id> last_review_commit` (así la próxima revisión
-     verá solo los cambios pedidos);
-   - actualiza `current.md`: **Estado** a `changes_requested` y **Próximo paso**
-     a aplicar los cambios de `review.md`;
-   - documenta los cambios requeridos;
-   - DETENTE.
+3. Aplica el **Cierre** (aprobación o rechazo).
 
 #### Caso B — `type == task`
 
@@ -93,19 +77,21 @@ finalizado, dejando el resultado documentado.
      `.rei/docs/project/verification.md` pasa;
    - los checkpoints lentos tienen evidencia válida (CI o ejecución manual);
    - `rei check --quiet` finaliza correctamente.
-3. Escribe el resultado en
+3. Aplica el **Cierre** (aprobación o rechazo).
+
+#### Cierre (común a Caso A y Caso B)
+
+1. Escribe el resultado en
    `.rei/progress/work-items/<work-item-id>/review.md`.
-4. Si todo es correcto:
-   - ejecuta `rei validate <work-item-id>` (consistencia interna);
-   - cierra la sesión con `rei session archive` (archiva el resumen en
-     `history.md` y restablece `current.md`);
+2. Si todo es correcto:
+   - ejecuta `rei validate <work-item-id>`;
+   - cierra la sesión con `rei session archive`;
    - cambia `status` a `done`;
    - DETENTE.
-5. Si encuentras cualquier incumplimiento:
+3. Si encuentras cualquier incumplimiento:
    - cambia `status` a `changes_requested`;
    - registra el punto revisado con
-     `rei commit set <work-item-id> last_review_commit` (así la próxima revisión
-     verá solo los cambios pedidos);
+     `rei commit set <work-item-id> last_review_commit`;
    - actualiza `current.md`: **Estado** a `changes_requested` y **Próximo paso**
      a aplicar los cambios de `review.md`;
    - documenta los cambios requeridos;
@@ -136,8 +122,6 @@ planificación:
 - SIEMPRE cierra la sesión con `rei session archive` al aprobar (feature o
   task).
 - NUNCA escribas plantillas a mano: usa el CLI (`rei`).
-- No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar
-  un dato concreto en lugar de releer el archivo completo.
 
 ### Formato de salida
 
@@ -176,5 +160,18 @@ Nunca devuelvas el contenido de la revisión en el chat.
 
 ## Referencia
 
-Sin detalle adicional: toda la información necesaria para ejecutar el rol está
-en el `## Contrato`.
+Detalle opcional (no necesario para ejecutar el rol).
+
+### Racional de los comandos de cierre
+
+- `rei validate` comprueba la consistencia interna del Work Item.
+- `rei session archive` archiva el resumen en `history.md` y restablece
+  `current.md`.
+- `rei commit set <work-item-id> last_review_commit` registra el punto revisado:
+  así la próxima revisión verá solo los cambios pedidos.
+- `tasks.md` mantiene la trazabilidad tarea ↔ `R-id`.
+
+### Duplicado de `AGENTS.md` §9
+
+No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar un
+dato concreto en lugar de releer el archivo completo.

@@ -82,9 +82,6 @@ plantillas.
 | 5. Verificación | `.rei/docs/project/verification.md` + `.rei/config.json` | los de `verification.md` |
 | 6. Cierre y validación | `rei init status` / `rei doctor` | — (verificación final) |
 
-`AGENTS.md` contiene dos marcadores (uno por sección). Debe quedar sin ninguno
-para considerarse completo.
-
 #### Entrevista guiada
 
 - Haz **una pregunta o un bloque corto** de preguntas por paso.
@@ -127,8 +124,6 @@ necesaria):
 - SIEMPRE pide confirmación al usuario antes de pasar al siguiente paso.
 - SIEMPRE actualiza `.rei/config.json` al completar el paso de verificación.
 - SIEMPRE verifica el cierre con `rei init status` y `rei doctor`.
-- No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar
-  un dato concreto en lugar de releer el archivo completo.
 
 ### Formato de salida
 

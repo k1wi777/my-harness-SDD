@@ -119,8 +119,6 @@ NO inventes información para completar la planificación.
   el Work Item es nuevo (`pending`); no la reinicies si ya existe (`ready`).
 - SIEMPRE deja `.rei/progress/current.md` en `ready` al finalizar correctamente.
 - NUNCA escribas plantillas a mano: usa el CLI (`rei`).
-- No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar
-  un dato concreto en lugar de releer el archivo completo.
 
 ### Formato de salida
 
@@ -155,5 +153,9 @@ del spec en chat — vive en disco.
 
 ## Referencia
 
-Sin detalle adicional: toda la información necesaria para ejecutar el rol está
-en el `## Contrato`.
+Detalle opcional (no necesario para ejecutar el rol).
+
+### Duplicado de `AGENTS.md` §9
+
+No releas un archivo que ya esté en tu contexto; usa búsquedas para localizar un
+dato concreto en lugar de releer el archivo completo.
