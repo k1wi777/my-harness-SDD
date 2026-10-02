@@ -32,8 +32,8 @@ Tu único trabajo es **transformar un Work Item pendiente en una planificación 
 
 # Protocolo
 
-1. Lee `.rei/docs/harness/specs.md` (para `task` solo la sección `plan.md`; para
-   `feature` las secciones de requisitos, diseño y tareas).
+1. Lee `.rei/docs/harness/specs.md` si `type == feature`. Si `type == task`, lee
+   `.rei/docs/harness/task.md`.
 2. Lee `.rei/specs/<work-item-id>/meta.json`.
 3. Verifica que `status` sea `pending` o `ready`.
 4. Consulta `type`.

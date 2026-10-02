@@ -149,7 +149,8 @@ Define el funcionamiento del arnés. **No requiere personalización** al adaptar
 | Documento | Propósito |
 |-----------|-----------|
 | `workflow.md` | Flujo completo: tipos de Work Item, estados y transiciones. |
-| `specs.md` | Cómo se construyen las especificaciones. |
+| `specs.md` | Cómo se construyen las especificaciones (Features). |
+| `task.md` | Formato del plan de una Task. |
 | `progress.md` | Funcionamiento del sistema de progreso. |
 | `meta.md` | Estructura y significado de `meta.json`. |
 

@@ -115,43 +115,8 @@ El Implementer marcará cada tarea como completada (`[x]`) en `tasks.md` **inmed
 
 ## Task
 
-Las Tasks utilizan una planificación simplificada.
-
-El Spec Author únicamente genera `plan.md`.
-
----
-
-### plan.md
-
-Resume el trabajo que debe realizar el Implementer sin generar documentación innecesaria.
-
-Formato recomendado:
-
-```text
-Objetivo
-
-...
-
-Archivos
-
-...
-
-Cambios
-
-...
-
-Restricciones
-
-...
-
-Pasos
-
-1.
-2.
-3.
-```
-
-Debe contener únicamente la información necesaria para implementar correctamente el cambio.
+Las Tasks usan una planificación simplificada: el Spec Author genera únicamente
+`plan.md`. El formato se define en `.rei/docs/harness/task.md`.
 
 ---
 
