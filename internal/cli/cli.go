@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/k1wi777/my-harness-SDD/internal/check"
 	"github.com/k1wi777/my-harness-SDD/internal/doctor"
 	"github.com/k1wi777/my-harness-SDD/internal/gitx"
+	"github.com/k1wi777/my-harness-SDD/internal/meta"
 	"github.com/k1wi777/my-harness-SDD/internal/paths"
 	"github.com/k1wi777/my-harness-SDD/internal/state"
 	"github.com/k1wi777/my-harness-SDD/internal/template"
@@ -40,6 +42,8 @@ func Run(args []string) int {
 		return cmdSession(args[1:])
 	case "items":
 		return cmdItems(args[1:])
+	case "status":
+		return cmdStatus(args[1:])
 	case "commit":
 		return cmdCommit(args[1:])
 	case "validate":
@@ -69,6 +73,8 @@ Comandos:
   session archive              Archiva la sesión en history.md y resetea current.md
   session reset                Restablece current.md
   items status                 Lista el estado de todos los Work Items
+  status set <id> <status> [--force]
+                               Cambia el estado de un Work Item en meta.json
   commit set <id> <base_commit|last_review_commit>
                                Registra el commit actual de git en meta.json
   validate [<id>]              Comprueba la consistencia interna de un Work Item
@@ -225,6 +231,71 @@ func cmdItems(args []string) int {
 	}
 	if active > 0 {
 		fmt.Println("AVISO: existe un Work Item en in_progress.")
+	}
+	return 0
+}
+
+func cmdStatus(args []string) int {
+	if len(args) == 0 || args[0] != "set" {
+		fmt.Fprintln(os.Stderr, "uso: rei status set <id> <status> [--force]")
+		return 2
+	}
+	force := false
+	var positional []string
+	for _, a := range args[1:] {
+		switch {
+		case a == "--force":
+			force = true
+		case strings.HasPrefix(a, "-"):
+			fmt.Fprintln(os.Stderr, "uso: rei status set <id> <status> [--force]")
+			return 2
+		default:
+			positional = append(positional, a)
+		}
+	}
+	if len(positional) < 2 {
+		fmt.Fprintln(os.Stderr, "uso: rei status set <id> <status> [--force]")
+		return 2
+	}
+	id, status := positional[0], positional[1]
+	if !meta.IsValidStatus(status) {
+		fmt.Fprintf(os.Stderr, "ERROR: estado inválido: %q\n", status)
+		return 1
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	path := p.MetaFile(id)
+	if _, err := os.Stat(path); err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: el Work Item %q no existe\n", id)
+		return 1
+	}
+	previous, err := meta.Load(path)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+		return 1
+	}
+	if previous.Status == status {
+		fmt.Printf("Work Item %s: ya está en '%s'.\n", id, status)
+		return 0
+	}
+	forced := false
+	if !meta.TransitionAllowed(previous.Status, status) {
+		if !force {
+			fmt.Fprintf(os.Stderr, "ERROR: transición no permitida: %s -> %s (ver workflow.md; usa --force para forzar)\n", previous.Status, status)
+			return 1
+		}
+		forced = true
+	}
+	if _, err := meta.SetStatus(path, status); err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+		return 1
+	}
+	if forced {
+		fmt.Printf("Work Item %s: %s -> %s (forzado).\n", id, previous.Status, status)
+	} else {
+		fmt.Printf("Work Item %s: %s -> %s.\n", id, previous.Status, status)
 	}
 	return 0
 }

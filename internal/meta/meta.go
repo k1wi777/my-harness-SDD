@@ -77,3 +77,41 @@ func IsValidType(s string) bool {
 	}
 	return false
 }
+
+// allowedTransitions describe las transiciones estándar de workflow.md.
+// Cualquier estado puede pasar a blocked.
+var allowedTransitions = map[string][]string{
+	StatusPending:          {StatusReady},
+	StatusReady:            {StatusInProgress},
+	StatusInProgress:       {StatusReview},
+	StatusReview:           {StatusDone, StatusChangesRequested},
+	StatusChangesRequested: {StatusInProgress},
+}
+
+// TransitionAllowed indica si from -> to es una transición estándar.
+func TransitionAllowed(from, to string) bool {
+	if to == StatusBlocked {
+		return true
+	}
+	for _, s := range allowedTransitions[from] {
+		if s == to {
+			return true
+		}
+	}
+	return false
+}
+
+// SetStatus actualiza el status de un meta.json preservando el resto de campos.
+// Devuelve el estado anterior.
+func SetStatus(path, status string) (string, error) {
+	m, err := Load(path)
+	if err != nil {
+		return "", err
+	}
+	previous := m.Status
+	m.Status = status
+	if err := m.Save(path); err != nil {
+		return "", err
+	}
+	return previous, nil
+}

@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_00-33__rei-status-set",
+  "title": "rei status set",
+  "description": "Agregar el comando `rei status set \u003cid\u003e \u003cstatus\u003e`: cambia el estado de un Work Item en `meta.json` de forma segura, preservando el resto de campos (incluidos base_commit y last_review_commit). Valida que el id exista, que el estado sea válido y que la transición esté permitida según workflow.md; ofrece `--force` para forzar transiciones no estándar. Actualiza rei help. Fuera de alcance: no edita current.md, no toca git, no ejecuta checks. Motivo: el dogfooding de `rei doctor` destapó que editar meta.json a mano borró base_commit.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T00:33:00-05:00",
+  "base_commit": "726a658661373a8caaec8134187061213739cb46",
+  "last_review_commit": ""
+}
