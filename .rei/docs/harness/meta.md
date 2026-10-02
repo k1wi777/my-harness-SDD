@@ -22,7 +22,9 @@ Cada carpeta dentro de `.rei/specs/` debe contener un único archivo `meta.json`
   "description": "",
   "type": "",
   "status": "",
-  "created_at": ""
+  "created_at": "",
+  "base_commit": "",
+  "last_review_commit": ""
 }
 ```
 
@@ -84,3 +86,23 @@ Los estados válidos y sus transiciones se definen en `workflow.md`.
 ## created_at
 
 Fecha y hora exactas de creación del Work Item en formato ISO 8601, incluyendo la zona horaria. Debe corresponder al momento utilizado para construir el prefijo del campo `id`.
+
+## base_commit
+
+SHA del commit que marca el **inicio de la implementación**. Lo registra el Leader al aprobar el Work Item:
+
+```bash
+bash .rei/scripts/set-commit.sh <work-item-id> base_commit
+```
+
+Vacío si el proyecto no usa git. `review-diff.sh` lo usa como punto base del paquete de revisión.
+
+## last_review_commit
+
+SHA del punto ya revisado. Lo registra el Reviewer al rechazar (`changes_requested`):
+
+```bash
+bash .rei/scripts/set-commit.sh <work-item-id> last_review_commit
+```
+
+Si está presente, `review-diff.sh` calcula el diff desde ese punto, para que la próxima revisión vea solo los cambios pedidos y no revalide lo anterior. Vacío si no aplica.

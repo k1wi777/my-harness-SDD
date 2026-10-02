@@ -191,6 +191,14 @@ Esto permite:
 
 ---
 
+# Revisión por diff (git)
+
+REI Harness funciona sin git, pero está optimizado para usarlo. Cuando el proyecto es un repositorio git, el Reviewer recibe un **paquete de revisión** (`.rei/scripts/review-diff.sh`) con los cambios reales del Work Item en lugar de releer toda la especificación. Al aprobar se registra un `base_commit`, y en un `changes_requested` se registra un `last_review_commit` para que la próxima revisión vea solo los cambios pedidos.
+
+Si no hay git, el flujo sigue funcionando en modo lectura. `init.sh` inicializa git automáticamente si no existe.
+
+---
+
 # Filosofía del proyecto
 
 Este repositorio no pretende construir un asistente autónomo.

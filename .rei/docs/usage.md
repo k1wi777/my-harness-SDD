@@ -136,3 +136,6 @@ En `.rei/progress/history.md` — es un registro permanente, nunca se sobrescrib
 
 **¿Necesito leer toda la documentación de `.rei/docs/` para usar REI Harness?**
 No. Esta guía es suficiente para el uso diario. Los agentes cargan solo lo necesario según la etapa — como humano, consulta `.rei/docs/project/` si quieres revisar las reglas de tu proyecto, o `.rei/docs/harness/` si quieres entender el detalle del arnés.
+
+**¿REI Harness necesita git?**
+No, pero funciona mejor con él. Si el repositorio usa git, el Reviewer revisa solo los cambios reales del Work Item (`review-diff.sh`) en lugar de releer toda la especificación, y en `changes_requested` puede acotar la revisión a lo que cambió. Si no hay git, el flujo sigue funcionando en modo lectura. `init.sh` inicializa git automáticamente si no existe.
