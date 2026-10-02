@@ -78,10 +78,18 @@ func Run(args []string) int {
 func project() (*paths.Project, int) {
 	p, err := paths.Find()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, projectMessage(err))
 		return nil, 1
 	}
 	return p, 0
+}
+
+// projectMessage traduce un error de resolución de proyecto a un mensaje útil.
+func projectMessage(err error) string {
+	if errors.Is(err, paths.ErrNotFound) {
+		return "REI no está inicializado aquí; ejecuta `rei init` para inicializarlo."
+	}
+	return err.Error()
 }
 
 func cmdCheck(args []string) int {
