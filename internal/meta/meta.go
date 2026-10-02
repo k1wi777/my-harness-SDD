@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 )
@@ -42,13 +43,24 @@ func Load(path string) (*Meta, error) {
 }
 
 // Save escribe el meta.json preservando el orden de campos.
+// No escapa HTML (<, >, &) y escribe de forma atómica.
 func (m *Meta) Save(path string) error {
-	data, err := json.MarshalIndent(m, "", "  ")
-	if err != nil {
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(m); err != nil {
 		return err
 	}
-	data = append(data, '\n')
-	return os.WriteFile(path, data, 0o644)
+	return writeFileAtomic(path, buf.Bytes())
+}
+
+func writeFileAtomic(path string, data []byte) error {
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, data, 0o644); err != nil {
+		return err
+	}
+	return os.Rename(tmp, path)
 }
 
 // ValidStatuses contiene todos los estados admitidos.

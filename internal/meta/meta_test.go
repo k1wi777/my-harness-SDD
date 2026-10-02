@@ -1,7 +1,9 @@
 package meta
 
 import (
+	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -25,6 +27,36 @@ func TestSaveLoadRoundTrip(t *testing.T) {
 	}
 	if *got != *m {
 		t.Fatalf("got %+v, want %+v", got, m)
+	}
+}
+
+func TestSaveDoesNotEscapeHTML(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "meta.json")
+	m := &Meta{
+		ID:          "x",
+		Title:       "t",
+		Description: "a < b > c & d",
+		Type:        "task",
+		Status:      StatusPending,
+		CreatedAt:   "x",
+	}
+	if err := m.Save(path); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(data), `\u003c`) || strings.Contains(string(data), `\u0026`) {
+		t.Fatalf("Save escapó HTML: %s", data)
+	}
+	got, err := Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Description != m.Description {
+		t.Fatalf("roundtrip description = %q, want %q", got.Description, m.Description)
 	}
 }
 
