@@ -80,7 +80,7 @@ func ArchiveSession(p *paths.Project) (string, error) {
 	defer history.Close()
 
 	header := fmt.Sprintf("\n## %s \u2014 %s\n\n", time.Now().Format("2006-01-02 15:04"), workItem)
-	if _, err := history.WriteString(header + content + "\n"); err != nil {
+	if _, err := history.WriteString(header + stripSessionHeader(content) + "\n"); err != nil {
 		return "", err
 	}
 	if err := ResetCurrent(p); err != nil {
@@ -97,4 +97,26 @@ func field(content, label string) string {
 		}
 	}
 	return ""
+}
+
+// stripSessionHeader elimina el título y la introducción de la plantilla de
+// current.md, para que la entrada de history.md empiece en los campos.
+func stripSessionHeader(content string) string {
+	lines := strings.Split(content, "\n")
+	i := 0
+	for i < len(lines) && strings.TrimSpace(lines[i]) == "" {
+		i++
+	}
+	if i < len(lines) && strings.HasPrefix(strings.TrimSpace(lines[i]), "# Sesión actual") {
+		i++
+	}
+	for i < len(lines) {
+		t := strings.TrimSpace(lines[i])
+		if t == "" || strings.HasPrefix(t, ">") {
+			i++
+			continue
+		}
+		break
+	}
+	return strings.Join(lines[i:], "\n")
 }

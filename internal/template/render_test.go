@@ -65,4 +65,7 @@ func TestStartAndArchive(t *testing.T) {
 	if !strings.Contains(string(hist), "2026-10-01_10-00__x") {
 		t.Fatal("history.md no contiene la entrada")
 	}
+	if strings.Contains(string(hist), "# Sesión actual") {
+		t.Fatal("history.md no debe incluir el encabezado de la plantilla")
+	}
 }

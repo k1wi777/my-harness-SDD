@@ -14,7 +14,7 @@
 
 Antes de realizar cualquier modificación en el proyecto:
 
-1. Ejecuta `rei check`.
+1. Ejecuta `rei check --quiet`.
 2. Si falla, DETENTE e informa el problema.
 3. Carga únicamente la documentación necesaria para la tarea actual siguiendo el orden de la Sección 8.
 

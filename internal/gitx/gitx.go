@@ -107,13 +107,14 @@ func ReviewDiff(p *paths.Project, id string, full bool) (string, error) {
 	fmt.Fprintf(&b, "== Paquete de revisión: %s ==\n", id)
 	fmt.Fprintf(&b, "Base: %s (%s)\n\n", base, origin)
 
-	b.WriteString("--- Resumen ---\n")
-	if len(tracked) > 0 {
-		args := append([]string{"diff", "--stat", base, "--"}, tracked...)
+	codeTracked := filterCode(tracked)
+	b.WriteString("--- Resumen (código) ---\n")
+	if len(codeTracked) > 0 {
+		args := append([]string{"diff", "--stat", base, "--"}, codeTracked...)
 		stat, _ := gitOut(p.Root, args...)
 		b.WriteString(stat)
 	} else {
-		b.WriteString("(sin cambios en archivos rastreados)\n")
+		b.WriteString("(sin cambios de código)\n")
 	}
 
 	if len(untracked) > 0 {
