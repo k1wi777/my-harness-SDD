@@ -6,3 +6,6 @@
 
 # Go local toolchain (si se instala dentro del repo)
 /.gocache/
+
+# Artefacto de instalación local (lo genera `rei init`; no aplica al repo fuente)
+/.rei/install-manifest.json
