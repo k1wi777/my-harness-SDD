@@ -17,6 +17,7 @@ import (
 	"github.com/k1wi777/my-harness-SDD/internal/show"
 	"github.com/k1wi777/my-harness-SDD/internal/state"
 	"github.com/k1wi777/my-harness-SDD/internal/template"
+	"github.com/k1wi777/my-harness-SDD/internal/update"
 	"github.com/k1wi777/my-harness-SDD/internal/validate"
 	"github.com/k1wi777/my-harness-SDD/internal/workitem"
 )
@@ -75,6 +76,8 @@ func Run(args []string) int {
 		return cmdTest(rest)
 	case "item":
 		return cmdItem(rest)
+	case "update":
+		return cmdUpdate(rest)
 	default:
 		fmt.Fprintf(os.Stderr, "comando desconocido: %s\n\n", cmd)
 		printHelp()
@@ -250,6 +253,27 @@ func cmdItem(args []string) int {
 		return code
 	}
 	return show.WorkItem(p, args[1], os.Stdout)
+}
+
+// cmdUpdate implementa `rei update [--check]`. Solo acepta `--check` como
+// argumento (cualquier otro es uso incorrecto, 2) y delega en update.Run, que
+// resuelve la descarga/instalación y los códigos 0/1.
+func cmdUpdate(args []string) int {
+	check := false
+	for _, a := range args {
+		switch a {
+		case "--check":
+			check = true
+		default:
+			fmt.Fprintln(os.Stderr, "uso: rei update [--check]")
+			return 2
+		}
+	}
+	return update.Run(update.Options{
+		CurrentVersion: version,
+		Check:          check,
+		Stdout:         os.Stdout,
+	})
 }
 
 func cmdDoctor(args []string) int {

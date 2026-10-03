@@ -130,6 +130,19 @@ var commands = []commandInfo{
 		},
 	},
 	{
+		name:  "update",
+		usage: "update [--check]",
+		short: "Auto-actualiza el binario de REI desde GitHub Releases",
+		detail: []string{
+			"Consulta la última release publicada, la compara (semver) con la versión en ejecución y, si hay una más reciente, descarga el asset del SO/arch, verifica su SHA-256 contra checksums.txt y reemplaza el binario en ejecución (temp + rename con backup).",
+			"--check: solo informa del resultado de la comprobación; no descarga ni escribe (en cualquier SO). Sale 0 si la consulta funcionó.",
+			"En Windows no es posible reemplazar un .exe en ejecución: informa y abre la página de releases en el navegador, imprimiendo la URL como alternativa.",
+			"Versión 'dev' (compilación local): avisa de que no es una release publicada y ofrece instalar la última disponible.",
+			"Fallo de integridad (SHA-256): aborta sin modificar el binario. Fallo de red o de permisos: informa, sale 1 y no deja el binario degradado; si la sustitución falla tras iniciarse, restaura el original.",
+			"Códigos de salida: 0 si está actualizado, al día, `--check` correcto o Windows guiado; 1 ante red/permisos/integridad/extracción; 2 uso incorrecto.",
+		},
+	},
+	{
 		name:   "version",
 		usage:  "version",
 		short:  "Muestra la versión",

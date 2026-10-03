@@ -545,3 +545,43 @@ del esqueleto, `--force` como escape, sin tocar `.rei/specs/**` ni
 Esperar la revisión del Work Item (`impl.md` documenta la implementación y la
 verificación).
 
+
+## 2026-10-03 00:47 — 2026-10-03_00-34__rei-update-binary
+
+- **Work Item:** 2026-10-03_00-34__rei-update-binary
+- **Tipo:** feature
+- **Estado:** review
+- **Inicio:** 2026-10-03T00:34:22-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Planificación de la Feature `rei update [--check]` (auto-actualización del
+binario global desde GitHub Releases):
+
+- `requirements.md`: 15 requisitos EARS (consulta de release, comparación
+  semver, selección de asset, descarga+sha256, instalación Unix/macOS,
+  Windows+navegador, `--check`, versión `dev`, fallos de integridad/red/permisos,
+  restauración, ayuda y uso incorrecto).
+- `design.md`: paquete nuevo `internal/update` (semver, github, archive,
+  replace, browser) con costuras inyectables; cableado en `internal/cli` y
+  `internal/cli/help.go`; solo librería estándar.
+- `tasks.md`: 12 tareas `T1`–`T12` con R-id y checkboxes.
+
+## Bitácora
+
+- Sesión iniciada (`rei session start`) en estado `pending`.
+- Leídos `specs.md`, `meta.json`, `architecture.md` y el código del CLI
+  (`internal/cli`, `internal/meta`) y `.goreleaser.yaml`.
+- Redactados `requirements.md` (EARS), `design.md` y `tasks.md`.
+- Planificación finalizada; pendiente de aprobación humana.
+- Implementación iniciada. T1–T12 completadas (paquete `internal/update`,
+  cableado en `internal/cli` y tests).
+- Verificación final OK: gofmt, go vet, make test, make build, `rei check
+  --quiet` (0) y `rei update --check` (degrada con aviso 404 → 1).
+- Documentado en `impl.md`; Work Item en `review`.
+
+## Próximo paso
+
+Esperar revisión del Reviewer. No iniciar otro Work Item.
+
