@@ -201,6 +201,38 @@ func printHelp() {
 	fmt.Print(helpText())
 }
 
+// helpWidth es el ancho objetivo para ajustar las líneas de la ayuda por comando.
+const helpWidth = 100
+
+// wrap envuelve `text` en líneas de a lo sumo `width` columnas, prefijando cada
+// línea con `indent` (la primera incluida). Las líneas de continuación de una
+// viñeta pueden usar una sangría distinta.
+func wrap(text string, width int, indent, hang string) string {
+	words := strings.Fields(text)
+	var b strings.Builder
+	cur := indent
+	b.WriteString(cur)
+	col := len(cur)
+	for i, w := range words {
+		needSpace := i > 0 && col > len(cur)
+		if needSpace && col+1+len(w) > width {
+			b.WriteString("\n")
+			cur = hang
+			b.WriteString(cur)
+			col = len(cur)
+			needSpace = false
+		}
+		if needSpace {
+			b.WriteString(" ")
+			col++
+		}
+		b.WriteString(w)
+		col += len(w)
+	}
+	b.WriteString("\n")
+	return b.String()
+}
+
 // commandHelpText devuelve el texto de ayuda de un comando a partir de la
 // tabla. No escribe a stdout, para poder testearlo.
 func commandHelpText(name string) (string, bool) {
@@ -209,10 +241,18 @@ func commandHelpText(name string) (string, bool) {
 			continue
 		}
 		var b strings.Builder
-		fmt.Fprintf(&b, "rei %s — %s\n", c.name, c.short)
-		fmt.Fprintf(&b, "Uso: %s\n", c.usage)
+		b.WriteString(wrap("rei "+c.name+" — "+c.short, helpWidth, "", ""))
+		b.WriteString("\nUso:\n")
+		b.WriteString(wrap(c.usage, helpWidth, "  ", "  "))
+		b.WriteString("\nDetalle:\n")
 		for _, d := range c.detail {
-			fmt.Fprintf(&b, "  %s\n", d)
+			// Las líneas con alineación manual (varios espacios seguidos) se
+			// respetan tal cual; el resto se ajusta al ancho.
+			if strings.Contains(d, "   ") {
+				fmt.Fprintf(&b, "  %s\n", d)
+				continue
+			}
+			b.WriteString(wrap("- "+d, helpWidth, "  ", "    "))
 		}
 		return b.String(), true
 	}

@@ -39,9 +39,15 @@ func TestHelpTestMencionaMakeTest(t *testing.T) {
 	if !ok {
 		t.Fatal("no hay ayuda para test")
 	}
-	if !strings.Contains(text, "make test") {
+	if !strings.Contains(normalize(text), "make test") {
 		t.Fatalf("la ayuda de test debe mencionar 'make test':\n%s", text)
 	}
+}
+
+// normalize colapsa los espacios en blanco (incluidos saltos de línea) para
+// comparar frases aunque el ajuste de línea las haya partido.
+func normalize(s string) string {
+	return strings.Join(strings.Fields(s), " ")
 }
 
 func TestHelpGeneralIncluyeNuevosComandos(t *testing.T) {
@@ -82,7 +88,7 @@ func TestHelpInitDocumentaInstalador(t *testing.T) {
 		t.Fatal("no hay ayuda para init")
 	}
 	for _, want := range []string{"esqueleto", "git", "Códigos de salida", ".rei/config.json"} {
-		if !strings.Contains(text, want) {
+		if !strings.Contains(normalize(text), want) {
 			t.Errorf("la ayuda de init debe mencionar %q:\n%s", want, text)
 		}
 	}
