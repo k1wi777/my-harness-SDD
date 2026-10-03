@@ -107,13 +107,14 @@ func cmdCheck(args []string) int {
 	return check.Run(p, quiet, os.Stdout)
 }
 
-// cmdInit implementa `rei init [status|opencode [--check]]`. En modo instalador
-// (sin argumentos) despliega el esqueleto embebido en el proyecto destino
-// —resuelto con initwizard.ResolveRoot, sin exigir un .rei/ previo— y reporta
-// la personalización. `status` es un reporte de solo lectura que exige un
-// proyecto REI existente (project()). `opencode` instala el esqueleto (incluido
-// .rei/adapters/) y genera los agentes nativos; `opencode --check` verifica sin
-// escribir. Cualquier otra combinación es uso incorrecto (2, R30).
+// cmdInit implementa `rei init [status|opencode|claude [--check]]`. En modo
+// instalador (sin argumentos) despliega el esqueleto embebido en el proyecto
+// destino —resuelto con initwizard.ResolveRoot, sin exigir un .rei/ previo— y
+// reporta la personalización. `status` es un reporte de solo lectura que exige
+// un proyecto REI existente (project()). `opencode` y `claude` instalan el
+// esqueleto (incluido .rei/adapters/) y generan los agentes nativos del runtime;
+// `<runtime> --check` verifica sin escribir. Cualquier otra combinación es uso
+// incorrecto (2, R30).
 func cmdInit(args []string) int {
 	switch {
 	case len(args) == 0:
@@ -143,8 +144,22 @@ func cmdInit(args []string) int {
 			return 1
 		}
 		return adapter.Check(p, os.Stdout)
+	case len(args) == 1 && args[0] == "claude":
+		p, err := initwizard.ResolveRoot()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		return adapter.InstallClaude(p, os.Stdout)
+	case len(args) == 2 && args[0] == "claude" && args[1] == "--check":
+		p, err := initwizard.ResolveRoot()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		return adapter.CheckClaude(p, os.Stdout)
 	default:
-		fmt.Fprintln(os.Stderr, "uso: rei init [status|opencode [--check]]")
+		fmt.Fprintln(os.Stderr, "uso: rei init [status|opencode|claude [--check]]")
 		return 2
 	}
 }

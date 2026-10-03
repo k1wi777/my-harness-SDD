@@ -77,9 +77,10 @@ y los mapea al formato nativo. El mismo Contrato alimenta a los dos caminos:
 - **Runtime sin adaptador nativo (fallback):** el Leader transmite al subagente
   únicamente la sección `## Contrato` del rol, nunca el archivo completo. Esto
   ahorra tokens por spawn.
-- **Runtime con adaptador nativo (OpenCode V2):** `rei init opencode` genera
-  `.opencode/agents/<rol>.md` con el frontmatter nativo (`permission`), la marca
-  `GENERATED` y el `## Contrato` como cuerpo.
+- **Runtime con adaptador nativo (OpenCode V2, Claude Code):**
+  `rei init opencode` genera `.opencode/agents/<rol>.md` y
+  `rei init claude` genera `.claude/agents/<rol>.md`, ambos con su frontmatter
+  nativo, la marca `GENERATED` y el `## Contrato` como cuerpo.
 
 ## Mapa de herramientas de OpenCode V2
 
@@ -94,6 +95,23 @@ y los mapea al formato nativo. El mismo Contrato alimenta a los dos caminos:
 
 `write` y `edit` colapsan en la misma clave `edit` (se deduplica). El orden del
 mapa `permission` sigue el orden de declaración de `tools` en el rol.
+
+## Mapa de herramientas de Claude Code
+
+Claude Code usa la clave nativa `tools`, una lista separada por comas:
+
+| Genérica canónica | Herramienta(s) nativa(s) |
+|-------------------|--------------------------|
+| `read` | `Read` |
+| `write` | `Write`, `Edit` |
+| `edit` | `Write`, `Edit` |
+| `search` | `Grep`, `Glob` |
+| `shell` | `Bash` |
+| `subagent` | `Agent` |
+
+`write` y `edit` colapsan en `Write, Edit` (se deduplica). El orden de la lista
+`tools` sigue el orden de declaración de `tools` en el rol; el campo `model` se
+emite solo si el rol lo declara (pass-through).
 
 ---
 
@@ -123,3 +141,33 @@ rei init opencode --check   # verifica sin escribir: 0 si todo coincide; 1 si fa
   avisa.
 - Es idempotente: reejecutarlo sobre archivos generados los deja idénticos.
 - `rei init` y `rei init status` conservan su comportamiento.
+
+---
+
+# Comando `rei init claude`
+
+```text
+rei init claude           # instala el esqueleto (incluye .rei/adapters/) y genera los agentes nativos
+rei init claude --check   # verifica sin escribir: 0 si todo coincide; 1 si falta o difiere
+```
+
+- Los archivos generados viven en `.claude/agents/<rol>.md` con el frontmatter
+  nativo de Claude Code (`name`, `description`, `tools` y `model` opcional), la
+  marca `GENERATED` y el `## Contrato` como cuerpo.
+- `rei init claude` **no sobrescribe** archivos que no lleven esa marca; los
+  avisa.
+- Es idempotente: reejecutarlo sobre archivos generados los deja idénticos.
+- `rei init`, `rei init opencode` y `rei init status` conservan su
+  comportamiento.
+
+---
+
+# Runtimes sin subagentes nativos (fallback)
+
+**Cursor** y **Codex** no exponen subagentes nativos configurables por rol, por
+lo que no tienen adaptador: funcionan por *fallback*, sin configuración. El
+Leader transmite a cada subagente únicamente la sección `## Contrato` del rol
+(la misma que alimenta a los adaptadores nativos), nunca el archivo completo.
+
+Esto no requiere ningún archivo `.cursor/` ni `.codex/`: el formato canónico de
+rol en `.rei/agents/<rol>.md` sigue siendo la única fuente de verdad.

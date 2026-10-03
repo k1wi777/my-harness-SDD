@@ -19,6 +19,8 @@ func TestSkeletonContieneAdaptadores(t *testing.T) {
 	for _, path := range []string{
 		".rei/adapters/opencode/agent.tmpl",
 		".rei/adapters/opencode/tools.json",
+		".rei/adapters/claude/agent.tmpl",
+		".rei/adapters/claude/tools.json",
 	} {
 		if _, err := fs.Stat(Skeleton, path); err != nil {
 			t.Errorf("Skeleton no contiene %s: %v", path, err)

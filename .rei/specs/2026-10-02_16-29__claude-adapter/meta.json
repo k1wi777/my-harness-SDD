@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_16-29__claude-adapter",
+  "title": "adaptador de Claude Code",
+  "description": "Anadir el adaptador de Claude Code y documentar Cursor/Codex como fallback. (1) Crear `.rei/adapters/claude/` (plantilla + mapa de herramientas) y el comando `rei init claude [--check]`, reutilizando la infraestructura de adaptadores: genera `.claude/agents/<rol>.md` con frontmatter `name`, `description`, `tools` (mapeo read->Read, write/edit->Write,Edit, search->Grep,Glob, shell->Bash, subagent->Agent), `model` si aplica, y marca GENERATED; no sobrescribe archivos sin marca; `--check` detecta deriva; idempotente. (2) Documentar en `.rei/docs/harness/adapters.md` que Cursor y Codex no tienen subagentes nativos y funcionan por fallback (sin config), y reflejarlo en `rei help init`. Verificacion: tests (parseo/mapeo/generacion/idempotencia/--check), `rei init claude --check`=0, y `rei init`/`rei init opencode`/`rei init status` intactos. Fuera de alcance: adaptadores nativos para Cursor/Codex.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T16:29:00-05:00",
+  "base_commit": "097a36ab9abe0b93ad9433d9afde7f065311395d",
+  "last_review_commit": ""
+}

@@ -45,7 +45,7 @@ func TestHelpTestMencionaMakeTest(t *testing.T) {
 
 func TestHelpGeneralIncluyeNuevosComandos(t *testing.T) {
 	text := helpText()
-	for _, want := range []string{"test", "item", "init [status|opencode [--check]]"} {
+	for _, want := range []string{"test", "item", "init [status|opencode|claude [--check]]"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("la ayuda general no incluye %q:\n%s", want, text)
 		}
@@ -88,6 +88,18 @@ func TestHelpInitDocumentaOpencodeYCheck(t *testing.T) {
 	}
 }
 
+func TestHelpInitDocumentaClaudeYFallback(t *testing.T) {
+	text, ok := commandHelpText("init")
+	if !ok {
+		t.Fatal("no hay ayuda para init")
+	}
+	for _, want := range []string{"claude", ".claude/agents/", "Cursor", "Codex", "fallback", "## Contrato"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("la ayuda de init debe mencionar %q:\n%s", want, text)
+		}
+	}
+}
+
 func TestPrintCommandHelpInit(t *testing.T) {
 	if code := printCommandHelp("init"); code != 0 {
 		t.Fatalf("printCommandHelp(init) = %d, esperaba 0", code)
@@ -100,5 +112,14 @@ func TestCmdInitArgumentoInvalido(t *testing.T) {
 	}
 	if code := cmdInit([]string{"status", "extra"}); code != 2 {
 		t.Fatalf("cmdInit(status extra) = %d, esperaba 2", code)
+	}
+}
+
+func TestCmdInitClaudeUsoIncorrecto(t *testing.T) {
+	if code := cmdInit([]string{"claude", "bogus"}); code != 2 {
+		t.Fatalf("cmdInit(claude bogus) = %d, esperaba 2", code)
+	}
+	if code := cmdInit([]string{"claude", "--check", "extra"}); code != 2 {
+		t.Fatalf("cmdInit(claude --check extra) = %d, esperaba 2", code)
 	}
 }

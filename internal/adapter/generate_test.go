@@ -10,7 +10,7 @@ import (
 	"github.com/k1wi777/my-harness-SDD/internal/paths"
 )
 
-const testToolsJSON = `{
+const testOpenCodeToolsJSON = `{
   "read": { "permission": ["read"] },
   "write": { "permission": ["edit"] },
   "edit": { "permission": ["edit"] },
@@ -20,7 +20,7 @@ const testToolsJSON = `{
 }
 `
 
-const testAgentTmpl = `---
+const testOpenCodeAgentTmpl = `---
 description: {{.Description}}
 mode: {{.Mode}}
 {{if .Model}}model: {{.Model}}
@@ -33,12 +33,9 @@ mode: {{.Mode}}
 {{.Contract}}
 `
 
-// setupProject crea un proyecto temporal con los 5 roles canónicos y el
-// adaptador OpenCode para ejercitar la generación sin depender del esqueleto.
-func setupProject(t *testing.T) *paths.Project {
+// setupRoles crea los 5 roles canónicos en un proyecto temporal.
+func setupRoles(t *testing.T, p *paths.Project) {
 	t.Helper()
-	p := &paths.Project{Root: t.TempDir()}
-
 	agentsDir := filepath.Join(p.ReiDir(), "agents")
 	if err := os.MkdirAll(agentsDir, 0o755); err != nil {
 		t.Fatal(err)
@@ -50,13 +47,26 @@ func setupProject(t *testing.T) *paths.Project {
 		}
 		writeTestFile(t, filepath.Join(agentsDir, name+".md"), canonicalRole(name, mode, tools))
 	}
+}
 
-	adapterDir := opencodeDir(p)
-	if err := os.MkdirAll(adapterDir, 0o755); err != nil {
+// writeAdapter instala tools.json y agent.tmpl de un runtime en p.
+func writeAdapter(t *testing.T, p *paths.Project, rt runtime, toolsJSON, tmpl string) {
+	t.Helper()
+	dir := adapterDir(p, rt)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	writeTestFile(t, filepath.Join(adapterDir, "tools.json"), testToolsJSON)
-	writeTestFile(t, filepath.Join(adapterDir, "agent.tmpl"), testAgentTmpl)
+	writeTestFile(t, filepath.Join(dir, "tools.json"), toolsJSON)
+	writeTestFile(t, filepath.Join(dir, "agent.tmpl"), tmpl)
+}
+
+// setupProject crea un proyecto temporal con los 5 roles canónicos y el
+// adaptador OpenCode para ejercitar la generación sin depender del esqueleto.
+func setupProject(t *testing.T) *paths.Project {
+	t.Helper()
+	p := &paths.Project{Root: t.TempDir()}
+	setupRoles(t, p)
+	writeAdapter(t, p, opencodeRuntime, testOpenCodeToolsJSON, testOpenCodeAgentTmpl)
 	return p
 }
 
@@ -78,37 +88,37 @@ func readTestFile(t *testing.T, path string) string {
 
 func testToolMap() toolMap {
 	return toolMap{
-		"read":     {Permission: []string{"read"}},
-		"write":    {Permission: []string{"edit"}},
-		"edit":     {Permission: []string{"edit"}},
-		"search":   {Permission: []string{"glob", "grep"}},
-		"shell":    {Permission: []string{"bash"}},
-		"subagent": {Permission: []string{"task"}},
+		"read":     {"permission": []string{"read"}},
+		"write":    {"permission": []string{"edit"}},
+		"edit":     {"permission": []string{"edit"}},
+		"search":   {"permission": []string{"glob", "grep"}},
+		"shell":    {"permission": []string{"bash"}},
+		"subagent": {"permission": []string{"task"}},
 	}
 }
 
-func TestBuildPermissionsOrdenYDedup(t *testing.T) {
-	got, err := buildPermissions([]string{"read", "write", "edit", "search", "shell"}, testToolMap())
+func TestResolveTargetsOrdenYDedup(t *testing.T) {
+	got, err := resolveTargets([]string{"read", "write", "edit", "search", "shell"}, testToolMap(), opencodeRuntime)
 	if err != nil {
-		t.Fatalf("buildPermissions: %v", err)
+		t.Fatalf("resolveTargets: %v", err)
 	}
 	want := []string{"read", "edit", "glob", "grep", "bash"}
 	if len(got) != len(want) {
-		t.Fatalf("permisos = %v, esperaba %v", got, want)
+		t.Fatalf("destinos = %v, esperaba %v", got, want)
 	}
-	for i, perm := range got {
-		if perm.Key != want[i] || perm.Value != "allow" {
-			t.Errorf("permisos[%d] = %+v, esperaba %s: allow", i, perm, want[i])
+	for i, target := range got {
+		if target != want[i] {
+			t.Errorf("destinos[%d] = %q, esperaba %q", i, target, want[i])
 		}
 	}
 }
 
-func TestBuildPermissionsSubagent(t *testing.T) {
-	got, err := buildPermissions([]string{"subagent"}, testToolMap())
+func TestResolveTargetsSubagent(t *testing.T) {
+	got, err := resolveTargets([]string{"subagent"}, testToolMap(), opencodeRuntime)
 	if err != nil {
-		t.Fatalf("buildPermissions: %v", err)
+		t.Fatalf("resolveTargets: %v", err)
 	}
-	if len(got) != 1 || got[0].Key != "task" {
+	if len(got) != 1 || got[0] != "task" {
 		t.Fatalf("subagent debe mapear a task: %+v", got)
 	}
 }
@@ -116,15 +126,15 @@ func TestBuildPermissionsSubagent(t *testing.T) {
 func TestValidateToolMapIncompleto(t *testing.T) {
 	tm := testToolMap()
 	delete(tm, "subagent")
-	if err := validateToolMap(tm); err == nil {
+	if err := validateToolMap(tm, opencodeRuntime); err == nil {
 		t.Fatal("se esperaba error por mapa de herramientas incompleto")
 	}
 }
 
-func TestValidateToolMapPermisoInvalido(t *testing.T) {
+func TestValidateToolMapDestinoInvalido(t *testing.T) {
 	tm := testToolMap()
-	tm["read"] = toolEntry{Permission: []string{"superpoder"}}
-	if err := validateToolMap(tm); err == nil {
+	tm["read"] = toolEntry{"permission": []string{"superpoder"}}
+	if err := validateToolMap(tm, opencodeRuntime); err == nil {
 		t.Fatal("se esperaba error por clave de permiso desconocida")
 	}
 }
@@ -133,11 +143,11 @@ func TestGenerateAllCreaArchivos(t *testing.T) {
 	p := setupProject(t)
 	var buf bytes.Buffer
 
-	if code := GenerateAll(p, &buf); code != 0 {
-		t.Fatalf("GenerateAll = %d, esperaba 0:\n%s", code, buf.String())
+	if code := generateAll(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d, esperaba 0:\n%s", code, buf.String())
 	}
 	for _, name := range Roles {
-		got := readTestFile(t, agentPath(p, name))
+		got := readTestFile(t, agentPath(p, opencodeRuntime, name))
 		if !strings.Contains(got, generatedMark) {
 			t.Errorf("%s.md no lleva la marca GENERATED", name)
 		}
@@ -148,7 +158,7 @@ func TestGenerateAllCreaArchivos(t *testing.T) {
 			t.Errorf("%s.md no contiene el frontmatter nativo:\n%s", name, got)
 		}
 	}
-	leader := readTestFile(t, agentPath(p, "leader"))
+	leader := readTestFile(t, agentPath(p, opencodeRuntime, "leader"))
 	if !strings.Contains(leader, "mode: primary") || !strings.Contains(leader, "  task: allow") {
 		t.Errorf("leader.md debe ser primary y permitir task:\n%s", leader)
 	}
@@ -157,16 +167,16 @@ func TestGenerateAllCreaArchivos(t *testing.T) {
 func TestGenerateAllIdempotente(t *testing.T) {
 	p := setupProject(t)
 	var first bytes.Buffer
-	if code := GenerateAll(p, &first); code != 0 {
+	if code := generateAll(p, opencodeRuntime, &first); code != 0 {
 		t.Fatalf("primera ejecución = %d:\n%s", code, first.String())
 	}
-	before := readTestFile(t, agentPath(p, "implementer"))
+	before := readTestFile(t, agentPath(p, opencodeRuntime, "implementer"))
 
 	var second bytes.Buffer
-	if code := GenerateAll(p, &second); code != 0 {
+	if code := generateAll(p, opencodeRuntime, &second); code != 0 {
 		t.Fatalf("segunda ejecución = %d:\n%s", code, second.String())
 	}
-	after := readTestFile(t, agentPath(p, "implementer"))
+	after := readTestFile(t, agentPath(p, opencodeRuntime, "implementer"))
 	if before != after {
 		t.Error("la segunda ejecución alteró el archivo generado")
 	}
@@ -178,15 +188,15 @@ func TestGenerateAllIdempotente(t *testing.T) {
 func TestGenerateAllNoSobrescribeSinMarca(t *testing.T) {
 	p := setupProject(t)
 	custom := "# agente manual del usuario\n"
-	dest := agentPath(p, "leader")
+	dest := agentPath(p, opencodeRuntime, "leader")
 	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	writeTestFile(t, dest, custom)
 
 	var buf bytes.Buffer
-	if code := GenerateAll(p, &buf); code != 0 {
-		t.Fatalf("GenerateAll = %d, esperaba 0:\n%s", code, buf.String())
+	if code := generateAll(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d, esperaba 0:\n%s", code, buf.String())
 	}
 	if got := readTestFile(t, dest); got != custom {
 		t.Errorf("el archivo sin marca fue sobrescrito:\n%s", got)
@@ -194,7 +204,7 @@ func TestGenerateAllNoSobrescribeSinMarca(t *testing.T) {
 	if !strings.Contains(buf.String(), "[WARN]") {
 		t.Errorf("debe avisar del archivo sin marca:\n%s", buf.String())
 	}
-	if _, err := os.Stat(agentPath(p, "reviewer")); err != nil {
+	if _, err := os.Stat(agentPath(p, opencodeRuntime, "reviewer")); err != nil {
 		t.Errorf("los demás roles deben generarse: %v", err)
 	}
 }
@@ -202,29 +212,29 @@ func TestGenerateAllNoSobrescribeSinMarca(t *testing.T) {
 func TestCheckDetectaDeriva(t *testing.T) {
 	p := setupProject(t)
 	var buf bytes.Buffer
-	if code := GenerateAll(p, &buf); code != 0 {
-		t.Fatalf("GenerateAll = %d:\n%s", code, buf.String())
+	if code := generateAll(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d:\n%s", code, buf.String())
 	}
 
 	buf.Reset()
-	if code := Check(p, &buf); code != 0 {
-		t.Fatalf("Check con todo generado = %d, esperaba 0:\n%s", code, buf.String())
+	if code := check(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("check con todo generado = %d, esperaba 0:\n%s", code, buf.String())
 	}
 
 	// Falta un archivo.
-	if err := os.Remove(agentPath(p, "reviewer")); err != nil {
+	if err := os.Remove(agentPath(p, opencodeRuntime, "reviewer")); err != nil {
 		t.Fatal(err)
 	}
 	buf.Reset()
-	if code := Check(p, &buf); code != 1 {
-		t.Fatalf("Check con un archivo ausente = %d, esperaba 1:\n%s", code, buf.String())
+	if code := check(p, opencodeRuntime, &buf); code != 1 {
+		t.Fatalf("check con un archivo ausente = %d, esperaba 1:\n%s", code, buf.String())
 	}
 
 	// Contenido alterado.
-	dest := agentPath(p, "implementer")
+	dest := agentPath(p, opencodeRuntime, "implementer")
 	writeTestFile(t, dest, readTestFile(t, dest)+"\nlínea manual\n")
 	buf.Reset()
-	if code := Check(p, &buf); code != 1 {
-		t.Fatalf("Check con contenido alterado = %d, esperaba 1:\n%s", code, buf.String())
+	if code := check(p, opencodeRuntime, &buf); code != 1 {
+		t.Fatalf("check con contenido alterado = %d, esperaba 1:\n%s", code, buf.String())
 	}
 }

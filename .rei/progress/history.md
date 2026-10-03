@@ -343,3 +343,38 @@ regeneración de agentes nativos. Plan completo en
 
 Trabajo implementado y documentado en `impl.md`; espera revisión.
 
+
+## 2026-10-02 21:45 — 2026-10-02_16-29__claude-adapter
+
+- **Work Item:** 2026-10-02_16-29__claude-adapter
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T16:29:46-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Implementar `plan.md` del adaptador de Claude Code (`.rei/adapters/claude/`,
+`rei init claude [--check]`, generación de `.claude/agents/<rol>.md`)
+reutilizando `internal/adapter`, y documentar Cursor/Codex como fallback.
+
+## Bitácora
+
+- Lectura de `task.md` y `meta.json` (type `task`, status `pending`).
+- `rei check --quiet` OK; sesión iniciada con `rei session start`.
+- Revisión de la infraestructura de adaptadores (`internal/adapter`,
+  `.rei/adapters/opencode/`, `cmdInit`, `help.go`, tests) y de
+  `adapters.md`.
+- Planificación finalizada y escrita en
+  `.rei/specs/2026-10-02_16-29__claude-adapter/plan.md`.
+- Implementados los 9 pasos de `plan.md`: descriptor `runtime` generalizado,
+  `claude.go`, `.rei/adapters/claude/`, `claude_test.go`, CLI `claude
+  [--check]`, ayuda, `adapters.md` y `embed_test.go`.
+- Verificación: `gofmt -l .` sin salida; `go vet ./...` OK; `make test` OK;
+  `make build` OK; `rei check --quiet` OK; `rei init claude --check`=0;
+  `rei init`/`rei init opencode`/`rei init status` intactos.
+
+## Próximo paso
+
+Esperar revisión del Work Item (`status = review`).
+

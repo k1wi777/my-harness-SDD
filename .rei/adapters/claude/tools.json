@@ -1,0 +1,8 @@
+{
+  "read":     { "tools": ["Read"] },
+  "write":    { "tools": ["Write", "Edit"] },
+  "edit":     { "tools": ["Write", "Edit"] },
+  "search":   { "tools": ["Grep", "Glob"] },
+  "shell":    { "tools": ["Bash"] },
+  "subagent": { "tools": ["Agent"] }
+}
