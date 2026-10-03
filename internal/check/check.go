@@ -71,7 +71,7 @@ func Run(p *paths.Project, quiet bool, out io.Writer) int {
 		fail(".rei/config.json inválido: %v", err)
 	case len(cfg.Checks) == 0:
 		if !quiet {
-			fmt.Fprintln(out, "[INFO] Sin checks configurados (.rei/config.json).")
+			fmt.Fprintf(out, "[INFO]  Sin checks configurados (.rei/config.json).\n")
 		}
 	default:
 		for _, ch := range cfg.Checks {

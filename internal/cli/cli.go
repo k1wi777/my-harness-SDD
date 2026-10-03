@@ -518,7 +518,7 @@ func cmdValidate(args []string) int {
 	fmt.Printf("== Validando Work Item: %s ==\n", id)
 	fails := 0
 	for _, is := range issues {
-		fmt.Printf("[%s] %s\n", is.Level, is.Message)
+		fmt.Printf("%-8s%s\n", "["+string(is.Level)+"]", is.Message)
 		if is.Level == validate.LevelFail {
 			fails++
 		}

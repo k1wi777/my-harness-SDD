@@ -161,12 +161,19 @@ func printStatus(out io.Writer, pending []Doc) {
 	for _, d := range pending {
 		pendingIDs[d.ID] = true
 	}
+	stateW := len("[PENDIENTE]")
+	pathW := 0
 	for _, d := range Docs {
-		state := "COMPLETO"
-		if pendingIDs[d.ID] {
-			state = "PENDIENTE"
+		if len(d.Path) > pathW {
+			pathW = len(d.Path)
 		}
-		fmt.Fprintf(out, "  [%s] %s — %s\n", state, d.Path, d.Label)
+	}
+	for _, d := range Docs {
+		state := "[COMPLETO]"
+		if pendingIDs[d.ID] {
+			state = "[PENDIENTE]"
+		}
+		fmt.Fprintf(out, "  %-*s %-*s %s\n", stateW, state, pathW+2, d.Path, d.Label)
 	}
 }
 
@@ -174,7 +181,13 @@ func printStatus(out io.Writer, pending []Doc) {
 func printPlan(out io.Writer) {
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, "Plan de pasos:")
+	titleW := 0
 	for _, s := range steps {
-		fmt.Fprintf(out, "  %d. %s -> %s\n", s.Num, s.Title, s.Target)
+		if len(s.Title) > titleW {
+			titleW = len(s.Title)
+		}
+	}
+	for _, s := range steps {
+		fmt.Fprintf(out, "  %d. %-*s -> %s\n", s.Num, titleW, s.Title, s.Target)
 	}
 }
