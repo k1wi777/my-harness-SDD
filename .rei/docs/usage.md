@@ -26,15 +26,25 @@ Ninguna de las dos es un trámite. Son los dos puntos donde el proceso se detien
    El binario **no necesita Go ni ninguna dependencia** para ejecutarse. Si
    desarrollas sobre el propio repositorio y tienes Go, también puedes
    compilarlo con `make build`.
-2. Copia `AGENTS.md` y la carpeta `.rei/` dentro de tu proyecto.
-3. **Personaliza la documentación de tu proyecto** (ver Sección 1.1).
-4. Ejecuta:
+2. En la raíz de tu proyecto, inicializa el arnés:
    ```bash
-   rei check
+   rei init
    ```
-5. `rei check` verificará que REI Harness esté completo y preparará las carpetas `.rei/specs/` y `.rei/progress/work-items/` si no existen todavía.
+   Despliega `AGENTS.md` y la carpeta `.rei/` (documentación, agentes, plantillas,
+   adaptadores y `config.json`), prepara la estructura de estado
+   (`.rei/specs/`, `.rei/progress/`) e inicializa git si falta. **No sobrescribe**
+   archivos existentes.
+3. (Opcional) Genera los subagentes nativos de tu runtime:
+   ```bash
+   rei init opencode   # o: rei init claude
+   ```
+   En Cursor y Codex (sin subagentes nativos) REI funciona por *fallback*, sin configuración.
+4. **Personaliza la documentación de tu proyecto** (ver Sección 1.1): ejecuta
+   `/personalize` (OpenCode o Claude Code) o pídele al agente «personaliza mi
+   proyecto» (el rol `initializer` conduce la entrevista).
 
-Si `rei check` reporta `[FAIL]`, falta algún archivo de REI Harness — revisa el listado que imprime antes de continuar. No inicies trabajo hasta que el resumen final diga "REI Harness listo para trabajar".
+Comprueba el estado en cualquier momento con `rei init status` (documentación
+pendiente), `rei doctor` (diagnóstico) y `rei items status` (Work Items).
 
 ### Permisos de ejecución
 

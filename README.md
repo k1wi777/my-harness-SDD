@@ -1,10 +1,10 @@
 # REI Harness
 
-REI Harness es un arnés de desarrollo para proyectos asistidos por IA basado en **Spec Driven Development (SDD)** y **orquestación multiagente**.
+REI Harness es una **herramienta de línea de comandos** (CLI en Go) para el desarrollo asistido por IA basado en **Spec Driven Development (SDD)** y **orquestación multiagente**.
 
 Su objetivo no es generar código automáticamente, sino proporcionar una estructura donde distintos agentes colaboran de forma controlada, verificable y siempre bajo supervisión humana.
 
-El repositorio actúa como la fuente de verdad del sistema: toda la planificación, implementación y revisión queda documentada dentro del propio proyecto.
+Con un solo comando (`rei init`), la herramienta **inicializa un arnés completo dentro de cualquier proyecto**: no hace falta clonar el repositorio ni copiar carpetas a mano. El estado (planificación, implementación, revisión e historial) vive dentro del propio proyecto.
 
 ---
 
@@ -37,172 +37,196 @@ el binario localmente con `make build`; quedará en `bin/rei`.
 
 ## Actualizar el CLI
 
-El binario `rei` puede actualizarse por sí mismo desde la línea de comandos:
+El binario `rei` puede actualizarse por sí mismo:
 
-- `rei update` descarga la última release publicada, verifica su `checksums.txt`
-  (SHA-256) y reemplaza el ejecutable en uso de forma atómica (con backup y
-  restauración si algo falla). En Windows, donde no se puede reemplazar el `.exe`
-  en ejecución, abre la página de releases para descargarla a mano.
+- `rei update` descarga la última release, verifica su `checksums.txt` (SHA-256)
+  y reemplaza el ejecutable de forma atómica (con backup y restauración si algo
+  falla). En Windows, donde no se puede reemplazar el `.exe` en ejecución, abre
+  la página de releases para descargarla a mano.
 - `rei update --check` solo informa de si hay una versión nueva, sin descargar ni
   modificar nada.
 
-Ambos comandos devuelven `0` cuando no hay nada que actualizar (ya estás en la
-última versión o todavía no hay releases publicadas). Un código `1` se reserva
-para fallos reales: red, HTTP 5xx, checksum inválido o asset ausente.
+Ambos devuelven `0` cuando no hay nada que actualizar; `1` se reserva para fallos
+reales (red, HTTP 5xx, checksum inválido o asset ausente).
 
 ---
 
-# Primeros pasos
+# Primeros pasos en tu proyecto
 
-Para entender cómo se usa REI Harness en el día a día (aprobar planificaciones, continuar una sesión interrumpida, preguntas frecuentes), consulta **`.rei/docs/usage.md`**.
+1. **Instala el binario** `rei` (ver [Instalación](#instalación)).
+2. **Inicializa REI** en la raíz de tu proyecto:
 
-1. Copia `AGENTS.md` y la carpeta `.rei/` dentro de tu proyecto.
-2. Ejecuta `rei check` para verificar REI Harness e inicializar `.rei/specs/` y `.rei/progress/`.
-3. Empieza a hablar con el agente describiendo lo que necesitas — actuará como Leader y coordinará el resto.
+   ```bash
+   rei init
+   ```
+
+   Despliega `AGENTS.md` y la carpeta `.rei/` (documentación, agentes, plantillas,
+   adaptadores y `config.json`), crea la estructura de estado
+   (`.rei/specs/`, `.rei/progress/`) e inicializa git si falta. **No sobrescribe**
+   archivos existentes.
+
+3. **(Opcional) Genera los subagentes nativos** de tu runtime:
+
+   ```bash
+   rei init opencode   # o: rei init claude
+   ```
+
+   Crea `.opencode/agents/` + el comando `/personalize`, o `.claude/agents/` +
+   `/personalize` + `CLAUDE.md`. En Cursor y Codex (sin subagentes nativos) REI
+   funciona por *fallback*, sin configuración.
+
+4. **Personaliza el proyecto** (propósito, stack, arquitectura, convenciones,
+   verificación):
+   - Con OpenCode o Claude Code: ejecuta **`/personalize`**.
+   - O pídele al agente: _"personaliza mi proyecto"_ (el Leader delega en el rol
+     `initializer`, que conduce una entrevista guiada).
+
+5. **Trabaja con el agente**: describe lo que necesitas. El Leader negocia el
+   Work Item, el Spec Author planifica, tú apruebas y el Implementer/Reviewer
+   ejecutan y verifican el ciclo.
+
+Comprueba el estado con `rei init status` (personalización pendiente), `rei doctor`
+(diagnóstico) y `rei items status` (Work Items).
 
 ---
 
-# Principios
+# Comandos
 
-REI Harness se construye sobre cuatro principios fundamentales.
+Los más usados (todos aceptan `rei <comando> --help`):
 
-## 1. El repositorio es la memoria
+| Comando | Qué hace |
+|---------|----------|
+| `rei init` | Inicializa el arnés en el proyecto (esqueleto + estado + git). |
+| `rei init status` | Indica qué documentación falta por personalizar. |
+| `rei init opencode` / `rei init claude` | Genera los subagentes nativos del runtime. |
+| `rei init --update [--force]` | Actualiza el arnés de un proyecto ya inicializado (marker-aware). |
+| `rei doctor` | Diagnóstico de solo lectura del arnés. |
+| `rei items status` | Lista los Work Items y su estado. |
+| `rei item show <id>` | Ficha de un Work Item (metadatos, documentos, validación). |
+| `rei status set <id> <estado>` | Cambia el estado de un Work Item. |
+| `rei validate [<id>]` | Comprueba la consistencia interna de un Work Item. |
+| `rei review-diff <id>` | Genera el paquete de revisión por diff. |
+| `rei test` | Ejecuta los checks declarados en `.rei/config.json`. |
+| `rei update [--check]` | Actualiza el binario desde GitHub Releases. |
 
-Los agentes no dependen del historial del chat.
-
-Toda la información relevante vive dentro del proyecto:
-
-- documentación
-- especificaciones
-- progreso
-- historial
-- estados
-
-Una conversación puede perderse.
-El repositorio no.
+Lista completa y detalle: `rei help` y `rei help <comando>`.
 
 ---
 
-## 2. Un agente, una responsabilidad
-
-Cada agente posee un único objetivo.
+# Agentes
 
 | Agente | Responsabilidad |
 |---------|-----------------|
-| Leader | Comprender la solicitud, coordinar el workflow y delegar. |
-| Spec Author | Transformar un Work Item en una planificación técnica. |
-| Implementer | Implementar únicamente la planificación aprobada. |
-| Reviewer | Validar que el trabajo cumple la planificación y las reglas del proyecto. |
+| **Leader** | Comprender la solicitud, coordinar el workflow y delegar. |
+| **Spec Author** | Transformar un Work Item en una planificación técnica. |
+| **Implementer** | Implementar únicamente la planificación aprobada. |
+| **Reviewer** | Validar que el trabajo cumple la planificación y las reglas del proyecto. |
+| **Initializer** | Conducir la personalización guiada del proyecto (wizard). |
 
-Ningún agente sustituye el trabajo de otro.
+Cada rol vive en `.rei/agents/<rol>.md` como un **`## Contrato`** conciso (lo que
+recibe el subagente) más una **`## Referencia`** opcional. Los adaptadores traducen
+ese Contrato al formato nativo de cada runtime.
 
 ---
 
+# Estructura
+
+Este repositorio es **el código fuente de la herramienta**:
+
+```text
+.
+├── AGENTS.md              # Punto de entrada para los agentes
+├── README.md
+├── go.mod
+├── cmd/rei/               # Punto de entrada del CLI
+├── internal/              # Paquetes (paths, meta, state, gitx, check, adapter, update, ...)
+├── embed.go               # Empaqueta el esqueleto del arnés dentro del binario
+├── .goreleaser.yaml       # Release multi-SO/arch
+├── .github/workflows/     # Publicación de releases con goreleaser
+└── .rei/                  # Arnés (docs, agentes, plantillas, adaptadores) + su propio estado
+```
+
+Un **proyecto** que usa REI solo recibe (lo crea `rei init`):
+
+```text
+AGENTS.md
+.rei/
+├── agents/      # Roles (Contrato + Referencia)
+├── adapters/    # Plantillas de adaptadores por runtime
+├── config.json  # Checks de verificación del proyecto
+├── docs/        # Documentación del arnés y del proyecto
+├── templates/   # Plantillas canónicas
+├── specs/       # Work Items y planificaciones
+└── progress/    # Sesión actual, historial y reportes por Work Item
+
+.opencode/agents/ + .opencode/commands/     # Si usas OpenCode
+.claude/agents/ + .claude/commands/ + CLAUDE.md   # Si usas Claude Code
+```
+
+---
+
+# Cómo funciona
+
+## 1. El repositorio es la memoria
+
+Los agentes no dependen del historial del chat. Toda la información relevante
+(planificación, progreso, historial, estados) vive dentro del proyecto. Una
+conversación puede perderse; el repositorio no.
+
+## 2. Un agente, una responsabilidad
+
+Cada agente posee un único objetivo y no sustituye el trabajo de otro. El Leader
+transmite a cada subagente solo el `## Contrato` de su rol.
+
 ## 3. Spec Driven Development
 
-Todo trabajo sigue el mismo flujo base.
+Todo trabajo sigue el mismo flujo base:
 
 ```
-Usuario
-      │
-      ▼
- Leader
-      │
-      ▼
- meta.json
-      │
-      ▼
-Spec Author
-      │
-      ▼
-Planificación
-      │
-      ▼
-Aprobación humana
-      │
-      ▼
-Implementer
-      │
-      ▼
-Reviewer
-      │
-      ▼
-Finalización
+Usuario → Leader → meta.json → Spec Author → Planificación
+        → ⏸ Aprobación humana → Implementer → Reviewer → Finalización
 ```
 
 El código nunca se implementa antes de existir una planificación aprobada.
 
-> Este diagrama muestra la ruta principal. Las ramificaciones (rechazo en revisión, bloqueos) están documentadas en `.rei/docs/harness/workflow.md`.
-
-> El tramo `Usuario → Leader → meta.json` representa una negociación explícita, no una conversión automática — ver `.rei/docs/usage.md` (para el usuario) o `.rei/agents/leader.md` (protocolo del agente).
-
-
----
+> Este diagrama muestra la ruta principal. Las ramificaciones (rechazo en
+> revisión, bloqueos) están en `.rei/docs/harness/workflow.md`.
 
 ## 4. El humano siempre mantiene el control
 
-Ningún agente puede avanzar automáticamente entre etapas críticas.
+Ningún agente avanza automáticamente entre etapas críticas. Toda planificación
+debe ser aprobada explícitamente antes de implementar.
 
-Toda planificación debe ser aprobada explícitamente antes de comenzar la implementación.
-
-La aprobación humana forma parte del workflow y nunca puede omitirse.
-
----
-
-# Organización del repositorio
-## Estructura
-
-```text
-.
-├── AGENTS.md                     # Punto de entrada para los agentes
-├── README.md                     # Descripción del repositorio
-├── go.mod                        # Módulo Go del CLI
-├── cmd/rei/                      # Punto de entrada del CLI `rei`
-├── internal/                     # Paquetes internos del CLI
-├── .rei/                         # REI Harness
-│   ├── agents/                   # Roles y protocolos de los agentes
-│   ├── templates/                # Plantillas canónicas (fuente única de verdad)
-│   ├── config.json               # Checks de verificación del proyecto
-│   ├── docs/                     # Documentación de REI Harness y del proyecto
-│   ├── specs/                    # Work Items y planificaciones por fecha
-│   └── progress/                 # Estado e historial del trabajo
-│       ├── current.md            # Estado de la sesión actual
-│       ├── history.md            # Resumen histórico
-│       └── work-items/           # Detalle por Work Item
-│
-├── src/                          # Código fuente del proyecto
-├── tests/                        # Pruebas del proyecto
-└── ...
-```
 ---
 
 # Work Items
 
-REI Harness trabaja sobre **Work Items**. Existen dos tipos, **Feature** y **Task**, según el nivel de planificación que requiere el cambio.
-
-Los criterios para elegir entre uno y otro, así como los estados y transiciones que sigue cada Work Item, están definidos en `.rei/docs/harness/workflow.md`.
+REI Harness trabaja sobre **Work Items**, de dos tipos: **Feature** (planificación
+completa: `requirements.md`, `design.md`, `tasks.md`) y **Task** (planificación
+breve: `plan.md`). Los criterios, estados y transiciones están en
+`.rei/docs/harness/workflow.md`.
 
 ---
 
 # Documentación
 
-La documentación está dividida en dos grupos según quién debe modificarla y desacoplada por responsabilidad.
+## Del arnés (`.rei/docs/harness/`)
 
-## Documentación de REI Harness (`.rei/docs/harness/`)
-
-Define el funcionamiento del arnés. **No requiere personalización** al adaptarlo a un proyecto.
+Define el funcionamiento de REI Harness. **No requiere personalización.**
 
 | Documento | Propósito |
 |-----------|-----------|
 | `workflow.md` | Flujo completo: tipos de Work Item, estados y transiciones. |
 | `specs.md` | Cómo se construyen las especificaciones (Features). |
 | `task.md` | Formato del plan de una Task. |
-| `progress.md` | Funcionamiento del sistema de progreso. |
+| `progress.md` | Sistema de progreso y plantillas. |
 | `meta.md` | Estructura y significado de `meta.json`. |
+| `adapters.md` | Formato canónico de rol y adaptadores de runtime. |
 
-## Documentación del proyecto (`.rei/docs/project/`)
+## Del proyecto (`.rei/docs/project/`)
 
-Describe las reglas de **tu repositorio**. **Debes personalizarla** al implementar REI Harness por primera vez.
+Describe las reglas de **tu repositorio**. **Debes personalizarla** (con
+`/personalize` o el rol `initializer`).
 
 | Documento | Propósito |
 |-----------|-----------|
@@ -210,53 +234,33 @@ Describe las reglas de **tu repositorio**. **Debes personalizarla** al implement
 | `conventions.md` | Convenciones de desarrollo. |
 | `verification.md` | Checkpoints y reglas de validación. |
 
-También personaliza las secciones 2 y 3 de `AGENTS.md` (propósito y stack) y los checks en `.rei/config.json` (verificación).
-
 Los agentes cargan únicamente la documentación necesaria para su etapa.
 
 ---
 
 # Sistema de progreso
 
-El progreso del proyecto también vive dentro del repositorio.
-
-```
-.rei/progress/
-```
-
-contiene:
-
-- sesión actual (`current.md`)
-- historial (`history.md`)
-- carpeta por Work Item (`work-items/<work-item-id>/`) con reportes de implementación, revisión y bloqueos
-
-Esto permite:
-
-- continuar sesiones interrumpidas
-- mantener trazabilidad
-- conservar un historial permanente del proyecto
+El progreso vive en `.rei/progress/`: la sesión actual (`current.md`), el
+historial permanente (`history.md`, append-only) y una carpeta por Work Item
+(`work-items/<id>/`) con los reportes de implementación y revisión. Esto permite
+continuar sesiones interrumpidas y mantener trazabilidad.
 
 ---
 
 # Revisión por diff (git)
 
-REI Harness funciona sin git, pero está optimizado para usarlo. Cuando el proyecto es un repositorio git, el Reviewer recibe un **paquete de revisión** (`rei review-diff`) con los cambios reales del Work Item en lugar de releer toda la especificación. Al aprobar se registra un `base_commit`, y en un `changes_requested` se registra un `last_review_commit` para que la próxima revisión vea solo los cambios pedidos.
-
-Si no hay git, el flujo sigue funcionando en modo lectura. `rei check` inicializa git automáticamente si no existe.
+REI Harness funciona sin git, pero está optimizado para usarlo. Con git, el
+Reviewer recibe un **paquete de revisión** (`rei review-diff`) con los cambios
+reales del Work Item en lugar de releer toda la especificación. Al aprobar se
+registra un `base_commit`; en un `changes_requested`, un `last_review_commit`
+para que la próxima revisión vea solo los cambios pedidos. Sin git, el flujo
+sigue funcionando en modo lectura.
 
 ---
 
-# Filosofía del proyecto
+# Filosofía
 
-Este repositorio no pretende construir un asistente autónomo.
-
-Pretende construir un sistema donde:
-
-- los agentes tienen responsabilidades claras;
-- el contexto está distribuido;
-- la documentación es la fuente de verdad;
-- el humano conserva siempre el control del proceso.
-
-La IA no reemplaza el proceso de desarrollo.
-
-Lo sigue.
+Este repositorio no pretende construir un asistente autónomo, sino un sistema
+donde los agentes tienen responsabilidades claras, el contexto está distribuido,
+la documentación es la fuente de verdad y el humano conserva siempre el control
+del proceso. La IA no reemplaza el proceso de desarrollo: lo sigue.
