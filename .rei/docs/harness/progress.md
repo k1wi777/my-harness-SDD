@@ -90,7 +90,10 @@ Documento generado por el **Implementer** en `.rei/progress/work-items/<work-ite
 
 Describe el trabajo realizado durante la implementación.
 
-Su estructura puede adaptarse según la naturaleza del Work Item, pero siempre debe incluir como mínimo:
+Debe ser **conciso**: tope blando de **~40 líneas / ~350 palabras**. Si se
+supera, `rei validate` emite un `WARN` (nunca un `FAIL`). Su estructura puede
+adaptarse según la naturaleza del Work Item, pero siempre debe incluir como
+mínimo:
 
 - resumen de la implementación;
 - archivos modificados;
@@ -108,7 +111,8 @@ Documento generado por el **Reviewer** en `.rei/progress/work-items/<work-item-i
 
 Resume el resultado de la revisión realizada sobre el Work Item.
 
-Debe incluir como mínimo:
+Debe ser **conciso**: tope blando de **~40 líneas / ~350 palabras**; superarlo
+produce un `WARN` en `rei validate` (nunca un `FAIL`). Debe incluir como mínimo:
 
 - estado final (`done`, `changes_requested` o `blocked`);
 - verificaciones realizadas;

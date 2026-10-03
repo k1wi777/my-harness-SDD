@@ -156,8 +156,15 @@ El Work Item no puede continuar.
 1. Lee el motivo del bloqueo (`.rei/progress/work-items/<work-item-id>/spec.md`,
    `impl.md` o `review.md`).
 2. Informa al usuario del motivo y de qué se necesita para desbloquear.
-3. NO continúes: espera la decisión del usuario (retomar, ajustar el alcance o
-   cancelar).
+3. NO continúes sin una decisión explícita del usuario. Tras su decisión,
+   guíalo con las transiciones estándar ahora admitidas (sin `--force`):
+   - **Retomar la implementación** →
+     `rei status set <work-item-id> in_progress` y relanza `implementer`
+     (retomará desde `current.md`).
+   - **Volver a la planificación / revisar la planificación** →
+     `rei status set <work-item-id> ready` y relanza `spec_author` si procede.
+   - **Cancelar** → no existe un estado de cancelación; deja el Work Item en
+     `blocked` y acuérdalo con el usuario. NO fuerces transiciones a `done`.
 
 #### Delegación
 

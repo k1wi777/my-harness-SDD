@@ -3,6 +3,7 @@ package validate
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/k1wi777/my-harness-SDD/internal/meta"
@@ -67,6 +68,28 @@ func TestEmptyDescriptionFails(t *testing.T) {
 	issues, _ := WorkItem(p, testID)
 	if countLevel(issues, LevelFail) == 0 {
 		t.Fatal("esperaba FAIL por description vacía")
+	}
+}
+
+func TestReportTooLargeWarns(t *testing.T) {
+	p := &paths.Project{Root: t.TempDir()}
+	writeMeta(t, p, &meta.Meta{
+		ID: testID, Title: "t", Description: "d",
+		Type: "task", Status: meta.StatusReview, CreatedAt: "2026-10-01T10:00:00-05:00",
+	})
+	mustWrite(t, filepath.Join(p.SpecDir(testID), "plan.md"), "- [x] 1\n")
+	big := strings.Repeat("palabra ", maxReportWords+1)
+	mustWrite(t, filepath.Join(p.WorkItemDir(testID), "impl.md"), big)
+
+	issues, err := WorkItem(p, testID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n := countLevel(issues, LevelFail); n != 0 {
+		t.Fatalf("esperaba 0 FAIL, got %d: %+v", n, issues)
+	}
+	if countLevel(issues, LevelWarn) == 0 {
+		t.Fatalf("esperaba WARN por impl.md demasiado grande: %+v", issues)
 	}
 }
 

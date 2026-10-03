@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_23-47__medium-fixes",
+  "title": "correcciones medias (desbloqueo + topes de reportes)",
+  "description": "Correcciones medias. (1) Desbloqueo: anadir transiciones estandar desde `blocked` en `internal/meta` (p. ej. `blocked -> in_progress` y `blocked -> ready`) para reanudar un Work Item bloqueado sin `--force`; actualizar el Caso H del `## Contrato` de `.rei/agents/leader.md` (guiar al usuario: retomar -> blocked->in_progress/ready, o cancelar) y regenerar nativos; tests. (2) Topes/estructura de reportes: definir una estructura concisa y un tope blando (p. ej. <= ~40 lineas / ~350 palabras) para `impl.md` y `review.md`, documentado en los Contratos de `implementer`/`reviewer` (y/o `.rei/docs/harness/progress.md`), y un aviso (`WARN`, sin fallar) en `validate` si se excede. Regenerar nativos. Verificacion: tests, `rei init opencode --check`=0, `rei check --quiet`=0, y `rei status set <id> ...` desde `blocked` a un estado activo sin `--force`. Fuera de alcance: `rei init --update`.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T23:47:00-05:00",
+  "base_commit": "e8f3637800118124b6c7a41f27bb7ff334ff0a5a",
+  "last_review_commit": ""
+}

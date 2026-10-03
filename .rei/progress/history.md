@@ -464,3 +464,41 @@ generado: `.rei/specs/2026-10-02_23-25__distribution/plan.md`.
 Solicitar **revisión**: esperar al Reviewer para validar el trabajo contra
 `plan.md`.
 
+
+## 2026-10-02 23:52 — 2026-10-02_23-47__medium-fixes
+
+- **Work Item:** 2026-10-02_23-47__medium-fixes
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T23:47:21-05:00
+- **Agente activo:** _—_
+
+## Plan
+
+Planificación de una `task` de dos correcciones medias (desbloqueo desde `blocked`
+sin `--force` + topes/estructura de reportes con `WARN` en `validate`). `plan.md`
+redactado en `.rei/specs/2026-10-02_23-47__medium-fixes/plan.md`, con archivos,
+cambios, restricciones y pasos.
+
+## Bitácora
+
+- Sesión iniciada (`rei session start`, estado `pending`, agente `spec_author`).
+- Redactado `plan.md` para la task: transiciones `blocked -> in_progress`/`ready`
+  en `internal/meta` (+ tests), Caso H de `.rei/agents/leader.md`, tope blando de
+  `impl.md`/`review.md` documentado en Contratos y `progress.md`, aviso `WARN` en
+  `internal/validate` (+ test) y regeneración de nativos.
+- Planificación finalizada; a la espera de aprobación humana.
+- Aprobada por el usuario; Leader deja `status = in_progress` y lanza `implementer`.
+- Implementer inicia la implementación siguiendo `plan.md` (9 pasos).
+- Implementados los 9 pasos: transiciones desde `blocked` (+ tests), `WARN` de
+  tope de reportes en `validate` (+ test), Caso H y Contratos/progress.md
+  actualizados, nativos regenerados.
+- Verificación completa OK: `gofmt`, `go vet`, `make test`, `make build`,
+  `rei check --quiet`, `--check` de opencode/claude, desbloqueo real sin
+  `--force` y `WARN` de tope sin `FAIL`. Documentado en `impl.md`.
+
+## Próximo paso
+
+Esperar la revisión del Reviewer sobre
+`.rei/progress/work-items/2026-10-02_23-47__medium-fixes/impl.md`.
+

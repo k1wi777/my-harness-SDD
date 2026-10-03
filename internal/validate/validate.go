@@ -19,6 +19,13 @@ const (
 	LevelWarn Level = "WARN"
 )
 
+// Tope blando de los reportes impl.md/review.md. Superarlo produce un WARN,
+// nunca un FAIL (ver .rei/docs/harness/progress.md).
+const (
+	maxReportLines = 40
+	maxReportWords = 350
+)
+
 // Issue es un hallazgo de la validación.
 type Issue struct {
 	Level   Level
@@ -104,6 +111,23 @@ func WorkItem(p *paths.Project, id string) ([]Issue, error) {
 		fail("falta review.md (estado done)")
 	}
 
+	// Aviso blando: impl.md/review.md no deben exceder el tope de tamaño.
+	for _, f := range []string{"impl.md", "review.md"} {
+		path := filepath.Join(p.WorkItemDir(id), f)
+		if !fileExists(path) {
+			continue
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			continue
+		}
+		lines, words := reportSize(string(data))
+		if lines > maxReportLines || words > maxReportWords {
+			warn("%s excede el tope blando (~%d líneas / ~%d palabras): %d líneas, %d palabras",
+				f, maxReportLines, maxReportWords, lines, words)
+		}
+	}
+
 	if s, err := state.ReadSession(p); err == nil && s.WorkItem == id {
 		if s.State != "" && s.State != m.Status {
 			warn("current.md dice Estado='%s' pero meta.json dice status='%s'", s.State, m.Status)
@@ -125,6 +149,16 @@ func needsPlanning(status string) bool {
 func fileExists(path string) bool {
 	fi, err := os.Stat(path)
 	return err == nil && !fi.IsDir()
+}
+
+// reportSize devuelve (líneas, palabras) de un reporte. Las líneas se cuentan
+// sobre el contenido sin el salto de línea final; las palabras, con Fields.
+func reportSize(content string) (int, int) {
+	lines := 0
+	if trimmed := strings.TrimSuffix(content, "\n"); trimmed != "" {
+		lines = len(strings.Split(trimmed, "\n"))
+	}
+	return lines, len(strings.Fields(content))
 }
 
 // createdAtPrefix deriva "YYYY-MM-DDTHH:mm" del id "YYYY-MM-DD_HH-mm__slug".

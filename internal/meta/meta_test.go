@@ -80,6 +80,8 @@ func TestTransitionAllowed(t *testing.T) {
 		{StatusReview, StatusDone},
 		{StatusReview, StatusChangesRequested},
 		{StatusChangesRequested, StatusInProgress},
+		{StatusBlocked, StatusReady},
+		{StatusBlocked, StatusInProgress},
 	}
 	for _, tc := range allowed {
 		if !TransitionAllowed(tc.from, tc.to) {
@@ -90,7 +92,7 @@ func TestTransitionAllowed(t *testing.T) {
 	rejected := []struct{ from, to string }{
 		{StatusPending, StatusInProgress},
 		{StatusDone, StatusInProgress},
-		{StatusBlocked, StatusInProgress},
+		{StatusBlocked, StatusDone},
 		{StatusReady, StatusDone},
 	}
 	for _, tc := range rejected {
