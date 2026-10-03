@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/k1wi777/my-harness-SDD/internal/adapter"
@@ -112,15 +113,20 @@ func cmdCheck(args []string) int {
 	return check.Run(p, quiet, os.Stdout)
 }
 
-// cmdInit implementa `rei init [status|opencode|claude [--check]]`. En modo
-// instalador (sin argumentos) despliega el esqueleto embebido en el proyecto
-// destino —resuelto con initwizard.ResolveRoot, sin exigir un .rei/ previo— y
-// reporta la personalización. `status` es un reporte de solo lectura que exige
-// un proyecto REI existente (project()). `opencode` y `claude` instalan el
-// esqueleto (incluido .rei/adapters/) y generan los agentes nativos del runtime;
-// `<runtime> --check` verifica sin escribir. Cualquier otra combinación es uso
-// incorrecto (2, R30).
+// cmdInit implementa `rei init [status|opencode|claude [--check]|--update
+// [--force]]`. En modo instalador (sin argumentos) despliega el esqueleto
+// embebido en el proyecto destino —resuelto con initwizard.ResolveRoot, sin
+// exigir un .rei/ previo— y reporta la personalización. `status` es un reporte
+// de solo lectura que exige un proyecto REI existente (project()). `opencode` y
+// `claude` instalan el esqueleto (incluido .rei/adapters/) y generan los
+// agentes nativos del runtime; `<runtime> --check` verifica sin escribir.
+// `--update [--force]` refresca el esqueleto de un proyecto ya inicializado
+// (exige project()) sin pisar la personalización ni el estado. Cualquier otra
+// combinación es uso incorrecto (2, R30).
 func cmdInit(args []string) int {
+	if hasArg(args, "--update") {
+		return cmdInitUpdate(args)
+	}
 	switch {
 	case len(args) == 0:
 		p, err := initwizard.ResolveRoot()
@@ -164,9 +170,59 @@ func cmdInit(args []string) int {
 		}
 		return adapter.CheckClaude(p, os.Stdout)
 	default:
-		fmt.Fprintln(os.Stderr, "uso: rei init [status|opencode|claude [--check]]")
+		fmt.Fprintln(os.Stderr, "uso: rei init [status|opencode|claude [--check]|--update [--force]]")
 		return 2
 	}
+}
+
+// cmdInitUpdate ejecuta `rei init --update [--force]`. Exige un proyecto REI
+// (project()); refresca el esqueleto con initwizard.Update y, si el proyecto ya
+// tiene los directorios nativos, regenera los adaptadores de OpenCode y/o
+// Claude Code. Devuelve 2 ante cualquier argumento distinto de --update/--force.
+func cmdInitUpdate(args []string) int {
+	force := false
+	for _, a := range args {
+		switch a {
+		case "--update":
+		case "--force":
+			force = true
+		default:
+			fmt.Fprintln(os.Stderr, "uso: rei init --update [--force]")
+			return 2
+		}
+	}
+	p, code := project()
+	if p == nil {
+		return code
+	}
+	rc := initwizard.Update(p, force, os.Stdout)
+	if isDir(filepath.Join(p.Root, ".opencode")) {
+		if adapter.Install(p, os.Stdout) != 0 {
+			rc = 1
+		}
+	}
+	if isDir(filepath.Join(p.Root, ".claude")) {
+		if adapter.InstallClaude(p, os.Stdout) != 0 {
+			rc = 1
+		}
+	}
+	return rc
+}
+
+// hasArg indica si args contiene la bandera exacta flag.
+func hasArg(args []string, flag string) bool {
+	for _, a := range args {
+		if a == flag {
+			return true
+		}
+	}
+	return false
+}
+
+// isDir informa si path existe y es un directorio.
+func isDir(path string) bool {
+	fi, err := os.Stat(path)
+	return err == nil && fi.IsDir()
 }
 
 // cmdTest ejecuta solo los checks declarados en .rei/config.json, sin efectos

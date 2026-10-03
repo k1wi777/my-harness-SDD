@@ -16,3 +16,17 @@ func TestProjectMessage(t *testing.T) {
 		t.Fatalf("projectMessage(other) = %q, want %q", got, "boom")
 	}
 }
+
+func TestCmdInitUpdateUsoIncorrecto(t *testing.T) {
+	cases := [][]string{
+		{"--update", "extra"},
+		{"--update", "--bogus"},
+		{"opencode", "--update"},
+		{"--force", "--update", "extra"},
+	}
+	for _, args := range cases {
+		if code := cmdInit(args); code != 2 {
+			t.Errorf("cmdInit(%v) = %d, esperaba 2", args, code)
+		}
+	}
+}

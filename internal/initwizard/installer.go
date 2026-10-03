@@ -1,6 +1,7 @@
 package initwizard
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -44,6 +45,7 @@ func ResolveRoot() (*paths.Project, error) {
 func InstallSkeleton(p *paths.Project, out io.Writer) int {
 	exit := 0
 	created, skipped := 0, 0
+	baseline := map[string]string{}
 
 	walkErr := fs.WalkDir(reiskel.Skeleton, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -62,7 +64,18 @@ func InstallSkeleton(p *paths.Project, out io.Writer) int {
 			return nil
 		}
 
-		if _, statErr := os.Stat(dest); statErr == nil {
+		embedded, err := reiskel.Skeleton.ReadFile(path)
+		if err != nil {
+			fmt.Fprintf(out, "[FAIL]  No se pudo leer %s del esqueleto: %v\n", path, err)
+			exit = 1
+			return nil
+		}
+
+		if current, statErr := os.ReadFile(dest); statErr == nil {
+			if bytes.Equal(current, embedded) {
+				// Sin cambios respecto al embebido: queda como baseline.
+				baseline[path] = hashBytes(embedded)
+			}
 			if path == "AGENTS.md" {
 				fmt.Fprintf(out, "[WARN]  %s ya existe; se conserva sin cambios.\n", path)
 			}
@@ -75,22 +88,18 @@ func InstallSkeleton(p *paths.Project, out io.Writer) int {
 			return nil
 		}
 
-		data, err := reiskel.Skeleton.ReadFile(path)
-		if err != nil {
-			fmt.Fprintf(out, "[FAIL]  No se pudo leer %s del esqueleto: %v\n", path, err)
-			exit = 1
-			return nil
-		}
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			fmt.Fprintf(out, "[FAIL]  No se pudo crear el directorio de %s: %v\n", path, err)
 			exit = 1
 			return nil
 		}
-		if err := os.WriteFile(dest, data, 0o644); err != nil {
+		if err := os.WriteFile(dest, embedded, 0o644); err != nil {
 			fmt.Fprintf(out, "[FAIL]  No se pudo crear %s: %v\n", path, err)
 			exit = 1
 			return nil
 		}
+		// Recién creado a partir del embebido: idéntico por construcción.
+		baseline[path] = hashBytes(embedded)
 		fmt.Fprintf(out, "[OK]    %s\n", path)
 		created++
 		return nil
@@ -98,6 +107,10 @@ func InstallSkeleton(p *paths.Project, out io.Writer) int {
 	if walkErr != nil {
 		fmt.Fprintf(out, "[FAIL]  No se pudo recorrer el esqueleto: %v\n", walkErr)
 		exit = 1
+	}
+
+	if err := saveManifest(p, baseline); err != nil {
+		fmt.Fprintf(out, "[WARN]  No se pudo guardar el manifiesto %s: %v\n", ManifestPath, err)
 	}
 
 	fmt.Fprintf(out, "%d archivo(s) creado(s), %d omitido(s).\n", created, skipped)

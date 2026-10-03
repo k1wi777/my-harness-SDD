@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_23-53__init-update",
+  "title": "rei init --update",
+  "description": "Implementar `rei init --update [--force]`: refresca el esqueleto del harness embebido en un proyecto YA inicializado, sin pisar la personalizacion del usuario ni su estado. Politica (marker-aware + --force): (1) docs de personalizacion de proyecto (`AGENTS.md` §2/§3, `.rei/docs/project/{architecture,conventions,verification}.md`) se consideran NO personalizados si contienen `<!-- REI:PENDIENTE -->` y se actualizan; si no contienen marcador, se conservan con aviso. (2) archivos del harness sin marcador (`.rei/docs/harness/**`, `.rei/agents/**`, `.rei/adapters/**`, `.rei/templates/**`, `.rei/config.json`, y las partes de `AGENTS.md` fuera de §2/§3): definir en el plan como actualizarlos de forma segura (p. ej. manifiesto de hashes guardado al instalar, o actualizar por defecto marcando el cambio). (3) `--force` sobrescribe los archivos que difieran, incluidos personalizados. (4) NUNCA tocar `.rei/specs/**` ni `.rei/progress/**`. (5) Reportar actualizados / sin cambios / omitidos; si procede, regenerar los nativos (`rei init opencode`/`claude`). (6) `rei init --update` NO instala desde cero (eso es `rei init`); asume proyecto inicializado y, si no lo esta, indicarlo. Verificacion: tests unitarios + proyecto temporal (marker-aware, no sobrescribe personalizado, --force sobrescribe, no toca specs/progress, idempotente). Actualizar `rei help init`. Fuera de alcance: adaptadores nuevos.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T23:53:00-05:00",
+  "base_commit": "1b8767562b4453daa3d490c30a771c1348e8dded",
+  "last_review_commit": ""
+}

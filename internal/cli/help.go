@@ -29,11 +29,16 @@ var commands = []commandInfo{
 	},
 	{
 		name:  "init",
-		usage: "init [status|opencode|claude [--check]]",
+		usage: "init [status|opencode|claude [--check]|--update [--force]]",
 		short: "Instala el esqueleto del harness, reporta la personalización y genera agentes nativos",
 		detail: []string{
 			"Sin argumentos: despliega el esqueleto embebido (AGENTS.md, .rei/docs/, .rei/agents/, .rei/adapters/, .rei/templates/ y .rei/config.json) sin sobrescribir archivos existentes, crea la estructura de estado (.rei/specs/, .rei/progress/work-items/, current.md, history.md) y, si falta y git está disponible, inicializa el repositorio.",
 			"status: reporta qué documentos siguen pendientes, sin modificar archivos (0 si no queda ninguno; 1 si queda alguno).",
+			"--update: refresca el esqueleto embebido en un proyecto YA inicializado; NO instala desde cero. Exige un proyecto REI (.rei/); si no lo está, avisa y sale 1. Nunca toca .rei/specs/** ni .rei/progress/**.",
+			"--update es marker-aware para los documentos de personalización (AGENTS.md §2/§3 y .rei/docs/project/{architecture,conventions,verification}.md): se actualizan si aún contienen `<!-- REI:PENDIENTE -->`; si ya no lo contienen (personalizados), se conservan con aviso.",
+			"--update para el resto del harness: se actualiza solo si el manifiesto .rei/install-manifest.json confirma que el archivo no se ha modificado desde la instalación; si se modificó o no hay entrada, se conserva con aviso.",
+			"--update --force: sobrescribe cualquier archivo que difiera, incluidos los personalizados o modificados a mano; los archivos que difieren se reportan como [NEW], [UPD], [OK] o [SKIP].",
+			"--update regenera los nativos solo si el proyecto ya tiene .opencode/ (OpenCode) y/o .claude/ (Claude Code); si no existen, no instala nativos.",
 			"opencode: instala el esqueleto (incluido .rei/adapters/), asegura la estructura y genera los agentes nativos de OpenCode en .opencode/agents/<rol>.md a partir del `## Contrato` de cada rol. Genera además el comando `/personalize` en .opencode/commands/personalize.md. No sobrescribe archivos que no lleven la marca GENERATED.",
 			"opencode --check: verifica que los agentes nativos y el comando `/personalize` existen y coinciden con la generación canónica, sin escribir (0 si todo coincide; 1 si falta alguno, no lleva la marca o difiere).",
 			"claude: instala el esqueleto (incluido .rei/adapters/) y genera los agentes nativos de Claude Code en .claude/agents/<rol>.md con frontmatter name, description, tools y model opcional a partir del `## Contrato` de cada rol. Genera además el comando `/personalize` en .claude/commands/personalize.md y `CLAUDE.md` (con `@AGENTS.md`). No sobrescribe archivos que no lleven la marca GENERATED.",

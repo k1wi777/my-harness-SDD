@@ -502,3 +502,46 @@ cambios, restricciones y pasos.
 Esperar la revisión del Reviewer sobre
 `.rei/progress/work-items/2026-10-02_23-47__medium-fixes/impl.md`.
 
+
+## 2026-10-03 00:06 — 2026-10-02_23-53__init-update
+
+- **Work Item:** 2026-10-02_23-53__init-update
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T23:53:20-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Planificación finalizada en `.rei/specs/2026-10-02_23-53__init-update/plan.md`.
+`rei init --update [--force]` con política marker-aware para docs de
+personalización + manifiesto de hashes `.rei/install-manifest.json` para el resto
+del esqueleto, `--force` como escape, sin tocar `.rei/specs/**` ni
+`.rei/progress/**` y con regeneración condicional de nativos.
+
+## Bitácora
+
+- 2026-10-02: Sesión `task` iniciada (`rei session start`). Estado `pending`.
+- 2026-10-02: Leídos `task.md`, `meta.json` y `rei check --quiet` (exit 0).
+  Revisados `internal/initwizard` (installer/initwizard), `internal/adapter`,
+  `internal/cli` (cli/help) y el esqueleto embebido (`embed.go`).
+- 2026-10-02: Decidida la política de actualización: manifiesto de hashes SHA-256
+  escrito al instalar + reglas marker-aware para `AGENTS.md` §2/§3 y
+  `.rei/docs/project/*.md`; alternativa «actualizar por defecto» descartada por
+  destructiva. `plan.md` redactado con tabla de decisión, límites y verificación.
+- 2026-10-02: Planificación finalizada. `current.md` -> `ready`; `meta.json` ->
+  `ready`. A la espera de aprobación humana.
+- 2026-10-03: Implementer inicia la ejecución del plan (pasos 1–8).
+- 2026-10-03: Pasos 1–6 completados: manifiesto de hashes, `InstallSkeleton`
+  actualizado, `Update`, integración en `cmdInit`, ayuda y tests.
+- 2026-10-03: V1–V5 en verde: `go test ./...`, `gofmt -l .`, `go vet ./...`,
+  `make build`, prueba de aceptación V4 en `/tmp/opencode/v4-update`
+  (marker-aware, `--force`, no toca `specs/`/`progress/`, idempotencia, exit 1
+  fuera de proyecto, regeneración de nativos), `rei check --quiet` y `--check`
+  de nativos. Evidencia en `impl.md`.
+
+## Próximo paso
+
+Esperar la revisión del Work Item (`impl.md` documenta la implementación y la
+verificación).
+
