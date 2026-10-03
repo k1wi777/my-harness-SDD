@@ -10,6 +10,7 @@ import (
 type commandInfo struct {
 	name   string
 	usage  string
+	list   string // forma corta para la tabla general; si vacío, se usa usage
 	short  string
 	detail []string
 }
@@ -30,6 +31,7 @@ var commands = []commandInfo{
 	{
 		name:  "init",
 		usage: "init [status|opencode|claude [--check]|--update [--force]]",
+		list:  "init [status|opencode|claude|--update]",
 		short: "Instala el esqueleto del harness, reporta la personalización y genera agentes nativos",
 		detail: []string{
 			"Sin argumentos: despliega el esqueleto embebido (AGENTS.md, .rei/docs/, .rei/agents/, .rei/adapters/, .rei/templates/ y .rei/config.json) sin sobrescribir archivos existentes, crea la estructura de estado (.rei/specs/, .rei/progress/work-items/, current.md, history.md) y, si falta y git está disponible, inicializa el repositorio.",
@@ -92,6 +94,7 @@ var commands = []commandInfo{
 	{
 		name:   "commit",
 		usage:  "commit set <id> <base_commit|last_review_commit>",
+		list:   "commit set <id> <field>",
 		short:  "Registra el commit actual de git en meta.json",
 		detail: []string{"Guarda HEAD en el campo indicado del Work Item."},
 	},
@@ -163,11 +166,34 @@ func helpText() string {
 	b.WriteString("\nUso:\n")
 	b.WriteString("  rei <comando> [argumentos]\n")
 	b.WriteString("\nComandos:\n")
+
+	rows := make([][2]string, 0, len(commands))
 	for _, c := range commands {
-		fmt.Fprintf(&b, "  %s\n", c.usage)
-		fmt.Fprintf(&b, "      %s\n", c.short)
+		left := c.list
+		if left == "" {
+			left = c.usage
+		}
+		rows = append(rows, [2]string{left, c.short})
 	}
+	b.WriteString(twoColumn(rows, "  ", 3))
+
 	b.WriteString("\nUsa 'rei <comando> --help' para ver el detalle de un comando.\n")
+	return b.String()
+}
+
+// twoColumn formatea filas de dos columnas alineando la segunda tras la más
+// ancha de la primera, con un margen fijo entre ambas.
+func twoColumn(rows [][2]string, indent string, gap int) string {
+	width := 0
+	for _, r := range rows {
+		if len(r[0]) > width {
+			width = len(r[0])
+		}
+	}
+	var b strings.Builder
+	for _, r := range rows {
+		fmt.Fprintf(&b, "%s%-*s%s\n", indent, width+gap, r[0], r[1])
+	}
 	return b.String()
 }
 

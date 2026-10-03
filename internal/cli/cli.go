@@ -389,6 +389,12 @@ func cmdItems(args []string) int {
 		return 0
 	}
 	fmt.Println("Work Items:")
+	width := 0
+	for _, it := range items {
+		if len(it.ID) > width {
+			width = len(it.ID)
+		}
+	}
 	active := 0
 	for _, it := range items {
 		marker := ""
@@ -396,7 +402,7 @@ func cmdItems(args []string) int {
 			marker = "   << ACTIVO"
 			active++
 		}
-		fmt.Printf("  - %s [%s]%s\n", it.ID, it.Status, marker)
+		fmt.Printf("  - %-*s [%s]%s\n", width, it.ID, it.Status, marker)
 	}
 	if active > 0 {
 		fmt.Println("AVISO: existe un Work Item en in_progress.")

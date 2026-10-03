@@ -8,7 +8,8 @@ import (
 func TestCommandHelpTextConocidos(t *testing.T) {
 	for _, name := range []string{
 		"check", "init", "doctor", "new", "session", "items", "status",
-		"commit", "validate", "review-diff", "test", "item", "version", "help",
+		"commit", "validate", "review-diff", "test", "item", "update",
+		"version", "help",
 	} {
 		text, ok := commandHelpText(name)
 		if !ok {
@@ -45,10 +46,21 @@ func TestHelpTestMencionaMakeTest(t *testing.T) {
 
 func TestHelpGeneralIncluyeNuevosComandos(t *testing.T) {
 	text := helpText()
-	for _, want := range []string{"test", "item", "init [status|opencode|claude [--check]|--update [--force]]"} {
+	for _, want := range []string{"test", "item", "update", "init [status|opencode|claude|--update]"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("la ayuda general no incluye %q:\n%s", want, text)
 		}
+	}
+}
+
+func TestTwoColumnAlinea(t *testing.T) {
+	out := twoColumn([][2]string{{"a", "x"}, {"bbb", "y"}}, "  ", 3)
+	lines := strings.Split(strings.TrimRight(out, "\n"), "\n")
+	if len(lines) != 2 {
+		t.Fatalf("líneas = %d, esperaba 2", len(lines))
+	}
+	if i0, i1 := strings.Index(lines[0], "x"), strings.Index(lines[1], "y"); i0 != i1 {
+		t.Fatalf("columnas desalineadas: %d vs %d\n%s", i0, i1, out)
 	}
 }
 
