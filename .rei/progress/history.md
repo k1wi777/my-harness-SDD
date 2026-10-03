@@ -585,3 +585,38 @@ binario global desde GitHub Releases):
 
 Esperar revisión del Reviewer. No iniciar otro Work Item.
 
+
+## 2026-10-03 01:21 — 2026-10-03_01-08__final-polish
+
+- **Work Item:** 2026-10-03_01-08__final-polish
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-03T01:09:10-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Planificación de la Task completada en `.rei/specs/2026-10-03_01-08__final-polish/plan.md`:
+(1) tope de tamaño de reportes solo para Work Items activos en `internal/validate`;
+(2) mensaje claro ante 404/no hay releases en `internal/update`;
+(3) documentar `rei update [--check]` en `README.md` y `.rei/docs/usage.md`;
+(4) subir el tope blando a ~80 líneas / ~600 palabras, reforzar los Contratos
+de `implementer`/`reviewer` y `progress.md`, y regenerar los nativos.
+
+## Bitácora
+
+- 2026-10-03T01:09 — Sesión iniciada (`rei session start`) para la Task.
+- 2026-10-03T01:09 — Redactado `plan.md` con objetivo, archivos, cambios,
+  restricciones y pasos. Planificación finalizada; se espera aprobación humana.
+- 2026-10-03 — Aprobación humana recibida; inicio de la implementación
+  (`in_progress`, agente `implementer`). Implementando los 11 pasos del plan.
+- 2026-10-03 — Pasos 1–11 completados y verificados: `gofmt`, `go vet`,
+  `make test`, `make build`, `rei doctor` sin WARN de tamaño, `rei update
+  --check` con mensaje claro (exit 0), `rei init opencode|claude --check` = 0 y
+  `rei check --quiet` = 0. Implementación documentada en `impl.md`.
+
+## Próximo paso
+
+Esperar revisión del Work Item (`review`). El Reviewer validará el trabajo
+contra `plan.md`.
+

@@ -2,11 +2,16 @@ package update
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
 )
+
+// errNoReleases señala que la API no tiene ninguna release publicada (HTTP
+// 404). No es un fallo: el comando lo trata como "nada que actualizar".
+var errNoReleases = errors.New("no hay releases publicadas")
 
 const (
 	// defaultAPIBase es la raíz de la API de GitHub.
@@ -46,6 +51,9 @@ func fetchLatestRelease(client *http.Client, apiBase string) (*githubRelease, er
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, errNoReleases
+	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("respuesta inesperada de GitHub: %s", resp.Status)
 	}

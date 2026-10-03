@@ -40,6 +40,15 @@ Si `rei check` reporta `[FAIL]`, falta algún archivo de REI Harness — revisa 
 
 El CLI `rei` es un binario compilado; no necesita permisos de ejecución especiales más allá de estar disponible en el `PATH`.
 
+### Actualizar el CLI
+
+Una vez instalado, `rei` puede actualizarse por sí mismo:
+
+- `rei update` descarga la última release publicada, verifica la integridad del archive (SHA-256) y reemplaza el ejecutable de forma atómica. En Windows, como no se puede reemplazar el `.exe` en ejecución, abre la página de releases para que la descargues a mano.
+- `rei update --check` solo comprueba si hay una versión más reciente; no descarga ni modifica nada.
+
+Ambos devuelven `0` cuando no hay nada que actualizar (ya estás al día o todavía no hay releases publicadas). Reservan el código `1` para fallos reales, como problemas de red o un checksum inválido.
+
 ---
 
 ## 1.1 Qué personalizar y qué no

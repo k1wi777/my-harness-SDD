@@ -90,8 +90,9 @@ finalizado, dejando el resultado documentado.
 1. Escribe el resultado en
    `.rei/progress/work-items/<work-item-id>/review.md`, con una estructura
    concisa (resultado, verificaciones, observaciones, acciones requeridas si
-   aplica) y un tope blando de ~40 líneas / ~350 palabras. `rei validate` avisa
-   (`WARN`) si se excede, sin fallar.
+   aplica) y un tope blando de ~80 líneas / ~600 palabras. Prioriza la
+   concreción y no lo excedas. `rei validate` avisa (`WARN`) si se excede, sin
+   fallar.
 2. Si todo es correcto:
    - ejecuta `rei validate <work-item-id>`;
    - cierra la sesión con `rei session archive`;

@@ -22,8 +22,8 @@ const (
 // Tope blando de los reportes impl.md/review.md. Superarlo produce un WARN,
 // nunca un FAIL (ver .rei/docs/harness/progress.md).
 const (
-	maxReportLines = 40
-	maxReportWords = 350
+	maxReportLines = 80
+	maxReportWords = 600
 )
 
 // Issue es un hallazgo de la validación.
@@ -112,19 +112,22 @@ func WorkItem(p *paths.Project, id string) ([]Issue, error) {
 	}
 
 	// Aviso blando: impl.md/review.md no deben exceder el tope de tamaño.
-	for _, f := range []string{"impl.md", "review.md"} {
-		path := filepath.Join(p.WorkItemDir(id), f)
-		if !fileExists(path) {
-			continue
-		}
-		data, err := os.ReadFile(path)
-		if err != nil {
-			continue
-		}
-		lines, words := reportSize(string(data))
-		if lines > maxReportLines || words > maxReportWords {
-			warn("%s excede el tope blando (~%d líneas / ~%d palabras): %d líneas, %d palabras",
-				f, maxReportLines, maxReportWords, lines, words)
+	// Solo se evalúa en Work Items activos; el histórico ya cerrado no se mide.
+	if isActiveStatus(m.Status) {
+		for _, f := range []string{"impl.md", "review.md"} {
+			path := filepath.Join(p.WorkItemDir(id), f)
+			if !fileExists(path) {
+				continue
+			}
+			data, err := os.ReadFile(path)
+			if err != nil {
+				continue
+			}
+			lines, words := reportSize(string(data))
+			if lines > maxReportLines || words > maxReportWords {
+				warn("%s excede el tope blando (~%d líneas / ~%d palabras): %d líneas, %d palabras",
+					f, maxReportLines, maxReportWords, lines, words)
+			}
 		}
 	}
 
@@ -141,6 +144,17 @@ func needsPlanning(status string) bool {
 	switch status {
 	case meta.StatusReady, meta.StatusInProgress, meta.StatusReview,
 		meta.StatusChangesRequested, meta.StatusDone:
+		return true
+	}
+	return false
+}
+
+// isActiveStatus indica si el Work Item sigue en curso y, por tanto, se le
+// aplica el tope blando de tamaño de impl.md/review.md. El histórico cerrado
+// (done/pending/ready/blocked) no se mide.
+func isActiveStatus(status string) bool {
+	switch status {
+	case meta.StatusInProgress, meta.StatusReview, meta.StatusChangesRequested:
 		return true
 	}
 	return false

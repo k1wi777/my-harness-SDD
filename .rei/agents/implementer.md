@@ -74,8 +74,8 @@ dejando la evidencia necesaria para su revisión.
 2. Documenta el trabajo en
    `.rei/progress/work-items/<work-item-id>/impl.md`, con una estructura concisa
    (resumen, archivos modificados, cambios, verificación, observaciones) y un
-   tope blando de ~40 líneas / ~350 palabras. `rei validate` avisa (`WARN`) si se
-   excede, sin fallar.
+   tope blando de ~80 líneas / ~600 palabras. Prioriza la concreción: ve al
+   grano y no lo excedas. `rei validate` avisa (`WARN`) si se excede, sin fallar.
 3. Deja `.rei/progress/current.md` completamente actualizado: **Estado** a
    `review` y **Próximo paso** a esperar revisión.
 4. Cambia `status` a `review`.

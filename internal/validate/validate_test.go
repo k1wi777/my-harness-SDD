@@ -93,6 +93,30 @@ func TestReportTooLargeWarns(t *testing.T) {
 	}
 }
 
+// TestReportTooLargeDoneNoWarn comprueba que el tope blando solo se aplica a
+// Work Items activos: un `done` con un reporte grande no debe emitir WARN.
+func TestReportTooLargeDoneNoWarn(t *testing.T) {
+	p := &paths.Project{Root: t.TempDir()}
+	writeMeta(t, p, &meta.Meta{
+		ID: testID, Title: "t", Description: "d",
+		Type: "task", Status: meta.StatusDone, CreatedAt: "2026-10-01T10:00:00-05:00",
+	})
+	mustWrite(t, filepath.Join(p.SpecDir(testID), "plan.md"), "- [x] 1\n")
+	big := strings.Repeat("palabra ", maxReportWords+1)
+	mustWrite(t, filepath.Join(p.WorkItemDir(testID), "impl.md"), big)
+	mustWrite(t, filepath.Join(p.WorkItemDir(testID), "review.md"), "ok\n")
+
+	issues, err := WorkItem(p, testID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, is := range issues {
+		if is.Level == LevelWarn && strings.Contains(is.Message, "tope blando") {
+			t.Fatalf("done no debe medir el tope blando: %+v", issues)
+		}
+	}
+}
+
 func mustWrite(t *testing.T, path, content string) {
 	t.Helper()
 	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {

@@ -1,6 +1,7 @@
 package update
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -56,6 +57,11 @@ func Run(opts Options) int {
 
 	rel, err := fetchLatestRelease(opts.Client, opts.APIBase)
 	if err != nil {
+		// Sin releases publicadas no es un fallo: nada que actualizar.
+		if errors.Is(err, errNoReleases) {
+			fmt.Fprintln(out, "No hay releases publicadas todavía. Nada que actualizar.")
+			return 0
+		}
 		fmt.Fprintf(out, "ERROR: no se pudo consultar la última release: %v\n", err)
 		return 1
 	}

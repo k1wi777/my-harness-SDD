@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-03_01-08__final-polish",
+  "title": "pase final de pulido",
+  "description": "Pase final de pulido (4 puntos). (1) `internal/validate`: aplicar el tope de tamano de reportes SOLO a Work Items activos (`in_progress`/`review`/`changes_requested`); NO evaluarlo en `done`/`pending`/`ready`/`blocked` (elimina el ruido de `rei doctor`). (2) `internal/update`: mensaje claro cuando la API devuelve 404 / no hay releases publicadas (p. ej. 'no hay releases publicadas todavia'), sin tratarlo como error crudo. (3) Documentar `rei update [--check]` en `README.md` y `.rei/docs/usage.md`. (4) Subir el tope blando a ~80 lineas / ~600 palabras y reforzar la instruccion en los Contratos de `.rei/agents/implementer.md` y `.rei/agents/reviewer.md` (+ `.rei/docs/harness/progress.md`); regenerar nativos (`rei init opencode`/`claude`) y `--check`=0. Verificacion: tests, `rei doctor` sin WARN de tamano en el historico, `rei update --check` con mensaje claro, `rei check --quiet`=0. Fuera de alcance: `rei cost` y modelo por rol.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-03T01:08:00-05:00",
+  "base_commit": "b6a38bcb50b4e164988ee7e613b9da8f0d62e9bc",
+  "last_review_commit": ""
+}

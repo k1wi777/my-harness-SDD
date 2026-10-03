@@ -35,6 +35,21 @@ necesita Go ni ninguna dependencia para ejecutarse.
 Si desarrollas sobre el propio repositorio y tienes Go instalado, puedes compilar
 el binario localmente con `make build`; quedará en `bin/rei`.
 
+## Actualizar el CLI
+
+El binario `rei` puede actualizarse por sí mismo desde la línea de comandos:
+
+- `rei update` descarga la última release publicada, verifica su `checksums.txt`
+  (SHA-256) y reemplaza el ejecutable en uso de forma atómica (con backup y
+  restauración si algo falla). En Windows, donde no se puede reemplazar el `.exe`
+  en ejecución, abre la página de releases para descargarla a mano.
+- `rei update --check` solo informa de si hay una versión nueva, sin descargar ni
+  modificar nada.
+
+Ambos comandos devuelven `0` cuando no hay nada que actualizar (ya estás en la
+última versión o todavía no hay releases publicadas). Un código `1` se reserva
+para fallos reales: red, HTTP 5xx, checksum inválido o asset ausente.
+
 ---
 
 # Primeros pasos

@@ -207,3 +207,28 @@ func TestRunCheckNetwork(t *testing.T) {
 		t.Fatalf("--check = %d, want 0", code)
 	}
 }
+
+// TestRunNoReleases comprueba que un 404 de la API (sin releases publicadas) se
+// trata como un estado normal: mensaje claro y salida 0.
+func TestRunNoReleases(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.NotFound(w, r)
+	}))
+	t.Cleanup(srv.Close)
+
+	var buf bytes.Buffer
+	opts := Options{
+		CurrentVersion: "v0.1.0",
+		Stdout:         &buf,
+		APIBase:        srv.URL,
+		Client:         srv.Client(),
+		GOOS:           "linux",
+		GOARCH:         "amd64",
+	}
+	if code := Run(opts); code != 0 {
+		t.Fatalf("Run sin releases = %d, want 0; salida: %q", code, buf.String())
+	}
+	if !strings.Contains(buf.String(), "No hay releases publicadas") {
+		t.Fatalf("debe informar de la ausencia de releases: %q", buf.String())
+	}
+}
