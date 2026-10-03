@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_23-02__wizard-launch",
+  "title": "lanzar el wizard de forma explicita",
+  "description": "Lanzar el wizard de forma explicita. (1) Quitar la auto-delegacion de `AGENTS.md` §1 (que el Leader lance `initializer` solo por deteccion de pendientes). (2) Trigger explicito en el Contrato del leader: cuando el usuario pida 'personaliza mi proyecto' (o equivalente), el Leader delega en el rol `initializer` pasandole su `## Contrato`; documentarlo tambien en `AGENTS.md`. (3) `rei init` y sus variantes (opencode/claude) terminan indicando como iniciar la entrevista. (4) El adaptador genera un comando de runtime `/personalize`: OpenCode `.opencode/commands/personalize.md` con `agent: initializer` (+ `subtask`); Claude `.claude/commands/personalize.md`. (5) El adaptador de Claude genera ademas `CLAUDE.md` con `@AGENTS.md` (Claude usa `CLAUDE.md`; `AGENTS.md` solo se lee si no hay `CLAUDE.md`). Verificacion: tests, `rei init opencode --check`=0, `rei init claude --check`=0 (en proyecto temporal), regenerar nativos. Fuera de alcance: otros runtimes.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T23:02:00-05:00",
+  "base_commit": "1b81195833bcb5b49635fd69261660125b961f8f",
+  "last_review_commit": ""
+}

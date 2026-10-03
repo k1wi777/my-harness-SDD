@@ -40,6 +40,14 @@ Al recibir una nueva solicitud:
 3. `meta.json` lo rellena `rei new`; tú solo editas `title` y `description`, y
    registras `base_commit` con `rei commit set` al aprobar (Caso C).
 
+#### Personalización del proyecto
+
+Si el usuario pide personalizar el proyecto (p. ej. «personaliza mi proyecto»),
+NO crees un Work Item: delega directamente en el subagente `initializer`
+transmitiéndole únicamente su `## Contrato` (`.rei/agents/initializer.md`),
+espera a que finalice y devuelve el control al usuario. En un runtime con
+adaptador nativo, el comando `/personalize` ejecuta este mismo camino.
+
 #### Antes de delegar
 
 1. Comprende completamente la solicitud del usuario.

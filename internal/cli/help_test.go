@@ -100,6 +100,18 @@ func TestHelpInitDocumentaClaudeYFallback(t *testing.T) {
 	}
 }
 
+func TestHelpInitDocumentaPersonalize(t *testing.T) {
+	text, ok := commandHelpText("init")
+	if !ok {
+		t.Fatal("no hay ayuda para init")
+	}
+	for _, want := range []string{"/personalize", ".opencode/commands/", ".claude/commands/", "CLAUDE.md"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("la ayuda de init debe mencionar %q:\n%s", want, text)
+		}
+	}
+}
+
 func TestPrintCommandHelpInit(t *testing.T) {
 	if code := printCommandHelp("init"); code != 0 {
 		t.Fatalf("printCommandHelp(init) = %d, esperaba 0", code)

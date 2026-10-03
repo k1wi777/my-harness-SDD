@@ -18,12 +18,27 @@ func TestSkeletonContieneArchivosRequeridos(t *testing.T) {
 func TestSkeletonContieneAdaptadores(t *testing.T) {
 	for _, path := range []string{
 		".rei/adapters/opencode/agent.tmpl",
+		".rei/adapters/opencode/command.tmpl",
 		".rei/adapters/opencode/tools.json",
 		".rei/adapters/claude/agent.tmpl",
+		".rei/adapters/claude/command.tmpl",
 		".rei/adapters/claude/tools.json",
 	} {
 		if _, err := fs.Stat(Skeleton, path); err != nil {
 			t.Errorf("Skeleton no contiene %s: %v", path, err)
+		}
+	}
+}
+
+func TestSkeletonCommandTmplOpenCode(t *testing.T) {
+	data, err := fs.ReadFile(Skeleton, ".rei/adapters/opencode/command.tmpl")
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(data)
+	for _, want := range []string{"agent: initializer", "subtask: true", "{{.Mark}}"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("command.tmpl de OpenCode debe contener %q:\n%s", want, text)
 		}
 	}
 }

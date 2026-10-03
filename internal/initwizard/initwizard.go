@@ -18,8 +18,8 @@ import (
 // marker es el marcador canónico que señala contenido pendiente de personalizar.
 const marker = "<!-- REI:PENDIENTE -->"
 
-// initializerPath es el rol de IA que conduce la personalización guiada.
-const initializerPath = ".rei/agents/initializer.md"
+// InitializerPath es el rol de IA que conduce la personalización guiada.
+const InitializerPath = ".rei/agents/initializer.md"
 
 // Doc describe un documento de personalización.
 type Doc struct {
@@ -119,8 +119,8 @@ func Init(p *paths.Project, out io.Writer) int {
 	fmt.Fprintln(out)
 
 	if len(pending) > 0 {
-		fmt.Fprintf(out, "Personalización pendiente. Invoca el rol `initializer` (%s)\n", initializerPath)
-		fmt.Fprintln(out, "o consulta el detalle con `rei init status`.")
+		fmt.Fprintln(out, "Personalización pendiente. Inicia la entrevista con el comando")
+		fmt.Fprintf(out, "`/personalize` (OpenCode o Claude Code) o invocando el rol `initializer`\n(%s). Consulta el detalle con `rei init status`.\n", InitializerPath)
 	} else {
 		fmt.Fprintln(out, "Documentación del proyecto personalizada. No hay pasos pendientes.")
 	}

@@ -233,6 +233,7 @@ func TestClaudeAdapterDelEsqueletoEsValido(t *testing.T) {
 	for _, path := range []string{
 		".rei/adapters/claude/tools.json",
 		".rei/adapters/claude/agent.tmpl",
+		".rei/adapters/claude/command.tmpl",
 	} {
 		if _, err := reiskel.Skeleton.ReadFile(path); err != nil {
 			t.Errorf("el esqueleto no contiene %s: %v", path, err)
@@ -248,5 +249,71 @@ func TestClaudeAdapterDelEsqueletoEsValido(t *testing.T) {
 	}
 	if err := validateToolMap(tm, claudeRuntime); err != nil {
 		t.Errorf("tools.json del esqueleto no válido para el runtime Claude: %v", err)
+	}
+}
+
+func TestClaudeGenerateCreaCommandYClaudeMD(t *testing.T) {
+	p := setupClaudeProject(t)
+	var buf bytes.Buffer
+	if code := generateAll(p, claudeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d:\n%s", code, buf.String())
+	}
+
+	cmd := readTestFile(t, commandPath(p, claudeRuntime))
+	if !strings.Contains(cmd, claudeMark) {
+		t.Errorf("el comando de Claude no lleva la marca GENERATED:\n%s", cmd)
+	}
+
+	md := readTestFile(t, filepath.Join(p.Root, "CLAUDE.md"))
+	if !strings.Contains(md, claudeMark) {
+		t.Errorf("CLAUDE.md no lleva la marca GENERATED:\n%s", md)
+	}
+	if !strings.Contains(md, "@AGENTS.md") {
+		t.Errorf("CLAUDE.md debe importar AGENTS.md (@AGENTS.md):\n%s", md)
+	}
+}
+
+func TestClaudeCheckDetectaDerivaCommandYClaudeMD(t *testing.T) {
+	p := setupClaudeProject(t)
+	var buf bytes.Buffer
+	if code := generateAll(p, claudeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d:\n%s", code, buf.String())
+	}
+	if code := check(p, claudeRuntime, &buf); code != 0 {
+		t.Fatalf("check con todo generado = %d:\n%s", code, buf.String())
+	}
+
+	if err := os.Remove(filepath.Join(p.Root, "CLAUDE.md")); err != nil {
+		t.Fatal(err)
+	}
+	buf.Reset()
+	if code := check(p, claudeRuntime, &buf); code != 1 {
+		t.Fatalf("check sin CLAUDE.md = %d, esperaba 1:\n%s", code, buf.String())
+	}
+}
+
+func TestClaudeNoSobrescribeCommandYClaudeMDSinMarca(t *testing.T) {
+	p := setupClaudeProject(t)
+	custom := "contenido manual del usuario\n"
+	cmdDest := commandPath(p, claudeRuntime)
+	mdDest := filepath.Join(p.Root, "CLAUDE.md")
+	if err := os.MkdirAll(filepath.Dir(cmdDest), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeTestFile(t, cmdDest, custom)
+	writeTestFile(t, mdDest, custom)
+
+	var buf bytes.Buffer
+	if code := generateAll(p, claudeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d, esperaba 0:\n%s", code, buf.String())
+	}
+	if got := readTestFile(t, cmdDest); got != custom {
+		t.Errorf("el comando sin marca fue sobrescrito:\n%s", got)
+	}
+	if got := readTestFile(t, mdDest); got != custom {
+		t.Errorf("CLAUDE.md sin marca fue sobrescrito:\n%s", got)
+	}
+	if !strings.Contains(buf.String(), "[WARN]") {
+		t.Errorf("debe avisar de los archivos sin marca:\n%s", buf.String())
 	}
 }

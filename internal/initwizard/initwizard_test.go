@@ -140,3 +140,19 @@ func TestStatusSinPendientes(t *testing.T) {
 		t.Errorf("Status debería indicar que está personalizada:\n%s", buf.String())
 	}
 }
+
+func TestInitMencionaPersonalize(t *testing.T) {
+	p := &paths.Project{Root: t.TempDir()}
+	setupTemplates(t, p)
+	var buf bytes.Buffer
+	if code := Init(p, &buf); code != 0 {
+		t.Fatalf("Init = %d, salida:\n%s", code, buf.String())
+	}
+	out := buf.String()
+	if !strings.Contains(out, "/personalize") {
+		t.Errorf("Init debe indicar cómo iniciar la entrevista con /personalize:\n%s", out)
+	}
+	if !strings.Contains(out, InitializerPath) {
+		t.Errorf("Init debe mencionar el rol initializer (%s):\n%s", InitializerPath, out)
+	}
+}

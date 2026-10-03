@@ -378,3 +378,43 @@ reutilizando `internal/adapter`, y documentar Cursor/Codex como fallback.
 
 Esperar revisión del Work Item (`status = review`).
 
+
+## 2026-10-02 23:14 — 2026-10-02_23-02__wizard-launch
+
+- **Work Item:** 2026-10-02_23-02__wizard-launch
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T23:03:06-05:00
+- **Agente activo:** implementer
+
+## Plan
+
+Redactado `plan.md` en `.rei/specs/2026-10-02_23-02__wizard-launch/`:
+personalización explícita (quitar auto-delegación, trigger en el Leader,
+mensaje final de `rei init`, comando `/personalize` en OpenCode y Claude, y
+`CLAUDE.md` para Claude).
+
+## Bitácora
+
+- Sesión iniciada con `rei session start 2026-10-02_23-02__wizard-launch task`.
+- Leídos `task.md`, `meta.json`, `leader.md`, `adapters.md` y el código del CLI
+  (`internal/adapter`, `internal/initwizard`, `internal/cli`, `internal/check`,
+  `internal/paths`, `embed.go`) y los tests existentes.
+- Planificación finalizada y verificada internamente contra las restricciones
+  del Work Item.
+- Aprobación humana recibida; inicio de la implementación por el `implementer`.
+- Implementados los 10 pasos de `plan.md`: trigger explícito en `AGENTS.md` §6 y
+  en el `## Contrato` de `leader`; `command.tmpl` de OpenCode/Claude; comando
+  `/personalize` y `CLAUDE.md` generados/verificados por `internal/adapter`;
+  mensajes de `rei init` y ayuda; tests añadidos/ajustados.
+- Verificado en proyecto temporal limpio: `rei init opencode` + `--check` = 0,
+  `rei init claude` + `--check` = 0, mensajes finales con `/personalize`,
+  idempotencia y no-sobrescritura.
+- `gofmt -l .` limpio, `go vet ./...` = 0, `make test` verde, `make build` = 0,
+  `rei check --quiet` = 0. Nativos regenerados (`.opencode/**`, `.claude/**`,
+  `CLAUDE.md`).
+
+## Próximo paso
+
+Esperar la revisión del `reviewer` (`.rei/progress/work-items/2026-10-02_23-02__wizard-launch/impl.md`).
+

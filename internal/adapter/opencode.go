@@ -60,6 +60,9 @@ var opencodeRuntime = runtime{
 			Contract:    "## Contrato\n\n" + role.Contract,
 		}
 	},
+	artifacts: []artFile{
+		commandArtifact(".opencode/commands/personalize.md", "command.tmpl"),
+	},
 }
 
 // Install despliega el esqueleto y genera los agentes nativos de OpenCode en

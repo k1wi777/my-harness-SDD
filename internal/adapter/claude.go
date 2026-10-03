@@ -49,6 +49,22 @@ var claudeRuntime = runtime{
 			Contract:    "## Contrato\n\n" + role.Contract,
 		}
 	},
+	artifacts: []artFile{
+		commandArtifact(".claude/commands/personalize.md", "command.tmpl"),
+		claudeMDArtifact(),
+	},
+}
+
+// claudeMDArtifact construye el artefacto de `CLAUDE.md`: además de la marca
+// GENERATED, importa `AGENTS.md` (`@AGENTS.md`) para que Claude Code lo cargue
+// como contexto raíz (Claude lee `CLAUDE.md`; `AGENTS.md` solo si falta aquel).
+func claudeMDArtifact() artFile {
+	return artFile{
+		rel: "CLAUDE.md",
+		build: func(_ *paths.Project, rt runtime) (string, error) {
+			return rt.mark + "\n\n@AGENTS.md\n", nil
+		},
+	}
 }
 
 // InstallClaude despliega el esqueleto y genera los agentes nativos de Claude

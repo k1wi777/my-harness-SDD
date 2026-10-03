@@ -23,10 +23,6 @@ Antes de realizar cualquier modificación en el proyecto:
 
 No continúes hasta completar estos pasos.
 
-Si `rei init status` reporta documentos de personalización pendientes, el
-**Leader** DEBE delegar primero en el rol `initializer`
-(`.rei/agents/initializer.md`) antes de continuar con cualquier otro trabajo.
-
 ---
 
 # 2. Propósito del proyecto
@@ -143,6 +139,12 @@ Al delegar en un subagente, el Leader transmite únicamente la sección `## Cont
 del rol correspondiente, nunca el archivo completo (`## Referencia` es detalle
 opcional y no se envía). Si el runtime dispone de un adaptador nativo
 (`rei init opencode`), el subagente recibe ese mismo Contrato como system prompt.
+
+Si el usuario pide personalizar el proyecto (por ejemplo, «personaliza mi
+proyecto»), el Leader NO crea un Work Item: delega directamente en el rol
+`initializer` (`.rei/agents/initializer.md`) transmitiéndole su `## Contrato` y
+espera a que finalice. En un runtime con adaptador nativo, el comando
+`/personalize` ejecuta este mismo camino.
 
 ---
 

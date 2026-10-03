@@ -119,7 +119,8 @@ emite solo si el rol lo declara (pass-through).
 
 El formato canónico no cambia al añadir un runtime; solo se añade su adaptador:
 
-1. Crea `.rei/adapters/<runtime>/` con su plantilla y su mapa de herramientas.
+1. Crea `.rei/adapters/<runtime>/` con sus plantillas (`agent.tmpl`,
+   `command.tmpl`) y su mapa de herramientas.
 2. Añade la construcción nativa correspondiente en `internal/adapter`.
 3. Registra el subcomando de instalación/verificación en el CLI.
 
@@ -137,6 +138,9 @@ rei init opencode --check   # verifica sin escribir: 0 si todo coincide; 1 si fa
 
 - Los archivos generados viven en `.opencode/agents/<rol>.md` e incluyen la
   marca `GENERATED`.
+- Genera además el comando `/personalize` en
+  `.opencode/commands/personalize.md`, con `agent: initializer` y
+  `subtask: true`, que lanza la entrevista del rol `initializer`.
 - `rei init opencode` **no sobrescribe** archivos que no lleven esa marca; los
   avisa.
 - Es idempotente: reejecutarlo sobre archivos generados los deja idénticos.
@@ -154,6 +158,9 @@ rei init claude --check   # verifica sin escribir: 0 si todo coincide; 1 si falt
 - Los archivos generados viven en `.claude/agents/<rol>.md` con el frontmatter
   nativo de Claude Code (`name`, `description`, `tools` y `model` opcional), la
   marca `GENERATED` y el `## Contrato` como cuerpo.
+- Genera además el comando `/personalize` en
+  `.claude/commands/personalize.md` y `CLAUDE.md`, que importa `AGENTS.md`
+  (`@AGENTS.md`) para que Claude Code lo cargue como contexto raíz.
 - `rei init claude` **no sobrescribe** archivos que no lleven esa marca; los
   avisa.
 - Es idempotente: reejecutarlo sobre archivos generados los deja idénticos.

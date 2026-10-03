@@ -33,6 +33,17 @@ mode: {{.Mode}}
 {{.Contract}}
 `
 
+// testCommandTmpl es la plantilla genérica del comando `/personalize` usada por
+// los tests de ambos runtimes: solo consume la marca GENERATED.
+const testCommandTmpl = `---
+description: Comando de prueba.
+---
+
+{{.Mark}}
+
+Cuerpo del comando de prueba.
+`
+
 // setupRoles crea los 5 roles canónicos en un proyecto temporal.
 func setupRoles(t *testing.T, p *paths.Project) {
 	t.Helper()
@@ -49,7 +60,7 @@ func setupRoles(t *testing.T, p *paths.Project) {
 	}
 }
 
-// writeAdapter instala tools.json y agent.tmpl de un runtime en p.
+// writeAdapter instala tools.json, agent.tmpl y command.tmpl de un runtime en p.
 func writeAdapter(t *testing.T, p *paths.Project, rt runtime, toolsJSON, tmpl string) {
 	t.Helper()
 	dir := adapterDir(p, rt)
@@ -58,6 +69,7 @@ func writeAdapter(t *testing.T, p *paths.Project, rt runtime, toolsJSON, tmpl st
 	}
 	writeTestFile(t, filepath.Join(dir, "tools.json"), toolsJSON)
 	writeTestFile(t, filepath.Join(dir, "agent.tmpl"), tmpl)
+	writeTestFile(t, filepath.Join(dir, "command.tmpl"), testCommandTmpl)
 }
 
 // setupProject crea un proyecto temporal con los 5 roles canónicos y el
@@ -236,5 +248,86 @@ func TestCheckDetectaDeriva(t *testing.T) {
 	buf.Reset()
 	if code := check(p, opencodeRuntime, &buf); code != 1 {
 		t.Fatalf("check con contenido alterado = %d, esperaba 1:\n%s", code, buf.String())
+	}
+}
+
+// commandPath devuelve la ruta destino del comando `/personalize` de un runtime.
+func commandPath(p *paths.Project, rt runtime) string {
+	return filepath.Join(p.Root, filepath.FromSlash(rt.artifacts[0].rel))
+}
+
+func TestGenerateAllCreaCommand(t *testing.T) {
+	p := setupProject(t)
+	var buf bytes.Buffer
+	if code := generateAll(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d:\n%s", code, buf.String())
+	}
+	got := readTestFile(t, commandPath(p, opencodeRuntime))
+	if !strings.Contains(got, generatedMark) {
+		t.Errorf("el comando no lleva la marca GENERATED:\n%s", got)
+	}
+	if !strings.Contains(got, "Cuerpo del comando de prueba.") {
+		t.Errorf("el comando no contiene el cuerpo de la plantilla:\n%s", got)
+	}
+}
+
+func TestGenerateAllNoSobrescribeCommandSinMarca(t *testing.T) {
+	p := setupProject(t)
+	custom := "# comando manual del usuario\n"
+	dest := commandPath(p, opencodeRuntime)
+	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeTestFile(t, dest, custom)
+
+	var buf bytes.Buffer
+	if code := generateAll(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d, esperaba 0:\n%s", code, buf.String())
+	}
+	if got := readTestFile(t, dest); got != custom {
+		t.Errorf("el comando sin marca fue sobrescrito:\n%s", got)
+	}
+	if !strings.Contains(buf.String(), "[WARN]") {
+		t.Errorf("debe avisar del comando sin marca:\n%s", buf.String())
+	}
+}
+
+func TestCheckDetectaDerivaCommand(t *testing.T) {
+	p := setupProject(t)
+	var buf bytes.Buffer
+	if code := generateAll(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("generateAll = %d:\n%s", code, buf.String())
+	}
+	if code := check(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("check con todo generado = %d:\n%s", code, buf.String())
+	}
+	if err := os.Remove(commandPath(p, opencodeRuntime)); err != nil {
+		t.Fatal(err)
+	}
+	buf.Reset()
+	if code := check(p, opencodeRuntime, &buf); code != 1 {
+		t.Fatalf("check sin el comando = %d, esperaba 1:\n%s", code, buf.String())
+	}
+}
+
+// TestInstallGeneraComandoYMencionaPersonalize ejercita el camino completo con
+// el esqueleto embebido real (plantillas incluidas) en un proyecto temporal.
+func TestInstallGeneraComandoYMencionaPersonalize(t *testing.T) {
+	p := &paths.Project{Root: t.TempDir()}
+	var buf bytes.Buffer
+	if code := install(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("install = %d:\n%s", code, buf.String())
+	}
+	if !strings.Contains(buf.String(), "/personalize") {
+		t.Errorf("el cierre de install debe mencionar /personalize:\n%s", buf.String())
+	}
+	got := readTestFile(t, commandPath(p, opencodeRuntime))
+	if !strings.Contains(got, "agent: initializer") || !strings.Contains(got, "subtask: true") {
+		t.Errorf("el comando generado debe declarar agent: initializer y subtask: true:\n%s", got)
+	}
+
+	buf.Reset()
+	if code := check(p, opencodeRuntime, &buf); code != 0 {
+		t.Fatalf("check tras install = %d, esperaba 0:\n%s", code, buf.String())
 	}
 }
