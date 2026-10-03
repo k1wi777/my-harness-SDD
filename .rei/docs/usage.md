@@ -161,17 +161,27 @@ No, pero funciona mejor con él. Si el repositorio usa git, el Reviewer revisa s
 
 ---
 
-# 7. Subagentes nativos de OpenCode
+# 7. Subagentes nativos (OpenCode y Claude Code)
 
-REI Harness define sus roles en `.rei/agents/`: el `leader` coordina el workflow y delega en el Spec Author, el Implementer, el Reviewer y el Initializer. Si trabajas con OpenCode, puedes instalarlos como **subagentes nativos** para invocarlos directamente, sin que el Leader tenga que reenviarles el contrato cada vez.
+REI Harness define sus roles en `.rei/agents/`: el `leader` coordina el workflow y delega en el Spec Author, el Implementer, el Reviewer y el Initializer. Si tu runtime dispone de un adaptador nativo, puedes instalarlos como **subagentes nativos** para invocarlos directamente, sin que el Leader tenga que reenviarles el contrato cada vez.
 
-Para generarlos, ejecuta:
+Para generarlos en **OpenCode**, ejecuta:
 
 ```bash
 rei init opencode
 ```
 
-Esto crea un archivo por rol en `.opencode/agents/<rol>.md` —por ejemplo `.opencode/agents/implementer.md`— a partir del `## Contrato` canónico de `.rei/agents/<rol>.md`. Los archivos generados llevan la marca `GENERATED` y el comando es idempotente: si ya están al día, volver a ejecutarlo no los modifica. `rei init opencode` **no sobrescribe** archivos que no haya generado él; si encuentra uno, te avisa y lo conserva tal cual.
+Esto crea un archivo por rol en `.opencode/agents/<rol>.md` —por ejemplo `.opencode/agents/implementer.md`— a partir del `## Contrato` canónico de `.rei/agents/<rol>.md`, además del comando `/personalize`.
+
+Para **Claude Code** el comando es análogo:
+
+```bash
+rei init claude
+```
+
+Crea `.claude/agents/<rol>.md`, el comando `/personalize` y un `CLAUDE.md` que apunta a la documentación del arnés.
+
+En ambos casos, los archivos generados llevan la marca `GENERATED` y la instalación es idempotente: si ya están al día, volver a ejecutarla no los modifica. Estos comandos **no sobrescriben** archivos que no hayan generado ellos; si encuentran uno, te avisan y lo conservan tal cual.
 
 Una vez generados, tienes dos formas de trabajar con ellos:
 
@@ -181,9 +191,9 @@ Una vez generados, tienes dos formas de trabajar con ellos:
 Si editas el `## Contrato` de un rol en `.rei/agents/`, los archivos generados quedan desactualizados. Para comprobarlo sin escribir nada:
 
 ```bash
-rei init opencode --check
+rei init opencode --check   # o: rei init claude --check
 ```
 
-El comando devuelve `0` si todos los archivos coinciden con la generación canónica, y `1` si falta alguno o difiere. Así detectas la **deriva** entre `.rei/agents/` y `.opencode/agents/` antes de que afecte al trabajo.
+El comando devuelve `0` si todos los archivos coinciden con la generación canónica, y `1` si falta alguno o difiere. Así detectas la **deriva** entre `.rei/agents/` y los agentes nativos antes de que afecte al trabajo.
 
 Si tu entorno no dispone de un adaptador nativo, el resultado es equivalente: el Leader transmite al subagente únicamente el `## Contrato` del rol —nunca el archivo completo—, de modo que obtienes el mismo contrato operativo sin configuración adicional.
