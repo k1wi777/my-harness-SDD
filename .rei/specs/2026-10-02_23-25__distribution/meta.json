@@ -1,0 +1,10 @@
+{
+  "id": "2026-10-02_23-25__distribution",
+  "title": "distribucion de binarios (goreleaser + Actions)",
+  "description": "Distribucion de REI como binario. (1) Version inyectable: cambiar la version en `internal/cli` a una variable de paquete establecible por ldflags (default dev) y que `rei version` la muestre; Makefile y goreleaser la inyectan (primer release: v0.1.0). (2) `.goreleaser.yaml` que compile linux/darwin/windows x amd64/arm64, genere archives y checksums, e inyecte la version via ldflags. (3) GitHub Actions `.github/workflows/release.yml` que al empujar un tag `v*` ejecute goreleaser y publique el release. (4) Documentar la instalacion (descargar el binario de la release para tu SO, ponerlo en PATH) en README y `.rei/docs/usage.md`. Verificacion: `go build` con ldflags y `rei version` muestran la version inyectada; validar la config de goreleaser (si goreleaser no esta disponible, validar el YAML); tests en verde; `rei check --quiet`=0. Fuera de alcance: instalar goreleaser en este entorno o ejecutar GitHub Actions.",
+  "type": "task",
+  "status": "done",
+  "created_at": "2026-10-02T23:25:00-05:00",
+  "base_commit": "9e7758c79e18efdb02d6e6fb207180e793a3066b",
+  "last_review_commit": ""
+}

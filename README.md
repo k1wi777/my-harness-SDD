@@ -8,6 +8,35 @@ El repositorio actúa como la fuente de verdad del sistema: toda la planificaci�
 
 ---
 
+# Instalación
+
+El CLI `rei` se distribuye como **binario precompilado** en las
+[releases de GitHub](https://github.com/k1wi777/my-harness-SDD/releases); no
+necesita Go ni ninguna dependencia para ejecutarse.
+
+1. Entra en la página de releases:
+   <https://github.com/k1wi777/my-harness-SDD/releases>.
+2. Descarga el archive correspondiente a tu sistema operativo y arquitectura:
+   `rei_<versión>_<os>_<arch>.tar.gz` (en Windows, `rei_<versión>_windows_<arch>.zip`).
+3. Descomprímelo y mueve el binario `rei` a un directorio de tu `PATH`
+   (por ejemplo `/usr/local/bin` o `~/.local/bin`):
+
+   ```bash
+   tar -xzf rei_<versión>_<os>_<arch>.tar.gz
+   mv rei /usr/local/bin/
+   ```
+
+4. Verifica la instalación:
+
+   ```bash
+   rei version
+   ```
+
+Si desarrollas sobre el propio repositorio y tienes Go instalado, puedes compilar
+el binario localmente con `make build`; quedará en `bin/rei`.
+
+---
+
 # Primeros pasos
 
 Para entender cómo se usa REI Harness en el día a día (aprobar planificaciones, continuar una sesión interrumpida, preguntas frecuentes), consulta **`.rei/docs/usage.md`**.

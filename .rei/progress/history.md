@@ -418,3 +418,49 @@ mensaje final de `rei init`, comando `/personalize` en OpenCode y Claude, y
 
 Esperar la revisión del `reviewer` (`.rei/progress/work-items/2026-10-02_23-02__wizard-launch/impl.md`).
 
+
+## 2026-10-02 23:32 — 2026-10-02_23-25__distribution
+
+- **Work Item:** 2026-10-02_23-25__distribution
+- **Tipo:** task
+- **Estado:** review
+- **Inicio:** 2026-10-02T23:25:52-05:00
+- **Agente activo:** _—_
+
+## Plan
+
+Planificación de la Task `2026-10-02_23-25__distribution`: distribuir `rei` como
+binario con goreleaser + GitHub Actions (release inicial `v0.1.0`). Documento
+generado: `.rei/specs/2026-10-02_23-25__distribution/plan.md`.
+
+## Bitácora
+
+- Se inicia la sesión con `rei session start 2026-10-02_23-25__distribution task`.
+- Se lee `meta.json` (type `task`, status `pending`) y `.rei/docs/harness/task.md`.
+- Se inspecciona el estado actual: `internal/cli/cli.go` (`const version =
+  "0.1.0-dev"`), `Makefile`, `cmd/rei/main.go`, `README.md`, `.rei/docs/usage.md`,
+  `.gitignore` y `.github/` (inexistente).
+- Se verifica que `-X` funciona sobre variables no exportadas (prueba con un
+  módulo temporal).
+- Se redacta `plan.md` con objetivo, archivos, cambios, restricciones, pasos y
+  verificación.
+- Planificación aprobada; `meta.json` pasa a `in_progress`.
+- Inicia la implementación (Implementer). Se leen `architecture.md`,
+  `conventions.md` (plantillas sin personalizar) y el `plan.md`.
+- Implementados los 9 pasos: versión inyectable (`var version = "dev"` + test),
+  `Makefile` (`VERSION`/`LDFLAGS`), `.goreleaser.yaml`, workflow
+  `.github/workflows/release.yml` y documentación de instalación (`README.md` y
+  `.rei/docs/usage.md`).
+- Verificación: `make build` → `bin/rei version` = `rei dev`; `go build` con
+  `-ldflags ...=v0.1.0` → `/tmp/rei-dist version` = `rei v0.1.0`; YAML válido
+  (`js-yaml`: goreleaser v2 con 6 combinaciones SO/arch, archives, checksum y
+  ldflags; workflow con tag `v*` y `goreleaser-action`); `gofmt -l .` sin
+  salida, `go vet ./...` y `make test` en verde, `rei check --quiet` = 0.
+- Implementación documentada en
+  `.rei/progress/work-items/2026-10-02_23-25__distribution/impl.md`.
+
+## Próximo paso
+
+Solicitar **revisión**: esperar al Reviewer para validar el trabajo contra
+`plan.md`.
+

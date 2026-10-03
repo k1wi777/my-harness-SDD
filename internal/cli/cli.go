@@ -20,7 +20,12 @@ import (
 	"github.com/k1wi777/my-harness-SDD/internal/workitem"
 )
 
-const version = "0.1.0-dev"
+// version se inyecta en build time con:
+//
+//	-ldflags "-X github.com/k1wi777/my-harness-SDD/internal/cli.version=vX.Y.Z"
+//
+// Por defecto identifica una compilación local sin versión publicada.
+var version = "dev"
 
 // Run despacha un comando y devuelve el código de salida.
 func Run(args []string) int {
